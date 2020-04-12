@@ -207,6 +207,91 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-hook-usercall修饰的函数" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/78e44487.html" class="article-date">
+      <time datetime="2020-04-12T20:07:45.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/posts/78e44487.html">hook usercall修饰的函数</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>usercall不是标准的调用约定，用IDA反编译时经常能看到</p>
+<pre><code class="c">int __usercall sub_10017FF0@&lt;eax&gt;(int a1@&lt;eax&gt;, int a2@&lt;ecx&gt;, _BYTE *a3, _BYTE *a4)</code></pre>
+<p>这样的函数声明，这个是IDA自己定义的，这种使用寄存器传参可能是编译时被编译器优化的结果。</p>
+<p>如上例子则表示参数a1使用eax传递，参数a2使用ecx传递的。a2和a4是压栈</p>
+<p>要hook这类函数的时候,我们可以写一个stub函数将usercall转换成调用__cdecl修饰的函数.</p>
+<pre><code>//
+int __cdecl sub_10017FF0 (int a1 , int a2, _BYTE *a3, _BYTE *a4)
+{
+//......
+}
+
+static void __declspec(naked) stub_sub_10017FF0()
+{
+        __asm
+        {
+                //按照顺序压入参数
+                push [esp + 08h] // a4
+                push [esp + 08h] // a3
+                push ecx // a2
+                push eax // a1
+                // 调用实际实现hook代码的函数
+                call sub_10017FF0
+                //寄存器传参的参数也要pop
+                add esp, 4 //  
+                pop ecx // a2
+                //堆栈平衡，这里有俩个参数是压栈的
+                add esp, 4 // a3
+                add esp, 4 // a4
+                retn
+        }
+}                                                                             </code></pre><p><strong><a href="https://github.com/michael-fadely/usercall-hook" target="_blank" rel="noopener">https://github.com/michael-fadely/usercall-hook</a></strong></p>
+
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-mbr结构和代码分析" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -1900,69 +1985,6 @@ Segmentation fault
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Pwnable/">Pwnable</a></li></ul>
     </div>
 
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-VirusTotal扫描器-python版" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/posts/62077d14.html" class="article-date">
-      <time datetime="2016-03-17T03:30:31.000Z" itemprop="datePublished">2016-03-17</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/posts/62077d14.html">VirusTotal扫描器 python版</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>利用在线查毒网站<a href="https://www.virustotal.com/" target="_blank" rel="noopener">https://www.virustotal.com/</a> 提供的API实现上传文件返回扫描结果，因为我平时只看查毒结果，因此只是简单的把文件上传然后返回分析结果。<br>代码如下：</p>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/posts/62077d14.html#more">大航海 >></a>
-        </p>
       
       <div class="clearfix"></div>
     </div>

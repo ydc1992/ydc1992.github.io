@@ -12,19 +12,19 @@
   
   <script>hljs.initHighlightingOnLoad();</script>
 
-  <title>AOSP-docker编译安卓源码绕过反调试 | ydc&#39;s blog</title>
+  <title>hook usercall修饰的函数 | ydc&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="看了很多编译源码的文章，发现很多都有坑，大部分都是环境配置问题，编译不同版本的源码jdk版本不一样，ubuntu版本也不一样。这很让人蛋疼，光是折腾环境就得半天了。 自从有了docker就不一样了，有人把Android源码编译的环境打包成了docker，就是AOSP docker;这样我们就不需要去折腾环境,直接拿人家弄好的来用。 推荐使用linux装docker，不用管是debian还是ubun">
+  <meta name="description" content="usercall不是标准的调用约定，用IDA反编译时经常能看到 int __usercall sub_10017FF0@&amp;lt;eax&amp;gt;(int a1@&amp;lt;eax&amp;gt;, int a2@&amp;lt;ecx&amp;gt;, _BYTE *a3, _BYTE *a4) 这样的函数声明，这个是IDA自己定义的，这种使用寄存器传参可能是编译时被编译器优化的结果。 如上例子则表示参数a1使用eax传递，参">
 <meta property="og:type" content="article">
-<meta property="og:title" content="AOSP-docker编译安卓源码绕过反调试">
-<meta property="og:url" content="http://shxi.me/posts/7b82cd68.html">
+<meta property="og:title" content="hook usercall修饰的函数">
+<meta property="og:url" content="http://shxi.me/posts/78e44487.html">
 <meta property="og:site_name" content="ydc&#39;s blog">
-<meta property="og:description" content="看了很多编译源码的文章，发现很多都有坑，大部分都是环境配置问题，编译不同版本的源码jdk版本不一样，ubuntu版本也不一样。这很让人蛋疼，光是折腾环境就得半天了。 自从有了docker就不一样了，有人把Android源码编译的环境打包成了docker，就是AOSP docker;这样我们就不需要去折腾环境,直接拿人家弄好的来用。 推荐使用linux装docker，不用管是debian还是ubun">
+<meta property="og:description" content="usercall不是标准的调用约定，用IDA反编译时经常能看到 int __usercall sub_10017FF0@&amp;lt;eax&amp;gt;(int a1@&amp;lt;eax&amp;gt;, int a2@&amp;lt;ecx&amp;gt;, _BYTE *a3, _BYTE *a4) 这样的函数声明，这个是IDA自己定义的，这种使用寄存器传参可能是编译时被编译器优化的结果。 如上例子则表示参数a1使用eax传递，参">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-03-26T14:30:10.123Z">
+<meta property="og:updated_time" content="2020-04-12T20:08:56.009Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="AOSP-docker编译安卓源码绕过反调试">
-<meta name="twitter:description" content="看了很多编译源码的文章，发现很多都有坑，大部分都是环境配置问题，编译不同版本的源码jdk版本不一样，ubuntu版本也不一样。这很让人蛋疼，光是折腾环境就得半天了。 自从有了docker就不一样了，有人把Android源码编译的环境打包成了docker，就是AOSP docker;这样我们就不需要去折腾环境,直接拿人家弄好的来用。 推荐使用linux装docker，不用管是debian还是ubun">
+<meta name="twitter:title" content="hook usercall修饰的函数">
+<meta name="twitter:description" content="usercall不是标准的调用约定，用IDA反编译时经常能看到 int __usercall sub_10017FF0@&amp;lt;eax&amp;gt;(int a1@&amp;lt;eax&amp;gt;, int a2@&amp;lt;ecx&amp;gt;, _BYTE *a3, _BYTE *a4) 这样的函数声明，这个是IDA自己定义的，这种使用寄存器传参可能是编译时被编译器优化的结果。 如上例子则表示参数a1使用eax传递，参">
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s blog" type="application/atom+xml">
   
@@ -206,11 +206,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-AOSP-docker编译安卓源码绕过反调试" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-hook-usercall修饰的函数" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/posts/7b82cd68.html" class="article-date">
-      <time datetime="2018-04-14T00:48:50.000Z" itemprop="datePublished">2018-04-14</time>
+      <a href="/posts/78e44487.html" class="article-date">
+      <time datetime="2020-04-12T20:07:45.000Z" itemprop="datePublished">2020-04-12</time>
 </a>
     </div>
   
@@ -223,7 +223,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      AOSP-docker编译安卓源码绕过反调试
+      hook usercall修饰的函数
     </h1>
   
 
@@ -240,133 +240,37 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>看了很多编译源码的文章，发现很多都有坑，大部分都是环境配置问题，编译不同版本的源码jdk版本不一样，ubuntu版本也不一样。这很让人蛋疼，光是折腾环境就得半天了。</p>
-<p>自从有了docker就不一样了，有人把Android源码编译的环境打包成了docker，就是AOSP docker;这样我们就不需要去折腾环境,直接拿人家弄好的来用。</p>
-<p>推荐使用linux装docker，不用管是debian还是ubuntu;虽然windows也可以使用docker，但是还是有点小问题。</p>
-<a id="more"></a>
-<h2 id="分配硬盘"><a href="#分配硬盘" class="headerlink" title="分配硬盘"></a>分配硬盘</h2><p>linux至少要分配100g的硬盘空间。空间足够的可以跳过，原本装有VMWare linux，但是空间不足，又不想重新装个虚拟机。 可以参考 这篇文章<a href="http://blog.csdn.net/u010372981/article/details/46514011" target="_blank" rel="noopener">http://blog.csdn.net/u010372981/article/details/46514011</a> 给虚拟机加块硬盘。</p>
-<h2 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h2><p>默认源中没有docker,我们需要在添加backports源，在/etc/apt/sources.list文件 加入下面这行</p>
-<pre><code>  deb http://http.debian.net/debian jessie-backports main</code></pre><p>运行如下命令安装docker</p>
-<pre><code>apt-get update
-apt-get install docker.io</code></pre><h2 id="开始编译"><a href="#开始编译" class="headerlink" title="开始编译"></a>开始编译</h2><p>1.开始之前先启动docker服务,不然到后面会报错</p>
-<pre><code> /etc/init.d/docker start</code></pre><p>2.设置AOSP_VOL环境变量,设置为你要存放源码的路径,给VMWare添加硬盘扩容的设置成挂载的硬盘的路径。我设置的/Android路径</p>
-<pre><code>export AOSP_VOL=/Android</code></pre><p>3.下载Wrapper脚本,我这里演示编译kitkat(Android 4.4),编译其他版本可以参考<a href="https://github.com/tiann/docker-aosp" target="_blank" rel="noopener">https://github.com/tiann/docker-aosp</a>, 脚本根对国内环境做了优化，使用速度比较快的清华源。</p>
-<pre><code>curl -O https://raw.githubusercontent.com/tiann/docker-aosp/master/tests/build-kitkat.sh</code></pre><p>4.编译源码,直接运行上一步下载下来的源码。该脚本会下载docker镜像，并且下载Android源码到AOSP_VOL指定的路径，然后编译。</p>
-<pre><code>sh ./build-kitkat.sh</code></pre><p>编译完成后,使用的是系统默认自带的内核，我们还需要重新修改编译内核绕过反调试</p>
-<h2 id="编译内核"><a href="#编译内核" class="headerlink" title="编译内核"></a>编译内核</h2><ol>
-<li>clone内核源码 我使用的手机是Nexus 5,对应的内核源码为kernel/msm。设备名是hammerhead</li>
-</ol>
-<p>在存放源码的目录创建kernel文件夹，我这里存放源码目录为/Android</p>
-<pre><code>cd /Android/aosp
-mkdir kernel
-cd kernel
-git clone https://aosp.tuna.tsinghua.edu.cn/kernel/msm.git</code></pre><ol>
-<li>选择系统版本 切换到克隆下来的源码目录，切换分支</li>
-</ol>
-<pre><code>git branch -a</code></pre><p>找到名字带有 hammerhead的。</p>
-<pre><code>git checkout remotes/origin/android-msm-hammerhead-3.4-kitkat-mr1</code></pre><ol>
-<li>修改源码</li>
-</ol>
-<p>需要修改<code>kernel/msm/fs/proc/base.c</code>和<code>kernel/msm/fs/proc/array.c</code>两个文件</p>
-<p>base.c中 <code>proc_pid_wchan</code>函数部分修改成如下：</p>
-<pre><code>//省略
-else {
-           if (strstr(symname, &quot;trace&quot;)) {
-                return sprintf(buffer, &quot;%s&quot;, &quot;sys_epoll_wait&quot;);
-           }
-           return sprintf(buffer, &quot;%s&quot;, symname);
-      }</code></pre><p>array.c中<code>tast_state</code>函数部分修改成</p>
-<pre><code>&quot;Gid:\t%d\t%d\t%d\t%d\n&quot;,
-              get_task_state(p),
-              task_tgid_nr_ns(p, ns),
-              pid_nr_ns(pid, ns),
-              ppid, /*tpid*/0,
-              cred-&gt;uid, cred-&gt;euid, cred-&gt;suid, cred-&gt;fsuid,
-              cred-&gt;gid, cred-&gt;egid, cred-&gt;sgid, cred-&gt;fsgid);</code></pre><p><code>task_state_array</code>变量修改成</p>
-<pre><code class="cpp">static const char * const task_state_array[] = {
-     &quot;R (running)&quot;,        /*    0 */
-     &quot;S (sleeping)&quot;,       /*    1 */
-     &quot;D (disk sleep)&quot;,     /*    2 */
-     &quot;S (sleeping)&quot;,       /*    4 */
-     &quot;S (sleeping)&quot;, /*     8 */
-     &quot;Z (zombie)&quot;,         /*  16 */
-     &quot;X (dead)&quot;,           /*  32 */
-     &quot;x (dead)&quot;,           /*  64 */
-     &quot;K (wakekill)&quot;,       /* 128 */
-     &quot;W (waking)&quot;,         /* 256 */
-};</code></pre>
-<ol>
-<li>创建编译脚本 在<code>/Android/aosp/kernel/msm</code>目录,即内核源码所在的目录创建一个脚本，内容如下,保存为run.sh. PATH前面的gcc路径为编译工具链,用来编译内核的。</li>
-</ol>
-<pre><code class="bash">export PATH=&#39;/Android/aosp/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin&#39;;$PATH
-export ARCH=arm
-export SUBARCH=arm
-export CROSS_COMPILE=arm-eabi-
-make hammerhead defconfig
-make -j4</code></pre>
-<p>然后运行该脚本开始编译内核</p>
-<pre><code>sh run.sh</code></pre><p>出现如下提示表示内核已经编译ok</p>
-<pre><code>CALL    scripts/checksyscalls.sh
-CHK     include/generated/compile.h
-Kernel: arch/arm/boot/Image is ready
-LD      arch/arm/boot/compressed/vmlinux
-OBJCOPY arch/arm/boot/zImage
-Kernel: arch/arm/boot/zImage is ready
-CAT     arch/arm/boot/zImage-dtb
-Kernel: arch/arm/boot/zImage-dtb is ready</code></pre><p>在<code>/Android/aosp/kernel/msm/arch/arm/boot</code>找到zImage-dtb,这个是nexus 5内核文件,拷贝到<code>/Android/aosp/device/lge/hammerhead-kernel</code>覆盖原来的文件</p>
-<ol>
-<li>下载驱动设备 要刷机到实体机,还需要下载三个驱动设备</li>
-</ol>
-<p>从<a href="https://developers.google.com/android/drivers找到对应的驱动设备。" target="_blank" rel="noopener">https://developers.google.com/android/drivers找到对应的驱动设备。</a></p>
-<p>搜索Nexus 5找到对应的系统版本，我的是Android 4.4.4。找到的结果如下：</p>
-<p>Nexus 5 (GSM/LTE) binaries for Android 4.4.4 (KTU84P)</p>
-<table>
-<thead>
-<tr>
-<th>Hardware Component</th>
-<th>Company</th>
-<th>Download</th>
-<th>SHA-256 Checksum</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>NFC, Bluetooth, Wi-Fi</td>
-<td>Broadcom</td>
-<td>Link</td>
-<td>f258605e24c9c3d4e78c9af934f3516a4f8d3410da697005fad42cad36c5ed5c</td>
-</tr>
-<tr>
-<td>Camera, Sensors, Audio</td>
-<td>LG</td>
-<td>Link</td>
-<td>fc72704e0fba9c51c6505ae009e474570de27ee8565d51483368d8dae6c0f44e</td>
-</tr>
-<tr>
-<td>Graphics, GSM, Camera, GPS, Sensors, Media, DSP, USB</td>
-<td>Qualcomm</td>
-<td>Link</td>
-<td>8603d85ad511346d65c27c3747919da280523b86d55a39dfce657a4ca1b0685b</td>
-</tr>
-</tbody></table>
-<p>Download对应的是下载连接，我们把这三个文件下载后解压到/Android/AOSP目录。得到三个sh脚本文件 <code>extract-broadcom-hammerhead.sh</code>、<code>extract-lge-hammerhead.sh</code>和<code>extract-qcom-hammerhead.sh</code>;</p>
-<p>分别运行它们</p>
-<pre><code>sh extract-broadcom-hammerhead.sh
-sh extract-lge-hammerhead.sh
-sh extract-qcom-hammerhead.sh</code></pre><p>一直按回车，等到如下提示输入 I ACCEPT。</p>
-<pre><code>Type &quot;I ACCEPT&quot; if you agree to the terms of the license: 
-You didn&#39;t accept the license. Extraction aborted.</code></pre><ol>
-<li>再次编译源码 再次运行编译脚本重新编译,这次会很快</li>
-</ol>
-<pre><code>sh ./build-kitkat.sh</code></pre><h2 id="刷机"><a href="#刷机" class="headerlink" title="刷机"></a>刷机</h2><p>先确定bootloader有没有解锁,没解锁是刷不进去的。</p>
-<p>Nexus 5 是两个音量键和开机键一起一直按到出现bootloader界面。usb连接手机，输入以下命令</p>
-<pre><code class="bash">fastboot oem unlock</code></pre>
-<p>这个是Nexus 5的解锁方式</p>
-<p>Android源码编译成功后,文件保存在<code>/Android/aosp/out/target/product/hammerhead</code>。</p>
-<p>输入如下命令就可以刷入实体机了。</p>
-<pre><code class="bash">cd /Android/aosp/out/target/product/hammerhead
-Adb reboot bootloader
-Fastboot -w flashall</code></pre>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://blog.csdn.net/gaisylly/article/details/50113791" target="_blank" rel="noopener">http://blog.csdn.net/gaisylly/article/details/50113791</a><br><a href="https://github.com/tiann/docker-aosp" target="_blank" rel="noopener">https://github.com/tiann/docker-aosp</a><br><a href="http://weishu.me/2016/12/30/simple-way-to-compile-android-source/" target="_blank" rel="noopener">http://weishu.me/2016/12/30/simple-way-to-compile-android-source/</a><br><a href="http://bbs.pediy.com/thread-213481.htm" target="_blank" rel="noopener">http://bbs.pediy.com/thread-213481.htm</a><br><a href="http://blog.csdn.net/sunao2002002/article/details/53057374" target="_blank" rel="noopener">http://blog.csdn.net/sunao2002002/article/details/53057374</a><br><a href="https://developers.google.com/android/drivers" target="_blank" rel="noopener">https://developers.google.com/android/drivers</a></p>
+        <p>usercall不是标准的调用约定，用IDA反编译时经常能看到</p>
+<pre><code class="c">int __usercall sub_10017FF0@&lt;eax&gt;(int a1@&lt;eax&gt;, int a2@&lt;ecx&gt;, _BYTE *a3, _BYTE *a4)</code></pre>
+<p>这样的函数声明，这个是IDA自己定义的，这种使用寄存器传参可能是编译时被编译器优化的结果。</p>
+<p>如上例子则表示参数a1使用eax传递，参数a2使用ecx传递的。a2和a4是压栈</p>
+<p>要hook这类函数的时候,我们可以写一个stub函数将usercall转换成调用__cdecl修饰的函数.</p>
+<pre><code>//
+int __cdecl sub_10017FF0 (int a1 , int a2, _BYTE *a3, _BYTE *a4)
+{
+//......
+}
+
+static void __declspec(naked) stub_sub_10017FF0()
+{
+        __asm
+        {
+                //按照顺序压入参数
+                push [esp + 08h] // a4
+                push [esp + 08h] // a3
+                push ecx // a2
+                push eax // a1
+                // 调用实际实现hook代码的函数
+                call sub_10017FF0
+                //寄存器传参的参数也要pop
+                add esp, 4 //  
+                pop ecx // a2
+                //堆栈平衡，这里有俩个参数是压栈的
+                add esp, 4 // a3
+                add esp, 4 // a4
+                retn
+        }
+}                                                                             </code></pre><p><strong><a href="https://github.com/michael-fadely/usercall-hook" target="_blank" rel="noopener">https://github.com/michael-fadely/usercall-hook</a></strong></p>
 
       
       
@@ -376,13 +280,13 @@ Fastboot -w flashall</code></pre>
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></p>
+        <p><span>本文标题:</span><a href="/posts/78e44487.html">hook usercall修饰的函数</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
-        <p><span>发布时间:</span>2018年04月14日 - 00时48分</p>
-        <p><span>最后更新:</span>2020年03月26日 - 14时30分</p>
+        <p><span>发布时间:</span>2020年04月12日 - 20时07分</p>
+        <p><span>最后更新:</span>2020年04月12日 - 20时08分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/posts/7b82cd68.html" title="AOSP-docker编译安卓源码绕过反调试">http://shxi.me/posts/7b82cd68.html</a>
-            <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/7b82cd68.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/posts/78e44487.html" title="hook usercall修饰的函数">http://shxi.me/posts/78e44487.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/78e44487.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -395,18 +299,9 @@ Fastboot -w flashall</code></pre>
 
 <nav id="article-nav">
   
-    <a href="/posts/9222f001.html" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          病毒样本快到碗里来，一个样本下载爬虫的实现
-        
-      </div>
-    </a>
   
-  
-    <a href="/posts/27be2f79.html" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">VB Crypt Payload</div>
+    <a href="/posts/efe148e3.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">mbr结构和代码分析</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -417,7 +312,7 @@ Fastboot -w flashall</code></pre>
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#分配硬盘"><span class="toc-number">1.</span> <span class="toc-text">分配硬盘</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装docker"><span class="toc-number">2.</span> <span class="toc-text">安装docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始编译"><span class="toc-number">3.</span> <span class="toc-text">开始编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译内核"><span class="toc-number">4.</span> <span class="toc-text">编译内核</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#刷机"><span class="toc-number">5.</span> <span class="toc-text">刷机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">6.</span> <span class="toc-text">参考</span></a></li></ol>
+    
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -471,13 +366,11 @@ Fastboot -w flashall</code></pre>
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/posts/9222f001.html" title="上一篇: 病毒样本快到碗里来，一个样本下载爬虫的实现">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/posts/27be2f79.html" title="下一篇: VB Crypt Payload">
+            <a href="/posts/efe148e3.html" title="下一篇: mbr结构和代码分析">
                 <i class="fa fa-angle-right"></i>
             </a>
         
