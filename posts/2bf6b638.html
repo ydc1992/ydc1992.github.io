@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css">
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/x86asm.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <title>Reversing.kr Windows kernal | ydc&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="运行程序看看，要输入数据之前要先点击按钮Enable然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reversing.kr Windows kernal">
+<meta property="og:url" content="http://shxi.me/posts/2bf6b638.html">
+<meta property="og:site_name" content="ydc&#39;s blog">
+<meta property="og:description" content="运行程序看看，要输入数据之前要先点击按钮Enable然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://t.cn/RGQPldt">
+<meta property="og:image" content="http://t.cn/RGQPYcX">
+<meta property="og:image" content="http://t.cn/RGQPTGH">
+<meta property="og:image" content="http://t.cn/RGQPHAF">
+<meta property="og:image" content="http://t.cn/RGQPQLd">
+<meta property="og:image" content="http://t.cn/RGQhP35">
+<meta property="og:image" content="http://t.cn/RGQGHdX">
+<meta property="og:image" content="http://t.cn/RGQPRcM">
+<meta property="og:image" content="http://t.cn/RGQPEOr">
+<meta property="og:image" content="http://t.cn/RGQh7iL">
+<meta property="og:image" content="http://t.cn/RGQhzqI">
+<meta property="og:image" content="http://t.cn/RGQhnkB">
+<meta property="og:image" content="http://t.cn/RGQ7j3U">
+<meta property="og:image" content="http://t.cn/RGQ7TVT">
+<meta property="og:updated_time" content="2020-03-26T14:30:10.124Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Reversing.kr Windows kernal">
+<meta name="twitter:description" content="运行程序看看，要输入数据之前要先点击按钮Enable然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。">
+<meta name="twitter:image" content="http://t.cn/RGQPldt">
+  
+    <link rel="alternative" href="/atom.xml" title="ydc&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head></html>
+<body>
+  <div id="container">
+
+<script id="__bs_script__">//<![CDATA[
+  document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.23.6'><\/script>".replace("HOST", location.hostname));
+//]]></script>  
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Ken</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://ydc1992.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">这人太懒了,没有添加任何信息</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Ken</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Ken</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-Reversing-kr-Windows-kernal" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/2bf6b638.html" class="article-date">
+      <time datetime="2016-03-06T11:21:40.000Z" itemprop="datePublished">2016-03-06</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Reversing.kr Windows kernal
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>运行程序看看，要输入数据之前要先点击按钮Enable<br><img src="http://t.cn/RGQPldt" alt><br>然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。<br><img src="http://t.cn/RGQPYcX" alt></p>
+<a id="more"></a>
+<p>用IDA载入程序，在sub_401110函数中就是对输入字符串判断的关键函数。<br><img src="http://t.cn/RGQPTGH" alt><br>来到关键call，这段代码是用户模式下的程序与驱动进行交互。对字符串验证的逻辑肯定是在驱动文件里了。<br><img src="http://t.cn/RGQPHAF" alt></p>
+<p>IDA载入驱动文件分析驱动<br><img src="http://t.cn/RGQPQLd" alt></p>
+<p>注册了两个派遣例程，sub_11288 函数是DeviceIoControl，处理用户模式与该驱动的交互。</p>
+<p>这里我们可以看到这里处理DeviceIoControlCode 为 0x1000 和 0x2000。再看前面sub_401110函数的代码，我们可以知道<br>程序刚开始运行时，编辑框不能输入任何数据，点击Enable,发送0x1000到驱动，按钮变成check,编辑框就能用了，这时就可以输入字符了。<br>再点击check，就发送0x2000到驱动验证结果对不对。</p>
+<p>sub_112F8函数代码<br><img src="http://t.cn/RGQhP35" alt></p>
+<p>驱动还使用KeInitializeDpc函数注册了一个定时器，每隔一段时间就运行sub_11266函数。<br>在这个函数里，看到一个函数 READ_PORT_UCHAR，这个函数通过端口号来读取输入的字节。然后在下面的这个函数sub_111DC中验证，<br><img src="http://t.cn/RGQGHdX" alt></p>
+<p>既然验证代码在内核中，那我们就需要用winDBG来调试驱动了。<br>在WinDBG中使用lm命令查找所有加载的模块。WinKer就是我们程序加载的驱动。<br><img src="http://t.cn/RGQPRcM" alt></p>
+<p>用!drvobj WinKer命令来看 WinKer驱动的信息。<br><img src="http://t.cn/RGQPEOr" alt><br>下面列出了个设备对象列表，点击87bc0650，你也可以手动输入命令!devobj 87bc0650。<br>这里这个驱动对象的地址是87bc0780，找到了驱动对象的地址，我们就可以使用dt来查看它的数据结构了。<br><img src="http://t.cn/RGQh7iL" alt></p>
+<p>还记得前面说的sub_11288函数的三个派遣函数么，派遣函数的地址存放在MajorFunction数组了，我们可以通过这个地址找到对于的函数，来进行调试。</p>
+<p>sub_11288 为MajorFunction第e个数组，因此可以通过计算87bc0780+0x38+0xe*4得到改内存的值知道这个函数的内存地址为93316288。<br><img src="http://t.cn/RGQhzqI" alt></p>
+<p>前面我们已经知道 验证代码在sub_11266(00011266)函数处，通过计算可以知道该函数在内存中的地址 93316288-11288 + 00011166 = 933161DC66 。这个函数就是验证地方。在这个地方下断就可以调试了。<br>不过有一个问题就是 在程序编辑框输入数据后这里会被断下两次,由此可知没输入一个字符，调用两次这个函数。</p>
+<p>通过 READ_PORT_UCHAR函数读取用户输入的数据。READ_PORT_UCHAR每一次只读取一个字节，而g_var变量也在随着变化，分析流程图我们可以得知g_var全局变量为输入字符在字符串的位置。READ_PORT_UCHAR读取从0到3位 返回的值分别是 0xa5u,0x92u,0x95u,0xbu<br><img src="http://t.cn/RGQhnkB" alt><br>当等于7是g_var+100= 107，没有这个分支，进入默认分支进入sub_11156函数。<br><img src="http://t.cn/RGQ7j3U" alt><br>同上类似，READ_PORT_UCHAR读取的是从4到6位,返回的值分别是：0xb2u，0x85u，0xa3u。 g_var值变成200，第三个swith同样。<br><img src="http://t.cn/RGQ7TVT" alt></p>
+<p>只要将你输入的字符和READ_PORT_UCHAR返回的字符对应起来，就可以得到正确的key。要知道READ_PORT_UCHAR的返回值,还是得用winDBG来调试。</p>
+
+      
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
+        <p><span>发布时间:</span>2016年03月06日 - 11时21分</p>
+        <p><span>最后更新:</span>2020年03月26日 - 14时30分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/posts/2bf6b638.html" title="Reversing.kr Windows kernal">http://shxi.me/posts/2bf6b638.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/2bf6b638.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+    <a href="/posts/6155f940.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          pycurl 分块下载
+        
+      </div>
+    </a>
+  
+  
+    <a href="/posts/c240cede.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Pwnable.kr leg</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'ydc1992',
+      repo: 'ydc1992.github.io',
+      oauth: {
+        client_id: '',
+        client_secret: '',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/posts/6155f940.html" title="上一篇: pycurl 分块下载">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/posts/c240cede.html" title="下一篇: Pwnable.kr leg">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/posts/efe148e3.html">mbr结构和代码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/61225802.html">app.any.run网站样本爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/1736976b.html">debug IDApython script</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9222f001.html">病毒样本快到碗里来，一个样本下载爬虫的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/27be2f79.html">VB Crypt Payload</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/62077d14.html">VirusTotal扫描器 python版</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6155f940.html">pycurl 分块下载</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/c240cede.html">Pwnable.kr leg</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9e24c54e.html">安卓游戏资源解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/b751c08a.html">Reversing.kr AutoHotkey1</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/ff6aab31.html">reversing.kr Ransomware</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/905112aa.html">Far Manager插件编写2</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/88524310.html">pwnable.kr bof</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/741ff96a.html">Pwnable.kr random</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/d8e13760.html">powershell hacker(三): 后门安装 </a></li><li class="post-list-item"><a class="post-list-link" href="/posts/564bd806.html">Pwnable.kr flag</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e2bbbc71.html">powershell hacker(一): Empirse</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/15b3d1e1.html">Pwnable.kr fd</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e6d76b89.html">Reversing.kr Direct3D FPS</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Ken
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+ 
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+  
+</body>
+</html>

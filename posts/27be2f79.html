@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css">
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/x86asm.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <title>VB Crypt Payload | ydc&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="分析VB样本的时候发现有几种混淆方式，记录下。 替换函数指针 样本shah:a66f989e58ada2eff729ac2032ff71a159c521e7372373f4a1c1cf13f8ae2f0c   载入vb.idc脚本，脚本分析完后，查看event handle函数，  .text:00463E14 _O_Pub_Obj_Inf1_Ctl_Inf0x3_0x7_lpForm_Load">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VB Crypt Payload">
+<meta property="og:url" content="http://shxi.me/posts/27be2f79.html">
+<meta property="og:site_name" content="ydc&#39;s blog">
+<meta property="og:description" content="分析VB样本的时候发现有几种混淆方式，记录下。 替换函数指针 样本shah:a66f989e58ada2eff729ac2032ff71a159c521e7372373f4a1c1cf13f8ae2f0c   载入vb.idc脚本，脚本分析完后，查看event handle函数，  .text:00463E14 _O_Pub_Obj_Inf1_Ctl_Inf0x3_0x7_lpForm_Load">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-04-12T17:20:24.923Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VB Crypt Payload">
+<meta name="twitter:description" content="分析VB样本的时候发现有几种混淆方式，记录下。 替换函数指针 样本shah:a66f989e58ada2eff729ac2032ff71a159c521e7372373f4a1c1cf13f8ae2f0c   载入vb.idc脚本，脚本分析完后，查看event handle函数，  .text:00463E14 _O_Pub_Obj_Inf1_Ctl_Inf0x3_0x7_lpForm_Load">
+  
+    <link rel="alternative" href="/atom.xml" title="ydc&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head></html>
+<body>
+  <div id="container">
+
+<script id="__bs_script__">//<![CDATA[
+  document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.23.6'><\/script>".replace("HOST", location.hostname));
+//]]></script>  
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Ken</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://ydc1992.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">这人太懒了,没有添加任何信息</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Ken</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Ken</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-VB-Crypt-Payload" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/27be2f79.html" class="article-date">
+      <time datetime="2018-03-01T06:53:37.000Z" itemprop="datePublished">2018-03-01</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      VB Crypt Payload
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>分析VB样本的时候发现有几种混淆方式，记录下。</p>
+<h2 id="替换函数指针"><a href="#替换函数指针" class="headerlink" title="替换函数指针"></a>替换函数指针</h2><blockquote>
+<p>样本shah:a66f989e58ada2eff729ac2032ff71a159c521e7372373f4a1c1cf13f8ae2f0c</p>
+</blockquote>
+<p> 载入vb.idc脚本，脚本分析完后，查看event handle函数，</p>
+<pre><code> .text:00463E14 _O_Pub_Obj_Inf1_Ctl_Inf0x3_0x7_lpForm_Load        dd offset Hdr_Jmp_Addr_0x46549A      ; Ptr to Form Load Event Code.
+ ....
+
+ .text:00463E78                 sub     [esp+arg_0], 0FFFFh
+ .text:00463E80                 jmp     _O_Pub_Obj_Inf1_Method0x1
+
+ .text:00463E85          Hdr_Jmp_Addr_0x46549A:       ; DATA XREF:.text:_O_Pub_Obj_Inf1_Ctl_Inf0x3_0x7_lpForm_Load↑o
+ .text:00463E85                 sub     dword ptr [esp+4], 3Bh ; &#39;;&#39; ; Flags and Code Address
+ .text:00463E8D                 jmp     _O_Pub_Obj_Inf1_Event0x2
+</code></pre><p><code>_O_Pub_Obj_Inf1_Event0x2</code>就是处理Form_load的函数，一般malicious code都是在这里实现。<br>接着往下看。<br>这里计算处shellcode的地址。<code>0x43AF4B=1526C77h/（sqr(25.0)）</code></p>
+<pre><code class="asm">.text:00465D83                        mov     [ebp+var_50], 1526C77h
+.text:00465D8A                        fld     ds:dbl_401118   ;25.0
+.text:00465D90                        push    ecx
+.text:00465D91                        push    ecx
+.text:00465D92                        fstp    qword ptr [esp+8+var_8]
+.text:00465D95                        call    rtcSqr
+.text:00465D9A                        call    __vbaFpI4
+.text:00465D9F                        mov     ecx, eax</code></pre>
+<p>在 <code>[eax+0x6f8]</code> 这个函数将shellcode地址替换，arg_0为Form_load的第一个参数，也就是Form类。</p>
+<pre><code class="asm">.text:00465DA8                        mov     eax, [ebp+arg_0]
+.text:00465DAB                        mov     eax, [eax]
+.text:00465DAD                        push    [ebp+arg_0]
+.text:00465DB0                        call    dword ptr [eax+6F8h]</code></pre>
+<p>[eax]中存放的是地址虚表，[eax+6f8h]地址正好是<em>O</em>Pub_Obj_Inf1_Method0x1方法,</p>
+<pre><code class="asm">
+.data:0046737C dd offset msvbvm60_BASIC_CLASS_QueryInterface
+.data:00467380 dd offset msvbvm60_BASIC_CLASS_AddRef
+.data:00467384 dd offset msvbvm60_BASIC_CLASS_Release
+...
+.data:00467A6C dd 72A44A98h
+.data:00467A70 dd 72A44AA0h
+.data:00467A74 dd 463E80h                 ; ptr _O_Pub_Obj_Inf1_Method0x1
+.data:00467A78 dd 463E8Dh                 ; ptr _O_Pub_Obj_Inf1_Event0x2 
+...</code></pre>
+<p>替换指针，进入shellcode执行代码</p>
+<pre><code>.text:00464434 add     eax, 2B0h
+.text:00464439 jo      loc_465495
+.text:0046443F mov     [ebp+var_20], eax
+.text:00464442 push    [ebp+arg_4] ;shellcode地址
+.text:00464445 push    [ebp+var_20] ;[eax+0x2b0]
+.text:00464448 call    replace_ptr
+....
+.text:004644C3 call    dword ptr [eax+2B0h]
+</code></pre><p>在shellcode中并没有使用常规的方式获取api地址，而是先找到msvbvm60模块的地址，再通过到处函数DllFunction来获得对应API的地址。<br>中间穿插了大量的花指令。</p>
+<pre><code>.text:0043B10F get_api_address proc near                                                                           ; CODE XREF: sub_43AF88:loc_43AF89↑p
+.text:0043B10F                                                                                                     ; sub_43B07C+2B↑p
+.text:0043B10F
+.text:0043B10F var_14          = dword ptr -14h
+.text:0043B10F anonymous_2     = dword ptr -10h
+.text:0043B10F anonymous_1     = dword ptr -0Ch
+.text:0043B10F anonymous_0     = dword ptr -8
+.text:0043B10F var_4           = dword ptr -4
+.text:0043B10F
+.text:0043B10F                 mov     eax, large fs:30h ;peb地址
+.text:0043B115                 packuswb mm1, mm1
+.text:0043B118                 mov     eax, [eax+0Ch] ;PEB_LDR_DATA
+.text:0043B11B                 pcmpgtb mm5, mm4
+.text:0043B11E                 mov     eax, [eax+14h];get InMemoryOrderModuleList
+.text:0043B121                 pcmpeqw mm2, mm7
+.text:0043B124
+.text:0043B124 loc_43B124:                                                                                         ; CODE XREF: get_api_address+29↓j
+.text:0043B124                                                                                                     ; get_api_address+36↓j
+.text:0043B124                 mov     eax, [eax]
+.text:0043B126                 punpckhdq mm1, mm3
+.text:0043B129                 mov     ebx, [eax+28h]
+.text:0043B12C                 pcmpgtw xmm7, xmm6
+.text:0043B130                 mov     esi, 53004Ch     ; 
+.text:0043B135                 inc     esi              ;MS for msvbvm60.dll 
+.text:0043B136                 cmp     [ebx], esi
+.text:0043B138                 jnz     short loc_43B124
+.text:0043B13A                 pcmpgtb xmm3, xmm7
+.text:0043B13E                 cmp     dword ptr [ebx+4], 420056h ;VB for MS for msvbvm60.dll 
+.text:0043B145                 jnz     short loc_43B124
+.text:0043B147                 pcmpgtd xmm0, xmm3
+.text:0043B14B                 mov     esi, [eax+10h]
+.text:0043B14E                 pcmpgtw xmm6, xmm6
+.text:0043B152                 push    esi
+.text:0043B153                 pcmpgtb mm3, mm4
+.text:0043B156                 mov     ebx, [esi+3Ch]
+.text:0043B159                 punpckhwd xmm0, xmm2
+.text:0043B15D                 mov     esi, [esp+4+var_4]
+.text:0043B160                 punpckhbw xmm5, xmm1
+.text:0043B164                 add     esi, ebx
+.text:0043B166                 pcmpeqd xmm0, xmm1
+.text:0043B16A                 mov     ebx, [esi+78h]
+.text:0043B16D                 pcmpeqw mm6, mm3
+.text:0043B170                 mov     eax, [esp+4+var_4]
+.text:0043B173                 punpckhwd xmm3, xmm7
+.text:0043B177                 add     eax, ebx
+.text:0043B179                 punpckhbw xmm4, xmm4
+.text:0043B17D                 mov     esi, eax
+.text:0043B17F                 pcmpeqb xmm4, xmm6
+.text:0043B183                 add     esi, 28h ; &#39;(&#39;
+.text:0043B186                 pcmpeqw mm1, mm2
+.text:0043B189
+.text:0043B189 loc_43B189:                                                                                         ; CODE XREF: get_api_address+80↓j
+.text:0043B189                                                                                                    get_api_address+94↓j ...
+.text:0043B189                 lodsd
+.text:0043B18A                 punpckhdq mm0, mm6
+.text:0043B18D                 test    eax, eax
+.text:0043B18F                 jz      short loc_43B189
+.text:0043B191                 packssdw xmm4, xmm7
+.text:0043B195                 add     eax, [esp+4+var_4]
+.text:0043B198                 pcmpeqb xmm6, xmm2
+.text:0043B19C                 mov     ebx, 83EC8B55h    ;DllFunctionCall 函数特征
+.text:0043B1A1                 cmp     [eax], ebx
+.text:0043B1A3                 jnz     short loc_43B189
+.text:0043B1A5                 punpckhwd mm0, mm4
+.text:0043B1A8                 cmp     dword ptr [eax+4], 8D560CECh  ;DllFunctionCall 函数特征
+.text:0043B1AF                 jnz     short loc_43B189
+.text:0043B1B1                 pcmpgtb mm6, mm4
+.text:0043B1B4                 pop     ebx
+.text:0043B1B5                 pcmpeqd xmm0, xmm1
+.text:0043B1B9                 xor     ebx, ebx
+.text:0043B1BB                 pcmpeqw mm6, mm3
+.text:0043B1BE                 push    ebx
+.text:0043B1BF                 punpckhwd xmm3, xmm7
+.text:0043B1C3                 push    ebx
+.text:0043B1C4                 punpckhbw xmm4, xmm4
+.text:0043B1C8                 push    ebx
+.text:0043B1C9                 pcmpeqb xmm4, xmm6
+.text:0043B1CD                 push    esp
+.text:0043B1CE                 pcmpeqw mm1, mm2
+.text:0043B1D1                 push    0
+.text:0043B1D3                 punpckhdq mm0, mm6
+.text:0043B1D6                 add     [esp+14h+var_14], 40000h
+.text:0043B1DD                 packssdw xmm4, xmm7
+.text:0043B1E1                 push    edx
+.text:0043B1E2                 pcmpeqb xmm6, xmm2
+.text:0043B1E6                 push    ecx
+.text:0043B1E7                 punpckhwd mm0, mm4
+.text:0043B1EA                 push    esp
+.text:0043B1EB                 pcmpgtb mm6, mm4
+.text:0043B1EE                 call    eax
+.text:0043B1F0                 pcmpeqd xmm0, xmm1
+.text:0043B1F4                 add     esp, 1Ch
+.text:0043B1F7                 pcmpeqw mm6, mm3
+.text:0043B1FA                 retn
+.text:0043B1FA get_api_address endp</code></pre><p>通过get_api_address函数获得shellNoitdyIconW函数。并调用两次。<br>第一次调用的时候dwMessage参数为NIM_ADD，打开<code>控制面板\所有控制面板项\通知区域图标</code>会发现下面有一个空白的<br>这是因为PNOTIFYICONDATA被垃圾数据填充了。第二次传入NIM_DELETE删除托盘图标。</p>
+<pre><code class="asm">.text:0043AF89 call    get_api_address
+.text:0043AF8E push    eax
+.text:0043AF8F push    dword ptr [ebp+52h] ;NOTIFYICONDATA结构体
+.text:0043AF92 push    0                   ;NIM_ADD
+.text:0043AF94 call    eax
+.text:0043AF96 cmp     eax, 1
+.text:0043AF99 jz      short $+2
+.text:0043AF9B
+.text:0043AF9B loc_43AF9B:                                                                                         ; CODE XREF: .text:0043AF99↑j
+.text:0043AF9B pop     eax
+.text:0043AF9C push    dword ptr [ebp+52h]
+.text:0043AF9F push    2                   ;NIM_DELETE 
+.text:0043AFA1 call    eax</code></pre>
+<p>使用ZwSetInformationProcess绕过DEP保护的原理如下</p>
+<pre><code class="cpp">ULONG ExecuteFlags = MEM_EXECUTE_OPTION_ENABLE;
+
+    NtSetInformationProcess(
+    -1,//当前进程
+    ProcessExecuteFlags, // 0x22
+    &amp;ExecuteFlags, // executeFlag=2; 设置为2关闭DEP
+    sizeof(ExecuteFlags)); // 0x4</code></pre>
+<p>关闭DEP以避免在栈上执行代码出现异常等问题。</p>
+<pre><code>.text:0043B1FF push    &#39;ssf&#39;
+.text:0043B204 dec     dword ptr [esp+0]   ;sse
+.text:0043B207 push    &#39;corQ&#39;
+.text:0043B20C dec     [esp+4+var_4]       ;corP
+.text:0043B20F push    &#39;noiu&#39;
+.text:0043B214 dec     [esp+8+var_8]       ;noit
+.text:0043B217 push    &#39;amrp&#39;
+.text:0043B21C dec     [esp+0Ch+var_C]     ;amro
+.text:0043B21F push    &#39;fnIu&#39;
+.text:0043B224 dec     [esp+10h+var_10]    ;fnIt
+.text:0043B227 push    &#39;eSw[&#39;
+.text:0043B22C dec     [esp+14h+var_14]   ;eSwZ
+.text:0043B22F mov     edx, esp     ZwSetInformationProcess
+.text:0043B231 jmp     loc_43B0A1
+...
+.text:0043B0A1 punpckhwd mm2, mm6
+.text:0043B0A4 pcmpeqd mm2, mm5                                                                                    ; a10
+.text:0043B0A7 call    get_api_address
+.text:0043B0AC add     esp, 18h
+.text:0043B0AF punpckhwd mm0, mm1
+.text:0043B0B2 push    4     ;sizeof(ExecuteFlags)
+.text:0043B0B4 packsswb mm0, mm2
+.text:0043B0B7 push    0  //0
+.text:0043B0B9 pcmpgtw mm7, mm4
+.text:0043B0BC add     [esp+4+var_4], 400004h
+.text:0043B0C3 pcmpeqb mm4, mm0
+.text:0043B0C6 push    22h ; &#39;&quot;&#39; ;ProcessExecuteFlags
+.text:0043B0C8 punpckhwd xmm1, xmm3
+.text:0043B0CC push    0FFFFFFFFh  ;当前进程
+.text:0043B0CE punpckhdq mm5, mm5
+.text:0043B0D1 call    eax ;ZwSetInformationProcess</code></pre><h2 id="反调试"><a href="#反调试" class="headerlink" title="反调试"></a>反调试</h2><p>这里使用三处反调试，</p>
+<ul>
+<li>PEB.BeingDebugged</li>
+<li>PEB.NtGlobalFlag</li>
+</ul>
+<pre><code class="asm">Stack[00000B48]:0012D7A8 push    ebp
+Stack[00000B48]:0012D7A9 mov     ebp, esp
+Stack[00000B48]:0012D7AB mov     eax, large fs:18h
+Stack[00000B48]:0012D7B1 mov     eax, [eax+30h]
+Stack[00000B48]:0012D7B4 cmp     byte ptr [eax+2], 1 ;BeingDebugged，改成0绕过
+Stack[00000B48]:0012D7B8 jz      loc_12DAEF
+Stack[00000B48]:0012D7BE nop
+Stack[00000B48]:0012D7BF nop
+Stack[00000B48]:0012D7C0 mov     eax, large fs:30h
+Stack[00000B48]:0012D7C6 nop
+Stack[00000B48]:0012D7C7 nop
+Stack[00000B48]:0012D7C8 mov     al, [eax+68h]
+Stack[00000B48]:0012D7CB nop
+Stack[00000B48]:0012D7CC nop
+Stack[00000B48]:0012D7CD and     al, 70h ;NtGlobalFlag,将al改成0绕过
+Stack[00000B48]:0012D7CF nop
+Stack[00000B48]:0012D7D0 nop
+Stack[00000B48]:0012D7D1 cmp     al, 70h ; &#39;p&#39;
+Stack[00000B48]:0012D7D3 jz      loc_12DAEF
+Stack[00000B48]:0012D7D9 mov     eax, 1         ;检测虚拟机
+Stack[00000B48]:0012D7DE cpuid
+Stack[00000B48]:0012D7E0 mov     eax, edx
+Stack[00000B48]:0012D7E2 shr     eax, 17h
+Stack[00000B48]:0012D7E5 and     eax, 1
+Stack[00000B48]:0012D7E8 cmp     eax, 1        ;如果为1则是运行在虚拟机内</code></pre>
+<p>接着往下走，还有一处反调试</p>
+<pre><code class="asm">Stack[00000B48]:0012D94B loc_12D94B:                   ; CODE XREF: Stack[00000B48]:0012D965↓j
+Stack[00000B48]:0012D94B push    eax
+Stack[00000B48]:0012D94C push    0Fh
+Stack[00000B48]:0012D94E call    dword ptr [ebp+94h]   ; sleep
+Stack[00000B48]:0012D954 pop     eax
+Stack[00000B48]:0012D955 push    eax
+Stack[00000B48]:0012D956 call    eax                  ; ntdll_NtYieldExecution
+Stack[00000B48]:0012D958 cmp     eax, 40000024h
+Stack[00000B48]:0012D95D jz      short loc_12D960
+Stack[00000B48]:0012D95F inc     edi
+Stack[00000B48]:0012D960
+Stack[00000B48]:0012D960 loc_12D960:                  ; CODE XREF: Stack[00000B48]:0012D95D↑j
+Stack[00000B48]:0012D960 pop     eax
+Stack[00000B48]:0012D961 inc     esi
+Stack[00000B48]:0012D962 cmp     esi, 20h ; &#39; &#39;
+Stack[00000B48]:0012D965 jnz     short loc_12D94B</code></pre>
+
+      
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/posts/27be2f79.html">VB Crypt Payload</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
+        <p><span>发布时间:</span>2018年03月01日 - 06时53分</p>
+        <p><span>最后更新:</span>2020年04月12日 - 17时20分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/posts/27be2f79.html" title="VB Crypt Payload">http://shxi.me/posts/27be2f79.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/27be2f79.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+    <a href="/posts/7b82cd68.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          AOSP-docker编译安卓源码绕过反调试
+        
+      </div>
+    </a>
+  
+  
+    <a href="/posts/9d7b1fcb.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">豆约翰博客备份专家破解</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#替换函数指针"><span class="toc-number">1.</span> <span class="toc-text">替换函数指针</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反调试"><span class="toc-number">2.</span> <span class="toc-text">反调试</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'ydc1992',
+      repo: 'ydc1992.github.io',
+      oauth: {
+        client_id: '',
+        client_secret: '',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/posts/7b82cd68.html" title="上一篇: AOSP-docker编译安卓源码绕过反调试">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/posts/9d7b1fcb.html" title="下一篇: 豆约翰博客备份专家破解">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/posts/efe148e3.html">mbr结构和代码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/61225802.html">app.any.run网站样本爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/1736976b.html">debug IDApython script</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9222f001.html">病毒样本快到碗里来，一个样本下载爬虫的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/27be2f79.html">VB Crypt Payload</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/62077d14.html">VirusTotal扫描器 python版</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6155f940.html">pycurl 分块下载</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/c240cede.html">Pwnable.kr leg</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9e24c54e.html">安卓游戏资源解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/b751c08a.html">Reversing.kr AutoHotkey1</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/ff6aab31.html">reversing.kr Ransomware</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/905112aa.html">Far Manager插件编写2</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/88524310.html">pwnable.kr bof</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/741ff96a.html">Pwnable.kr random</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/d8e13760.html">powershell hacker(三): 后门安装 </a></li><li class="post-list-item"><a class="post-list-link" href="/posts/564bd806.html">Pwnable.kr flag</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e2bbbc71.html">powershell hacker(一): Empirse</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/15b3d1e1.html">Pwnable.kr fd</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e6d76b89.html">Reversing.kr Direct3D FPS</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Ken
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+ 
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+  
+</body>
+</html>

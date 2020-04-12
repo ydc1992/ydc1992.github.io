@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css">
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/x86asm.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <title>mbr结构和代码分析 | ydc&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下  bootcode代码以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)， 第一块选区0x000~0x162为MBR的可执行代码 第二块选区0x163~0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符 第三块选区0x1be~0x1fd为分区表。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mbr结构和代码分析">
+<meta property="og:url" content="http://shxi.me/posts/efe148e3.html">
+<meta property="og:site_name" content="ydc&#39;s blog">
+<meta property="og:description" content="很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下  bootcode代码以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)， 第一块选区0x000~0x162为MBR的可执行代码 第二块选区0x163~0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符 第三块选区0x1be~0x1fd为分区表。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://pic.downk.cc/item/5e7cbd56504f4bcb04cf9d5f.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5e7cbf79504f4bcb04d0c432.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5e7cc08c504f4bcb04d17c1d.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5e7cca63504f4bcb04d7fc85.png">
+<meta property="og:updated_time" content="2020-04-12T15:39:16.464Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mbr结构和代码分析">
+<meta name="twitter:description" content="很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下  bootcode代码以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)， 第一块选区0x000~0x162为MBR的可执行代码 第二块选区0x163~0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符 第三块选区0x1be~0x1fd为分区表。">
+<meta name="twitter:image" content="https://pic.downk.cc/item/5e7cbd56504f4bcb04cf9d5f.png">
+  
+    <link rel="alternative" href="/atom.xml" title="ydc&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head></html>
+<body>
+  <div id="container">
+
+<script id="__bs_script__">//<![CDATA[
+  document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.23.6'><\/script>".replace("HOST", location.hostname));
+//]]></script>  
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Ken</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://ydc1992.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">这人太懒了,没有添加任何信息</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Ken</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Ken</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-mbr结构和代码分析" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/efe148e3.html" class="article-date">
+      <time datetime="2020-04-12T15:35:47.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mbr结构和代码分析
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下</p>
+</blockquote>
+<h1 id="bootcode代码"><a href="#bootcode代码" class="headerlink" title="bootcode代码"></a>bootcode代码</h1><p>以WIN7为例(bootcode代码,win7到win10都一样)，<br>MBR大小为1个扇区，大小为512(0x200)，</p>
+<pre><code>第一块选区0x000~0x162为MBR的可执行代码
+第二块选区0x163~0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符
+第三块选区0x1be~0x1fd为分区表。</code></pre><p><img src="https://pic.downk.cc/item/5e7cbd56504f4bcb04cf9d5f.png" alt></p>
+<a id="more"></a>
+<p>0x1b5处值为错误信息字符串的偏移，这里值为0x63,再加上0x100就是0x163，即字符串偏移，刚好为第二块选区。<br>不同版本该值不一样，如xp的为0x2c ,Vista为0x62,win 7到win10系统为0x63。</p>
+<p>要检测mbr有没有被修改，我们可以对正常mbr代码区域算个sha256作为白名单，<br>计算代码开始到错误提示字符串的代码部分hash256，在这个例子是win7,错误提示字符串为0x163,也就是计算从0到0x162部分的sha256<br>与白名单sha256比较是否一样；不一样，则mbr被修改了。</p>
+<table>
+<thead>
+<tr>
+<th align="center">系统版本</th>
+<th align="center">字符串偏移</th>
+<th align="center">白名单Sha256</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">xp</td>
+<td align="center">0x2c</td>
+<td align="center">b5ed343494f0326a08aa6abf7cc9aa4d96207532cf0d2b39453c6eb7bede19e3</td>
+</tr>
+<tr>
+<td align="center">vista</td>
+<td align="center">0x62</td>
+<td align="center">4799e8c92d32bca8e5103110a322523adb7a3909324132bd9abab8f3345e094a</td>
+</tr>
+<tr>
+<td align="center">Win7 以上</td>
+<td align="center">0x63</td>
+<td align="center">088995559ab317af9b3291408da689651e8353f62e0a478d92eb0b5a947063fd</td>
+</tr>
+</tbody></table>
+<pre><code class="cpp">typedef struct _MBR
+{
+    BYTE bootCode [440];
+    DWORD diskSignature ; //硬盘签名
+    WORD reserved ;
+    PARTITION partitionTable [4];//主分区，最多四个
+    WORD sectorEndSignature ; //55 aa
+} MBR ;</code></pre>
+<h1 id="分区表"><a href="#分区表" class="headerlink" title="分区表"></a>分区表</h1><p>从0x1be~0x1fd是分区表。最大只能有四个主分区，每个分区表为16bit大小，分区表采用chs寻址方式，具体结构如下：</p>
+<pre><code class="cpp">
+typedef struct _PARTITION
+{
+    BYTE bootIndicator ;           // 自举标志(0x80为活动分区,0x0为非活动分区)
+    BYTE head;                          //  起始磁头号
+    Word sector:10 ;                   // 起始扇区号
+    Word cylinder:6 ;              // 起始柱面号CYL
+    BYTE type ;                         // 分区格式标志 https://en.wikipedia.org/wiki/Partition_type
+    BYTE lastHead ;                  // 终止磁头号
+    Word lastSector:10;             // 终止扇区号
+    Word lastCylinder:6 ;        // 终止柱面号CYL
+    DWORD relativeSector ;     // 本分区之前已用扇区数，可以理解为起始位置
+    DWORD numberSectors ;  // 本分区扇区总数
+} PARTITION ;</code></pre>
+<p>活动分区的首个扇区为VBR,同样只有一个扇区。开头eb 52 90是直接跳过bpb结构到bootStrapCode执行代码。<br>第一块选区 0xb   -0x53为BIOS Parameter Block，即NTFS_BPB结构。<br>第二块选区 0x54 -0x18b为bootStrapCode代码区域<br>第三块选取 0x18c-0x1f6为错误显示字符串，引导系统失败时显示该字符串</p>
+<p><img src="https://pic.downk.cc/item/5e7cbf79504f4bcb04d0c432.png" alt></p>
+<pre><code class="cpp">typedef struct _NTFS_VOLUME_BOOT_RECORD
+{
+    BYTE jumpInstruction [3];  // eb 52 90
+    BYTE oemID [4];  //“NTFS”
+
+    BYTE dummy [4]; // 20 20 20 20
+    NTFS_BPB bpb;
+    BYTE bootStrapCode [426];
+    WORD sectorEndSignature ;// 55 aa
+} NTFS_VOLUME_BOOT_RECORD 
+</code></pre>
+<h1 id="BIOS-Parameter-Block"><a href="#BIOS-Parameter-Block" class="headerlink" title="BIOS Parameter Block"></a>BIOS Parameter Block</h1><p>该结构体提供了NTFS文件系统的一些信息</p>
+<pre><code>struct NTFS_BPB
+{
+    WORD bytesPerSector ;//每扇区字节数
+    BYTE sectorsPerCluster ; //每簇扇区数，簇是ntfs文件系统的基本单位
+    WORD reservedSectors ; 
+    BYTE fatCopies ;  
+    WORD rootDirEntries ;
+    WORD smallSectors ;
+    BYTE mediaDescriptor ;//介质描述符 硬盘为0xf8
+    WORD sectorsPerFAT ;
+    WORD sectorsPerTrack ;//每磁道扇区数 ntfs不用
+    WORD numberOfHeads ;//磁头数 ntfs不用
+    DWORD hiddenSectors ; //隐藏扇区数 ① 
+    DWORD largeSectors ;
+    DWORD reserved ;
+    ULONGLONG totalSectors ; //扇区总数
+    ULONGLONG MFTLogicalClusterNumber ;//$MFT起始簇号
+    ULONGLONG MirrorLogicalClusterNumber ;$MFTMir起始簇号
+    DWORD clustersPerMFTRecord ;
+    DWORD clustersPerindexRecord ;
+    ULONGLONG volumeSerial ;//卷序列号
+    DWORD checksum ;//效验和
+} bpb ;</code></pre><p>VBR和MBR一样，也可以根据错误显示字符串的偏移来推测出操作系统的版本，0x1f8处值为第一个错误信息字符串的偏移，此处值为0x8c,加上0x100即0x18c,该偏移就是错误信息字符串区域。<br>对于vbr也可以通过计算正常vbr代码区域的sha256作为白名单，</p>
+<p>vbr代码sha256计算，<br>应该计算 “eb 50 90”(也是代码)+ vbr代码区域 即0x54到错误信息字符串前。</p>
+<table>
+<thead>
+<tr>
+<th align="center">版本</th>
+<th align="center">字符串偏移</th>
+<th align="center">白名单Sha256</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">xp</td>
+<td align="center">0x83</td>
+<td align="center">5cb5aa385e0ada266690a2821e3a36ad372720d2ff47c0b1cd9d6ebcab25bf4e</td>
+</tr>
+<tr>
+<td align="center">vista</td>
+<td align="center">0x80</td>
+<td align="center">a1932aaba7d6d3adb1637e2ee0c8355706842ba825ea811728165420c518c0b1</td>
+</tr>
+<tr>
+<td align="center">Win7</td>
+<td align="center">0x8c</td>
+<td align="center">96d38c1be37b9124fb71d1d0f5c52969f0074687fe17aef0e1bafc54428674f6</td>
+</tr>
+<tr>
+<td align="center">Win8</td>
+<td align="center">0x18a(如果前面三个值都没命中，则看0x1f6到0x1f8的值)</td>
+<td align="center">51643dcce7e93d795b08e1f19e38374ae4deaf3b1217527561a44aa9913ded23</td>
+</tr>
+</tbody></table>
+<p>VBR加载IPL的代码，在IPL中解析NTFS格式定位bootmgr位置</p>
+<p>IPL的位置由VBR 的NTFS_BPB的hiddenSectors字段(相对于扇区起始位置0x1c)指定，即IPL的初始扇区。 </p>
+<p>IPL同样可以使用白名单来验证IPL是否被修改。IPL共15个扇区，但因为最后一个扇区有时会保存于引导启动无关的数据，因此只计算前面14个扇区的IPL。</p>
+<p>左边为win7,右边为win10 ,从win 8以后，IPL区域增加了  引导程序启动失败时显示的字符。该字符串偏移 由0x177-0x178处指定。<br>“An operating system wasn’t found. Try disconnecting any drives that don’t contain an operating system.”</p>
+<p><img src="https://pic.downk.cc/item/5e7cc08c504f4bcb04d17c1d.png" alt></p>
+<p>Win7以下则计算14个扇区的sha256，win8 以上则需要排除掉两个地方：错误信息字符串和保存该字符串索引的位置0x117~0x118。</p>
+<p>右图win10的sha256就是计算 0x200~0x299 + 0x319-第十四扇区结束。<br>我们可以根据 0x256处的跳转指来来判断对应的操作系统：<br>如果是e9,则是win8及以上。</p>
+<table>
+<thead>
+<tr>
+<th align="center">版本</th>
+<th align="center">Sha256</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">xp</td>
+<td align="center">525788a688cfbe9e416122f0bc3cfb32ce9699fd12356b6ccaa173444c7d8f3f</td>
+</tr>
+<tr>
+<td align="center">vista</td>
+<td align="center">ff1aae04bac3e29f062a7fa17320d7d26363256a69f96840718d45301da71291</td>
+</tr>
+<tr>
+<td align="center">Win7</td>
+<td align="center">462afe2322bad3d1c2747d7437d5f6c157e00ca37e5d38ebedd25346b3b488ce</td>
+</tr>
+<tr>
+<td align="center">Win 8以上</td>
+<td align="center">c09d496a1f24086c333468d58256d5db9c73fee945fca74603bdab05f19a6d57</td>
+</tr>
+</tbody></table>
+<p>上列结构都是针对代码部分做的检测，如果bootkit改动的不是代码，而是改分区表或者BPB的hiddenSectors 字段，则不能检测到是否被感染</p>
+<h1 id="正常系统boot引导代码"><a href="#正常系统boot引导代码" class="headerlink" title="正常系统boot引导代码"></a>正常系统boot引导代码</h1><p>设置好调试环境后，附加到gdb调试，这时会在bios启动后的第一条指令处断下<br>BIOS会 把MBR加载到0x7c00;这时候所有的段都是0x0,<br>MBR运行在实模式下，地址都是16bit。<br>在0x7c00设置断点，调整段为16bit，</p>
+<h2 id="MBR"><a href="#MBR" class="headerlink" title="MBR"></a>MBR</h2><pre><code class="asm">MEMORY:7C00 loc_7C00:                               
+MEMORY:7C00 xor     ax, ax
+MEMORY:7C02 mov     ss, ax
+MEMORY:7C04 mov     sp, 7C00h 
+MEMORY:7C07 mov     es, ax
+MEMORY:7C09 mov     ds, ax
+MEMORY:7C0B mov     si, 7C00h
+MEMORY:7C0E mov     di, 600h
+MEMORY:7C11 mov     cx, 200h
+MEMORY:7C14 cld
+MEMORY:7C15 rep movsb ；把MBR从0x7c00拷贝到0x600,大小为0x200
+MEMORY:7C17 push    ax
+MEMORY:7C18 push    61Ch
+MEMORY:7C1B retf</code></pre>
+<p>找到分区表的活动分区</p>
+<pre><code class="asm">MEMORY:061C FB                sti
+MEMORY:061D B9 04 00          mov     cx, 4；最多只有四个主分区
+MEMORY:0620 BD BE 07          mov     bp, 7BEh；分区表偏移(0x600+0x1be)
+MEMORY:0623                   loc_623:                               
+MEMORY:0623 80 7E 00 00       cmp     byte ptr [bp+0], 0；MBR的bootIndicator的最高位为1则为活动分区，因此如果小于0，则最高位为1，找到活动分区，
+                                                                                     ；一些旧的mbr只支持0x80和0x00两个有效值
+MEMORY:0627 7C 0B             jl      short loc_634                  ;如果小于0，找到活动分区，
+MEMORY:0629 0F 85 0E 01       jnz     loc_73B；如果大于0,跳转到错误处理，在屏幕上显示Invalid partition table
+                                                                                ;因为0x01~0x7f在bootIndicator为无效值 
+MEMORY:062D 83 C5 10         add     bp, 10h ；等于0，则找下一个分区表
+MEMORY:0630 E2 F1             loop    loc_623
+MEMORY:0632 CD 18             int     18h                              </code></pre>
+<p>调用int 13,功能号41. 检测是否支持int 13扩展功能。<br>执行int 13中断功能号42后，会将返回信息存放在ah,bx和cx寄存器。<br>如果支持int 13扩展，则cf为0，bx为0xaa55,cx最低位为1.</p>
+<pre><code>MEMORY:0634 mov     [bp+0], dl
+MEMORY:0637 push    bp
+MEMORY:0638 mov     byte ptr [bp+11h], 5
+MEMORY:063C mov     byte ptr [bp+10h], 0
+MEMORY:0640 mov     ah, 41h ; &#39;A&#39;
+MEMORY:0642 mov     bx, 55AAh
+MEMORY:0645 int     13h                             ; DISK - Check for INT 13h Extensions
+MEMORY:0645                                         ; BX = 55AAh, DL = 驱动号
+MEMORY:0645                                         ; Return: 如果不支持则设置cf为1
+MEMORY:0645                                         ; AH = 扩展版本号(不需要关心)
+MEMORY:0645                                         ; BX = AA55h
+MEMORY:0645                                         ; CX = Interface support bit map
+MEMORY:0647 pop     bp                       ;0x7be 分区表偏移
+MEMORY:0648 jb      short loc_659        ；cf为1，则跳转，
+MEMORY:064A cmp     bx, 0AA55h
+MEMORY:064E jnz     short loc_659
+MEMORY:0650 test    cx, 1
+MEMORY:0654 jz      short loc_659
+MEMORY:0656 inc     byte ptr [bp+10h]   ;[bp+10]为是否支持的int 13扩展的标志，
+                                                                   ;后面比较这个值来判断是否支持int 13扩展的功能</code></pre><p>扩展int 13读硬盘<br>在堆栈上构建调用int 13扩展读所需要的参数块，<br>在这里将活动分区的VBR拷贝到0x7c00偏移处。<br>如果从硬盘读取VBR数据成功，则cf=0，ah=0</p>
+<table>
+<thead>
+<tr>
+<th align="center">Offset</th>
+<th align="center">Size</th>
+<th align="center">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">结构体大小</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">总是0</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">要拷贝的扇区大小，最大是127个扇区</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">4</td>
+<td align="center">要拷贝到的位置</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="center">4</td>
+<td align="center">要拷贝的数据的位置</td>
+</tr>
+</tbody></table>
+<pre><code class="asm"> MEMORY:0659 loc_659:                                ; CODE XREF: MEMORY:0648
+MEMORY:0659                                         ; MEMORY:064E
+MEMORY:0659 pushad
+MEMORY:065B cmp     byte ptr [bp+10h], 0                  ;[bp+10] 为1表示支持int 13扩展
+MEMORY:065F jz      short loc_687                         ；不支持int 13扩展，使用标准int 13读硬盘
+MEMORY:0661 push    large 0                                          
+                                                          ；构建disk address packet结构
+MEMORY:0667 push    large dword ptr [bp+8]                ；要拷贝的位置，即VBR在硬盘中的位置，使用LBA寻址
+                                                          ；[bp+0]为分区表结构，[bp+8]为对应的分区在硬盘的位置
+
+MEMORY:066B push    0                                     ;push 的大小为16bit , 因此这里push了两次，第一次push的值为offser的值,第二次Push的值为segmet的值
+MEMORY:066E push    7C00h                                 ;因此这里是拷贝到内存地址0x 7c00:0处
+MEMORY:0671 push    1                                     ；每次拷贝一个扇区
+MEMORY:0674 push    10h                                   ；DAP结构大小
+MEMORY:0677 mov     ah, 42h ; &#39;B&#39;
+MEMORY:0679 mov     dl, [bp+0]
+MEMORY:067C mov     si, sp
+MEMORY:067E int     13h                             ; DISK - IBM/MS Extension - EXTENDED READ (DL - drive, DS:SI - disk address packet)</code></pre>
+<h2 id="标准int-13读VBR"><a href="#标准int-13读VBR" class="headerlink" title="标准int 13读VBR"></a>标准int 13读VBR</h2><pre><code class="asm">MEMORY:0687 mov     ax, 201h   ；ah=02,al=01，即调用int 13中断 功能号2。每次读取一个扇区
+MEMORY:068A mov     bx, 7C00h  ；从硬盘拷贝到内存地址0x7c00
+MEMORY:068D mov     dl, [bp+0]   ；
+MEMORY:0690 mov     dh, [bp+1]   ；
+MEMORY:0693 mov     cl, [bp+2]
+MEMORY:0696 mov     ch, [bp+3]
+MEMORY:0699 int     13h                         ; DISK - READ SECTORS INTO MEMORY
+MEMORY:0699                                         ; AL = 读取多少扇区, CH = track, CL = sector
+MEMORY:0699                                         ; DH = head, DL = 驱动号, ES:BX -&gt; 拷贝到的内存地址
+MEMORY:0699                                         ; Return: CF set on error, AH = status, AL = number of sectors read</code></pre>
+<h2 id="VBR代码分析"><a href="#VBR代码分析" class="headerlink" title="VBR代码分析"></a>VBR代码分析</h2><p>vbr第一条指令为jmp，跳过bios参数块</p>
+<pre><code class="cpp">MEMORY:7C00 jmp     short near ptr unk_7C54</code></pre>
+<p>设置ss、sp和ds的值</p>
+<pre><code>MEMORY:7C54 loc_7C54:
+MEMORY:7C54 cli
+MEMORY:7C55 xor     ax, ax
+MEMORY:7C57 mov     ss, ax
+MEMORY:7C59 mov     sp, 7C00h
+MEMORY:7C5C sti
+MEMORY:7C5D push    7C0h           ；设置ds
+MEMORY:7C60 pop     ds
+MEMORY:7C61 assume ds:nothing
+MEMORY:7C61 push    ds
+MEMORY:7C62 push    66h
+MEMORY:7C65 retf             ;retf弹出cs和ip，因此返回到0x7c0:66执行</code></pre><p>根据VBR结构oemID来检测是否是 ntfs文件系统，如果不是，则在屏幕上显示 “Disk read error”<br>接着再检测是否支持int 13扩展读。</p>
+<p>因为后面需要调用Int 13中断的一些功能号42h-44h,47h,48h，而这些需要支持int 13扩展才能使用。而且标准的int13中断只能访问8gb以内大小的硬盘空间。<br>如果不支持就失败，显示错误信息。<br>执行int 13中断功能号42后，会将返回信息存放在ah,bx和cx寄存器。<br>如果支持int 13扩展，则cf为0，bx为0xaa55,cx为1.</p>
+<pre><code class="asm">MEMORY:7C66 loc_7C66:                               ; CODE XREF: MEMORY:7C65
+MEMORY:7C66 mov     ds:0Eh, dl
+MEMORY:7C6A cmp     dword ptr ds:3, &#39;SFTN&#39;
+MEMORY:7C73 jnz     short loc_7C8A
+MEMORY:7C75 mov     ah, 41h ; &#39;A&#39;
+MEMORY:7C77 mov     bx, 55AAh
+MEMORY:7C7A int     13h                         ; DISK - Check for INT 13h Extensions
+MEMORY:7C7A                                         ; BX = 55AAh, DL = drive number
+MEMORY:7C7A                                         ; Return: CF set if not supported
+MEMORY:7C7A                                         ; AH = extensions version
+MEMORY:7C7A                                         ; BX = AA55h
+MEMORY:7C7A                                         ; CX = Interface support bit map
+MEMORY:7C7C jb      short loc_7C8A  ;判断cf标志
+MEMORY:7C7E cmp     bx, 0AA55h ;判断返回的bx是不是等于0xaa55,不等于则失败
+MEMORY:7C82 jnz     short loc_7C8A
+MEMORY:7C84 test    cx, 1
+MEMORY:7C88 jnz     short loc_7C8D ;cx等于1，支持Int 13扩展
+MEMORY:7C8A
+MEMORY:7C8A loc_7C8A:                               
+MEMORY:7C8A                                          
+MEMORY:7C8A jmp     loc_7D6A
+;错误处理,调用int 10中断 在屏幕上打印字符串，并停止执行任何指令
+MEMORY:7D6A loc_7D6A:                               ; CODE XREF: MEMORY:loc_7C8A
+MEMORY:7D6A mov     al, byte_1F8        ；
+MEMORY:7D6D call    loc_7D79                 ; 显示 &quot;A disk read error occurred&quot; 
+MEMORY:7D70 mov     al, byte_1FB
+MEMORY:7D73 call    loc_7D79                 ；显示 &quot;Press Ctrl+Alt+Del to restart&quot;
+MEMORY:7D76
+MEMORY:7D76 loc_7D76:                               ; CODE XREF: MEMORY:7D77
+MEMORY:7D76 hlt                                            ;cpu指令，cpu遇到该指令立即停止执行
+MEMORY:7D77 ; ---------------------------------------------------------------------------
+MEMORY:7D77 jmp     short loc_7D76
+MEMORY:7D79 ; ---------------------------------------------------------------------------
+MEMORY:7D79
+MEMORY:7D79 loc_7D79:                               ; CODE XREF: MEMORY:7D6D
+MEMORY:7D79                                         ; MEMORY:7D73
+MEMORY:7D79 mov     ah, 1                
+MEMORY:7D7B mov     si, ax                    ；ax为错误提示字符串 偏移，
+MEMORY:7D7D
+MEMORY:7D7D loc_7D7D:                               ; 调用int 10中断，每次在屏幕上显示一个字符
+MEMORY:7D7D lodsb
+MEMORY:7D7E cmp     al, 0
+MEMORY:7D80 jz      short locret_7D8B
+MEMORY:7D82 mov     ah, 0Eh
+MEMORY:7D84 mov     bx, 7
+MEMORY:7D87 int     10h                             ; - VIDEO - WRITE CHARACTER AND ADVANCE CURSOR (TTY WRITE)
+MEMORY:7D87                                         ; AL = character, BH = display page (alpha modes)
+MEMORY:7D87                                         ; BL = foreground color (graphics modes)
+MEMORY:7D89 jmp     short loc_7D7D
+MEMORY:7D8B ; ---------------------------------------------------------------------------
+MEMORY:7D8B
+MEMORY:7D8B locret_7D8B:                            ; CODE XREF: MEMORY:7D80
+MEMORY:7D8B retn</code></pre>
+<p>如果支持扩展int13中断调用，接下来调用int13中断获取硬盘信息</p>
+<pre><code class="asm">MEMORY:7C8D loc_7C8D:                               ; CODE XREF: MEMORY:7C88
+MEMORY:7C8D push    ds
+MEMORY:7C8E sub     sp, 18h      ；在堆栈开辟buffer，用来保存int 13中断，功能号0x48调用后返回的信息
+MEMORY:7C91 push    1Ah
+MEMORY:7C94 mov     ah, 48h ; &#39;H&#39;
+MEMORY:7C96 mov     dl, ds:0Eh;在0x7c66处被赋值，驱动号，通常是0x80
+MEMORY:7C9A mov     si, sp ;ds:si为存放返回数据的buffer
+MEMORY:7C9C push    ss
+MEMORY:7C9D pop     ds   ;
+MEMORY:7C9E int     13h                             ; DISK - IBM/MS Extension - GET DRIVE PARAMETERS (DL - drive, DS:SI - buffer)</code></pre>
+<p>返回内容存放地址ds:si;  具体结构如下：</p>
+<p><img src="https://pic.downk.cc/item/5e7cca63504f4bcb04d7fc85.png" alt></p>
+<p>判断返回的数据是不是有效数据。不是就屏幕显示错误提示字符串</p>
+<pre><code class="asm">MEMORY:7CA0 lahf
+MEMORY:7CA1 add     sp, 18h；刚好指向扇区大小
+MEMORY:7CA4 sahf
+MEMORY:7CA5 pop   ax ; 
+MEMORY:7CA6 pop   ds;恢复为0x7c00
+MEMORY:7CA7 jb       short loc_7C8A  ；错误处理，
+MEMORY:7CA9 cmp   ax, word_B  ； 和NTFS_BPB 的Bytes per Sector比较是不是相等，
+MEMORY:7CAD jnz     short loc_7C8A
+
+接下来准备调用int 13拷贝IPL的15个扇区。
+
+
+MEMORY:7CAF mov     word_F, ax 
+MEMORY:7CB2 shr     word_F, 4 ;0x200&gt;&gt;4 =0x20
+MEMORY:7CB7 push    ds
+MEMORY:7CB8 pop     dx ;dx=0x7c0
+MEMORY:7CB9 xor     bx, bx
+MEMORY:7CBB mov     cx, 2000h
+MEMORY:7CBE sub     cx, ax ;0x2000为16个扇区大小，减去一个扇区大小0x200为0x1e00,
+                                       ;总共要拷贝的数据大小
+MEMORY:7CC0 inc     dword_11 </code></pre>
+<p>循环调用int 13拷贝VBR之后的IPL 15个扇区，拷贝到内存0x7e00~0x9bff,代码结束地址为0x8c27,剩余部分都被以0填充。</p>
+<pre><code class="asm">MEMORY:7CC5
+MEMORY:7CC5 loc_7CC5:                               ; CODE XREF: MEMORY:7CD4
+MEMORY:7CC5 add     dx, word_F ;   拷贝到的地址，
+                                              ； 0x7c0+0x20 = 0x7e0 实质上是段地址，
+                                               ;   初始地址是0x7e0,每拷贝成功一个扇区，dx加20，即下一个扇区地址
+MEMORY:7CC9 mov     es, dx  ；
+MEMORY:7CCB inc     word_16
+MEMORY:7CCF call    near ptr unk_7D1D ;拷贝IPL的15个扇区
+MEMORY:7CD2 sub     cx, ax                       ;每次减0x200大小，为0也就拷贝完15个扇区
+MEMORY:7CD4 ja      short loc_7CC5</code></pre>
+<p>进入unk_7D1D函数，可以看到调用了int 13扩展读(功能号42) 来从硬盘拷贝一个扇区到内存</p>
+<pre><code class="asm">MEMORY:7D1D pushad
+MEMORY:7D1F push    ds
+MEMORY:7D20 push    es
+MEMORY:7D21
+MEMORY:7D21 loc_7D21:                               ; CODE XREF: MEMORY:7D63
+MEMORY:7D21 mov     eax, var_11
+MEMORY:7D25 add     eax, dword_1C
+MEMORY:7D2A push    ds                                   ;
+MEMORY:7D2B push    large offset unk_0     ；构建disk address packet结构
+MEMORY:7D31 push    eax
+MEMORY:7D33 push    es                                  ;es:eax 为拷贝到的内存位置
+MEMORY:7D34 push    bx                                 ;要拷贝的位置，使用LBA寻址
+MEMORY:7D35 push    1                                   ;每次值拷贝一个扇区
+MEMORY:7D38 push    10h                              ;DAP大小
+MEMORY:7D3B mov     ah, 42h ; &#39;B&#39;
+MEMORY:7D3D mov     dl, byte_E                  ;驱动号
+MEMORY:7D41 push    ss
+MEMORY:7D42 pop     ds
+MEMORY:7D43 mov     si, sp
+MEMORY:7D45 int     13h                             ; DISK - IBM/MS Extension - EXTENDED READ (DL - drive, DS:SI - disk address packet)
+MEMORY:7D47 pop     ecx
+MEMORY:7D49 pop     bx
+MEMORY:7D4A pop     dx
+MEMORY:7D4B pop     ecx
+MEMORY:7D4D pop     ecx
+MEMORY:7D4F pop     ds
+MEMORY:7D50 jb      loc_7D6A ;  如果cf为1，读硬盘失败，跳转到错误处理
+MEMORY:7D54 inc     var_11
+MEMORY:7D59 add     dx, word_F
+MEMORY:7D5D mov     es, dx
+MEMORY:7D5F dec     word_16
+MEMORY:7D63 jnz     short loc_7D21
+MEMORY:7D65 pop     es
+MEMORY:7D66 pop     ds
+MEMORY:7D67 popad
+MEMORY:7D69 retn</code></pre>
+<p>  把IPL的数据全部都从硬盘读到内存后，调用 Int 1a中断, ah为0xbb  检测是否支持TCG</p>
+<pre><code class="asm">  MEMORY:7CD6 mov     ax, 0BB00h
+MEMORY:7CD9 int     1Ah                             ; Trusted Computing Group call - TCG_StatusCheck
+MEMORY:7CD9                                         ; Return: EAX = 0 if supported
+MEMORY:7CD9                                         ; EBX = 41504354h (&#39;TCPA&#39;)
+MEMORY:7CD9                                         ; CH:CL = TCG BIOS Version
+MEMORY:7CD9                                         ; EDX = BIOS TCG Feature Flags
+MEMORY:7CD9                                         ; ESI = Pointer to Event Log
+MEMORY:7CD9                                         ;
+MEMORY:7CDB and     eax, eax
+MEMORY:7CDE jnz     short loc_7D0D   ;如果eax等于0，BIOS支持TCG
+MEMORY:7CE0 cmp     ebx, &#39;APCT&#39;
+MEMORY:7CE7 jnz     short loc_7D0D
+MEMORY:7CE9 cmp     cx, 102h
+MEMORY:7CED jb      short loc_7D0D
+MEMORY:7CEF push    ss
+MEMORY:7CF0 push    offset unk_BB07
+MEMORY:7CF3 push    ss
+MEMORY:7CF4 push    offset unk_E70
+MEMORY:7CF7 push    ss
+MEMORY:7CF8 push    offset unk_9
+MEMORY:7CFB push    ebx
+MEMORY:7CFD push    ebx
+MEMORY:7CFF push    ebp
+MEMORY:7D01 push    ss
+MEMORY:7D02 push    ss
+MEMORY:7D03 push    ss
+MEMORY:7D04 push    offset unk_1B8
+MEMORY:7D07 popad
+MEMORY:7D09 push    cs
+MEMORY:7D0A pop     es
+MEMORY:7D0B int     1Ah</code></pre>
+<p>将IPL非代码部分用0填充。</p>
+<pre><code class="asm">MEMORY:7D0D xor     ax, ax
+MEMORY:7D0F mov     di, 1028h
+MEMORY:7D12 mov     cx, 0FD8h  ；4056空闲大小被清0
+MEMORY:7D15 cld
+MEMORY:7D16 rep stosb
+MEMORY:7D18 jmp     near ptr unk_7E7A；0x7e7a为IPL处代码</code></pre>
+<h2 id="IPL代码"><a href="#IPL代码" class="headerlink" title="IPL代码"></a>IPL代码</h2><p>IPL的15个扇区复制完毕后，接着便是解析NTFS文件系统 找到bootmgr文件。</p>
+<p>计算每簇所占的字节数</p>
+<pre><code class="asm">MEMORY:7E7A movzx   eax, word_B ;ds为0x7c00,隐藏word_b为0x7c0b,即
+                                                   ;BPB结构的bytesPerSector (每扇区字节数)字段
+MEMORY:7E80 movzx   ebx, byte_D  ;sectorsPerCluster 每簇扇区数，
+MEMORY:7E86 mul     ebx                    ;eax*ebx 计算每簇的字节数，簇是NTFS系统文件最小计量单位，
+MEMORY:7E89 mov     dword_252, eax</code></pre>
+<p>计算文件记录(File Record)的大小(文件记录 NTFS文件系统的名词)<br>当簇的大小大于文件记录的大小时，clustersPerMFTRecord的值为负数，但是大小是不可能为负的。举个栗子，这里值是0xf6,实际上是计算2^|-10|=1024</p>
+<pre><code class="asm">MEMORY:7E8D mov     ecx, dword_40; clustersPerMFTRecord每个文件记录所占的簇数 ，这里值为0xf6(-10)
+MEMORY:7E92 cmp     cl, 0  ;
+MEMORY:7E95 jg      loc_7EA7   ;大于0跳转，但是大部分是小于0的
+MEMORY:7E99 neg     cl         ;-(-10)
+MEMORY:7E9B mov     eax, 1
+MEMORY:7EA1 shl     eax, cl ;2^10
+MEMORY:7EA4 jmp     short loc_7EAE
+MEMORY:7EA6 nop
+MEMORY:7EA7
+MEMORY:7EA7 loc_7EA7:                               ; clustersPerMFTRecord值不是负数，直接相乘得到文件记录所占用的字节数
+MEMORY:7EA7 mov     eax, dword_252       ;0x7e52 每簇所占用字节数
+MEMORY:7EAB mul     ecx
+MEMORY:7EAE loc_7EAE:                               ; CODE XREF: MEMORY:7EA4
+MEMORY:7EAE mov     _byte_file_record, eax; _byte_file_record 0x7e66</code></pre>
+
+      
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/posts/efe148e3.html">mbr结构和代码分析</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
+        <p><span>发布时间:</span>2020年04月12日 - 15时35分</p>
+        <p><span>最后更新:</span>2020年04月12日 - 15时39分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/posts/efe148e3.html" title="mbr结构和代码分析">http://shxi.me/posts/efe148e3.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/efe148e3.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/posts/61225802.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">app.any.run网站样本爬虫</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#bootcode代码"><span class="toc-number">1.</span> <span class="toc-text">bootcode代码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分区表"><span class="toc-number">2.</span> <span class="toc-text">分区表</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#BIOS-Parameter-Block"><span class="toc-number">3.</span> <span class="toc-text">BIOS Parameter Block</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#正常系统boot引导代码"><span class="toc-number">4.</span> <span class="toc-text">正常系统boot引导代码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MBR"><span class="toc-number">4.1.</span> <span class="toc-text">MBR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#标准int-13读VBR"><span class="toc-number">4.2.</span> <span class="toc-text">标准int 13读VBR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VBR代码分析"><span class="toc-number">4.3.</span> <span class="toc-text">VBR代码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPL代码"><span class="toc-number">4.4.</span> <span class="toc-text">IPL代码</span></a></li></ol></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'ydc1992',
+      repo: 'ydc1992.github.io',
+      oauth: {
+        client_id: '',
+        client_secret: '',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/posts/61225802.html" title="下一篇: app.any.run网站样本爬虫">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/posts/efe148e3.html">mbr结构和代码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/61225802.html">app.any.run网站样本爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/1736976b.html">debug IDApython script</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9222f001.html">病毒样本快到碗里来，一个样本下载爬虫的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/27be2f79.html">VB Crypt Payload</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/62077d14.html">VirusTotal扫描器 python版</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6155f940.html">pycurl 分块下载</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/c240cede.html">Pwnable.kr leg</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9e24c54e.html">安卓游戏资源解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/b751c08a.html">Reversing.kr AutoHotkey1</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/ff6aab31.html">reversing.kr Ransomware</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/905112aa.html">Far Manager插件编写2</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/88524310.html">pwnable.kr bof</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/741ff96a.html">Pwnable.kr random</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/d8e13760.html">powershell hacker(三): 后门安装 </a></li><li class="post-list-item"><a class="post-list-link" href="/posts/564bd806.html">Pwnable.kr flag</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e2bbbc71.html">powershell hacker(一): Empirse</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/15b3d1e1.html">Pwnable.kr fd</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e6d76b89.html">Reversing.kr Direct3D FPS</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Ken
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+ 
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+  
+</body>
+</html>

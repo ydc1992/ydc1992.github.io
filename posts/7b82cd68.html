@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css">
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/x86asm.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <title>AOSP-docker编译安卓源码绕过反调试 | ydc&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="看了很多编译源码的文章，发现很多都有坑，大部分都是环境配置问题，编译不同版本的源码jdk版本不一样，ubuntu版本也不一样。这很让人蛋疼，光是折腾环境就得半天了。 自从有了docker就不一样了，有人把Android源码编译的环境打包成了docker，就是AOSP docker;这样我们就不需要去折腾环境,直接拿人家弄好的来用。 推荐使用linux装docker，不用管是debian还是ubun">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AOSP-docker编译安卓源码绕过反调试">
+<meta property="og:url" content="http://shxi.me/posts/7b82cd68.html">
+<meta property="og:site_name" content="ydc&#39;s blog">
+<meta property="og:description" content="看了很多编译源码的文章，发现很多都有坑，大部分都是环境配置问题，编译不同版本的源码jdk版本不一样，ubuntu版本也不一样。这很让人蛋疼，光是折腾环境就得半天了。 自从有了docker就不一样了，有人把Android源码编译的环境打包成了docker，就是AOSP docker;这样我们就不需要去折腾环境,直接拿人家弄好的来用。 推荐使用linux装docker，不用管是debian还是ubun">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-03-26T14:30:10.123Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AOSP-docker编译安卓源码绕过反调试">
+<meta name="twitter:description" content="看了很多编译源码的文章，发现很多都有坑，大部分都是环境配置问题，编译不同版本的源码jdk版本不一样，ubuntu版本也不一样。这很让人蛋疼，光是折腾环境就得半天了。 自从有了docker就不一样了，有人把Android源码编译的环境打包成了docker，就是AOSP docker;这样我们就不需要去折腾环境,直接拿人家弄好的来用。 推荐使用linux装docker，不用管是debian还是ubun">
+  
+    <link rel="alternative" href="/atom.xml" title="ydc&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head></html>
+<body>
+  <div id="container">
+
+<script id="__bs_script__">//<![CDATA[
+  document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.23.6'><\/script>".replace("HOST", location.hostname));
+//]]></script>  
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Ken</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://ydc1992.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">这人太懒了,没有添加任何信息</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Ken</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Ken</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-AOSP-docker编译安卓源码绕过反调试" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/7b82cd68.html" class="article-date">
+      <time datetime="2018-04-14T00:48:50.000Z" itemprop="datePublished">2018-04-14</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      AOSP-docker编译安卓源码绕过反调试
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>看了很多编译源码的文章，发现很多都有坑，大部分都是环境配置问题，编译不同版本的源码jdk版本不一样，ubuntu版本也不一样。这很让人蛋疼，光是折腾环境就得半天了。</p>
+<p>自从有了docker就不一样了，有人把Android源码编译的环境打包成了docker，就是AOSP docker;这样我们就不需要去折腾环境,直接拿人家弄好的来用。</p>
+<p>推荐使用linux装docker，不用管是debian还是ubuntu;虽然windows也可以使用docker，但是还是有点小问题。</p>
+<a id="more"></a>
+<h2 id="分配硬盘"><a href="#分配硬盘" class="headerlink" title="分配硬盘"></a>分配硬盘</h2><p>linux至少要分配100g的硬盘空间。空间足够的可以跳过，原本装有VMWare linux，但是空间不足，又不想重新装个虚拟机。 可以参考 这篇文章<a href="http://blog.csdn.net/u010372981/article/details/46514011" target="_blank" rel="noopener">http://blog.csdn.net/u010372981/article/details/46514011</a> 给虚拟机加块硬盘。</p>
+<h2 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h2><p>默认源中没有docker,我们需要在添加backports源，在/etc/apt/sources.list文件 加入下面这行</p>
+<pre><code>  deb http://http.debian.net/debian jessie-backports main</code></pre><p>运行如下命令安装docker</p>
+<pre><code>apt-get update
+apt-get install docker.io</code></pre><h2 id="开始编译"><a href="#开始编译" class="headerlink" title="开始编译"></a>开始编译</h2><p>1.开始之前先启动docker服务,不然到后面会报错</p>
+<pre><code> /etc/init.d/docker start</code></pre><p>2.设置AOSP_VOL环境变量,设置为你要存放源码的路径,给VMWare添加硬盘扩容的设置成挂载的硬盘的路径。我设置的/Android路径</p>
+<pre><code>export AOSP_VOL=/Android</code></pre><p>3.下载Wrapper脚本,我这里演示编译kitkat(Android 4.4),编译其他版本可以参考<a href="https://github.com/tiann/docker-aosp" target="_blank" rel="noopener">https://github.com/tiann/docker-aosp</a>, 脚本根对国内环境做了优化，使用速度比较快的清华源。</p>
+<pre><code>curl -O https://raw.githubusercontent.com/tiann/docker-aosp/master/tests/build-kitkat.sh</code></pre><p>4.编译源码,直接运行上一步下载下来的源码。该脚本会下载docker镜像，并且下载Android源码到AOSP_VOL指定的路径，然后编译。</p>
+<pre><code>sh ./build-kitkat.sh</code></pre><p>编译完成后,使用的是系统默认自带的内核，我们还需要重新修改编译内核绕过反调试</p>
+<h2 id="编译内核"><a href="#编译内核" class="headerlink" title="编译内核"></a>编译内核</h2><ol>
+<li>clone内核源码 我使用的手机是Nexus 5,对应的内核源码为kernel/msm。设备名是hammerhead</li>
+</ol>
+<p>在存放源码的目录创建kernel文件夹，我这里存放源码目录为/Android</p>
+<pre><code>cd /Android/aosp
+mkdir kernel
+cd kernel
+git clone https://aosp.tuna.tsinghua.edu.cn/kernel/msm.git</code></pre><ol>
+<li>选择系统版本 切换到克隆下来的源码目录，切换分支</li>
+</ol>
+<pre><code>git branch -a</code></pre><p>找到名字带有 hammerhead的。</p>
+<pre><code>git checkout remotes/origin/android-msm-hammerhead-3.4-kitkat-mr1</code></pre><ol>
+<li>修改源码</li>
+</ol>
+<p>需要修改<code>kernel/msm/fs/proc/base.c</code>和<code>kernel/msm/fs/proc/array.c</code>两个文件</p>
+<p>base.c中 <code>proc_pid_wchan</code>函数部分修改成如下：</p>
+<pre><code>//省略
+else {
+           if (strstr(symname, &quot;trace&quot;)) {
+                return sprintf(buffer, &quot;%s&quot;, &quot;sys_epoll_wait&quot;);
+           }
+           return sprintf(buffer, &quot;%s&quot;, symname);
+      }</code></pre><p>array.c中<code>tast_state</code>函数部分修改成</p>
+<pre><code>&quot;Gid:\t%d\t%d\t%d\t%d\n&quot;,
+              get_task_state(p),
+              task_tgid_nr_ns(p, ns),
+              pid_nr_ns(pid, ns),
+              ppid, /*tpid*/0,
+              cred-&gt;uid, cred-&gt;euid, cred-&gt;suid, cred-&gt;fsuid,
+              cred-&gt;gid, cred-&gt;egid, cred-&gt;sgid, cred-&gt;fsgid);</code></pre><p><code>task_state_array</code>变量修改成</p>
+<pre><code class="cpp">static const char * const task_state_array[] = {
+     &quot;R (running)&quot;,        /*    0 */
+     &quot;S (sleeping)&quot;,       /*    1 */
+     &quot;D (disk sleep)&quot;,     /*    2 */
+     &quot;S (sleeping)&quot;,       /*    4 */
+     &quot;S (sleeping)&quot;, /*     8 */
+     &quot;Z (zombie)&quot;,         /*  16 */
+     &quot;X (dead)&quot;,           /*  32 */
+     &quot;x (dead)&quot;,           /*  64 */
+     &quot;K (wakekill)&quot;,       /* 128 */
+     &quot;W (waking)&quot;,         /* 256 */
+};</code></pre>
+<ol>
+<li>创建编译脚本 在<code>/Android/aosp/kernel/msm</code>目录,即内核源码所在的目录创建一个脚本，内容如下,保存为run.sh. PATH前面的gcc路径为编译工具链,用来编译内核的。</li>
+</ol>
+<pre><code class="bash">export PATH=&#39;/Android/aosp/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin&#39;;$PATH
+export ARCH=arm
+export SUBARCH=arm
+export CROSS_COMPILE=arm-eabi-
+make hammerhead defconfig
+make -j4</code></pre>
+<p>然后运行该脚本开始编译内核</p>
+<pre><code>sh run.sh</code></pre><p>出现如下提示表示内核已经编译ok</p>
+<pre><code>CALL    scripts/checksyscalls.sh
+CHK     include/generated/compile.h
+Kernel: arch/arm/boot/Image is ready
+LD      arch/arm/boot/compressed/vmlinux
+OBJCOPY arch/arm/boot/zImage
+Kernel: arch/arm/boot/zImage is ready
+CAT     arch/arm/boot/zImage-dtb
+Kernel: arch/arm/boot/zImage-dtb is ready</code></pre><p>在<code>/Android/aosp/kernel/msm/arch/arm/boot</code>找到zImage-dtb,这个是nexus 5内核文件,拷贝到<code>/Android/aosp/device/lge/hammerhead-kernel</code>覆盖原来的文件</p>
+<ol>
+<li>下载驱动设备 要刷机到实体机,还需要下载三个驱动设备</li>
+</ol>
+<p>从<a href="https://developers.google.com/android/drivers找到对应的驱动设备。" target="_blank" rel="noopener">https://developers.google.com/android/drivers找到对应的驱动设备。</a></p>
+<p>搜索Nexus 5找到对应的系统版本，我的是Android 4.4.4。找到的结果如下：</p>
+<p>Nexus 5 (GSM/LTE) binaries for Android 4.4.4 (KTU84P)</p>
+<table>
+<thead>
+<tr>
+<th>Hardware Component</th>
+<th>Company</th>
+<th>Download</th>
+<th>SHA-256 Checksum</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>NFC, Bluetooth, Wi-Fi</td>
+<td>Broadcom</td>
+<td>Link</td>
+<td>f258605e24c9c3d4e78c9af934f3516a4f8d3410da697005fad42cad36c5ed5c</td>
+</tr>
+<tr>
+<td>Camera, Sensors, Audio</td>
+<td>LG</td>
+<td>Link</td>
+<td>fc72704e0fba9c51c6505ae009e474570de27ee8565d51483368d8dae6c0f44e</td>
+</tr>
+<tr>
+<td>Graphics, GSM, Camera, GPS, Sensors, Media, DSP, USB</td>
+<td>Qualcomm</td>
+<td>Link</td>
+<td>8603d85ad511346d65c27c3747919da280523b86d55a39dfce657a4ca1b0685b</td>
+</tr>
+</tbody></table>
+<p>Download对应的是下载连接，我们把这三个文件下载后解压到/Android/AOSP目录。得到三个sh脚本文件 <code>extract-broadcom-hammerhead.sh</code>、<code>extract-lge-hammerhead.sh</code>和<code>extract-qcom-hammerhead.sh</code>;</p>
+<p>分别运行它们</p>
+<pre><code>sh extract-broadcom-hammerhead.sh
+sh extract-lge-hammerhead.sh
+sh extract-qcom-hammerhead.sh</code></pre><p>一直按回车，等到如下提示输入 I ACCEPT。</p>
+<pre><code>Type &quot;I ACCEPT&quot; if you agree to the terms of the license: 
+You didn&#39;t accept the license. Extraction aborted.</code></pre><ol>
+<li>再次编译源码 再次运行编译脚本重新编译,这次会很快</li>
+</ol>
+<pre><code>sh ./build-kitkat.sh</code></pre><h2 id="刷机"><a href="#刷机" class="headerlink" title="刷机"></a>刷机</h2><p>先确定bootloader有没有解锁,没解锁是刷不进去的。</p>
+<p>Nexus 5 是两个音量键和开机键一起一直按到出现bootloader界面。usb连接手机，输入以下命令</p>
+<pre><code class="bash">fastboot oem unlock</code></pre>
+<p>这个是Nexus 5的解锁方式</p>
+<p>Android源码编译成功后,文件保存在<code>/Android/aosp/out/target/product/hammerhead</code>。</p>
+<p>输入如下命令就可以刷入实体机了。</p>
+<pre><code class="bash">cd /Android/aosp/out/target/product/hammerhead
+Adb reboot bootloader
+Fastboot -w flashall</code></pre>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://blog.csdn.net/gaisylly/article/details/50113791" target="_blank" rel="noopener">http://blog.csdn.net/gaisylly/article/details/50113791</a><br><a href="https://github.com/tiann/docker-aosp" target="_blank" rel="noopener">https://github.com/tiann/docker-aosp</a><br><a href="http://weishu.me/2016/12/30/simple-way-to-compile-android-source/" target="_blank" rel="noopener">http://weishu.me/2016/12/30/simple-way-to-compile-android-source/</a><br><a href="http://bbs.pediy.com/thread-213481.htm" target="_blank" rel="noopener">http://bbs.pediy.com/thread-213481.htm</a><br><a href="http://blog.csdn.net/sunao2002002/article/details/53057374" target="_blank" rel="noopener">http://blog.csdn.net/sunao2002002/article/details/53057374</a><br><a href="https://developers.google.com/android/drivers" target="_blank" rel="noopener">https://developers.google.com/android/drivers</a></p>
+
+      
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
+        <p><span>发布时间:</span>2018年04月14日 - 00时48分</p>
+        <p><span>最后更新:</span>2020年03月26日 - 14时30分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/posts/7b82cd68.html" title="AOSP-docker编译安卓源码绕过反调试">http://shxi.me/posts/7b82cd68.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/7b82cd68.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+    <a href="/posts/9222f001.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          病毒样本快到碗里来，一个样本下载爬虫的实现
+        
+      </div>
+    </a>
+  
+  
+    <a href="/posts/27be2f79.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">VB Crypt Payload</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#分配硬盘"><span class="toc-number">1.</span> <span class="toc-text">分配硬盘</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装docker"><span class="toc-number">2.</span> <span class="toc-text">安装docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始编译"><span class="toc-number">3.</span> <span class="toc-text">开始编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译内核"><span class="toc-number">4.</span> <span class="toc-text">编译内核</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#刷机"><span class="toc-number">5.</span> <span class="toc-text">刷机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">6.</span> <span class="toc-text">参考</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'ydc1992',
+      repo: 'ydc1992.github.io',
+      oauth: {
+        client_id: '',
+        client_secret: '',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/posts/9222f001.html" title="上一篇: 病毒样本快到碗里来，一个样本下载爬虫的实现">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/posts/27be2f79.html" title="下一篇: VB Crypt Payload">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/posts/efe148e3.html">mbr结构和代码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/61225802.html">app.any.run网站样本爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/1736976b.html">debug IDApython script</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9222f001.html">病毒样本快到碗里来，一个样本下载爬虫的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/27be2f79.html">VB Crypt Payload</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/62077d14.html">VirusTotal扫描器 python版</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6155f940.html">pycurl 分块下载</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/c240cede.html">Pwnable.kr leg</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9e24c54e.html">安卓游戏资源解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/b751c08a.html">Reversing.kr AutoHotkey1</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/ff6aab31.html">reversing.kr Ransomware</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/905112aa.html">Far Manager插件编写2</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/88524310.html">pwnable.kr bof</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/741ff96a.html">Pwnable.kr random</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/d8e13760.html">powershell hacker(三): 后门安装 </a></li><li class="post-list-item"><a class="post-list-link" href="/posts/564bd806.html">Pwnable.kr flag</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e2bbbc71.html">powershell hacker(一): Empirse</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/15b3d1e1.html">Pwnable.kr fd</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e6d76b89.html">Reversing.kr Direct3D FPS</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Ken
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+ 
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+  
+</body>
+</html>

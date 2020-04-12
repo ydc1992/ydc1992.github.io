@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css">
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/x86asm.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <title>reversing.kr Ransomware | ydc&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="首先看程序，发现被加了upx壳，使用脱壳工具脱掉后，看有没有关键的字符串。 来到引用Key的地方。 .text:0044A775                 push    offset aKey     ; &amp;quot;Key : &amp;quot; .text:0044A77A                 call    ds:printf .text:0044A780">
+<meta name="keywords" content="Reversing">
+<meta property="og:type" content="article">
+<meta property="og:title" content="reversing.kr Ransomware">
+<meta property="og:url" content="http://shxi.me/posts/ff6aab31.html">
+<meta property="og:site_name" content="ydc&#39;s blog">
+<meta property="og:description" content="首先看程序，发现被加了upx壳，使用脱壳工具脱掉后，看有没有关键的字符串。 来到引用Key的地方。 .text:0044A775                 push    offset aKey     ; &amp;quot;Key : &amp;quot; .text:0044A77A                 call    ds:printf .text:0044A780">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-03-26T14:30:10.124Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="reversing.kr Ransomware">
+<meta name="twitter:description" content="首先看程序，发现被加了upx壳，使用脱壳工具脱掉后，看有没有关键的字符串。 来到引用Key的地方。 .text:0044A775                 push    offset aKey     ; &amp;quot;Key : &amp;quot; .text:0044A77A                 call    ds:printf .text:0044A780">
+  
+    <link rel="alternative" href="/atom.xml" title="ydc&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head></html>
+<body>
+  <div id="container">
+
+<script id="__bs_script__">//<![CDATA[
+  document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.23.6'><\/script>".replace("HOST", location.hostname));
+//]]></script>  
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Ken</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://ydc1992.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">这人太懒了,没有添加任何信息</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Ken</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Ken</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-reversing-kr-Ransomware" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/ff6aab31.html" class="article-date">
+      <time datetime="2016-01-10T23:18:49.000Z" itemprop="datePublished">2016-01-10</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      reversing.kr Ransomware
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/challenge/">challenge</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reversing/">Reversing</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>首先看程序，发现被加了upx壳，使用脱壳工具脱掉后，看有没有关键的字符串。</p>
+<p>来到引用<code>Key</code>的地方。</p>
+<pre><code class="cpp">.text:0044A775                 push    offset aKey     ; &quot;Key : &quot;
+.text:0044A77A                 call    ds:printf
+.text:0044A780                 add     esp, 4
+.text:0044A783                 call    sub_401000
+.text:0044A788                 push    offset input_key
+.text:0044A78D                 push    offset aS       ; &quot;%s&quot;
+.text:0044A792                 call    ds:scanf
+.text:0044A798                 add     esp, 8
+.text:0044A79B                 mov     dword ptr [ebp-18h], offset input_key
+.text:0044A7A2                 mov     eax, [ebp-18h]
+.text:0044A7A5                 add     eax, 1
+.text:0044A7A8                 mov     [ebp-1Ch], eax</code></pre>
+<a id="more"></a>
+<p>这段汇编代码把输入用来解密文件的key保存在<code>input_key</code>变量中。然后把input_key赋值给[ebp-18] 和 key值地址加一后的地址赋予[ebp-1c] (即)，继续往下走。碰到一个循环。</p>
+<pre><code class="cpp">.text:0044A7AB loc_44A7AB:                             ; CODE XREF: _main+371DBj
+.text:0044A7AB                 mov     ecx, [ebp-18h]
+.text:0044A7AE                 mov     dl, [ecx]
+.text:0044A7B0                 mov     [ebp-1Dh], dl
+.text:0044A7B3                 add     dword ptr [ebp-18h], 1
+.text:0044A7B7                 cmp     byte ptr [ebp-1Dh], 0
+.text:0044A7BB                 jnz     short loc_44A7AB</code></pre>
+<p>依次比较key的每一位，如果为0，退出循环。</p>
+<pre><code class="cpp">.text:0044A7BD                 mov     eax, [ebp-18h]
+.text:0044A7C0                 sub     eax, [ebp-1Ch]   ；计算key长度
+.text:0044A7C3                 mov     [ebp-24h], eax
+.text:0044A7C6                 mov     ecx, [ebp-24h]
+.text:0044A7C9                 mov     [ebp-0Ch], ecx
+.text:0044A7CC                 call    sub_401000
+.text:0044A7D1                 mov     dword ptr [ebp-8], 0
+.text:0044A7D8                 push    offset aRb      ; &quot;rb&quot;
+.text:0044A7DD                 push    offset aFile    ; &quot;file&quot;
+.text:0044A7E2                 call    ds:fopen         ;打开加密文件file
+.text:0044A7E8                 add     esp, 8
+.text:0044A7EB                 mov     [ebp-4], eax
+.text:0044A7EE                 call    sub_401000
+.text:0044A7F3                 cmp     dword ptr [ebp-4], 0
+.text:0044A7F7                 jnz     short loc_44A819
+.text:0044A7F9                 call    sub_401000
+.text:0044A7FE                 push    offset unk_44C1C4
+.text:0044A803                 call    ds:printf
+.text:0044A809                 add     esp, 4
+.text:0044A80C                 call    sub_401000
+.text:0044A811                 push    0
+.text:0044A813                 call    ds:exit</code></pre>
+<p>通过key的最后一位的地址减去key值首地址+1来计算key长度，然后打开加密文件file，如果打开失败则退出程序。成功则跳转到loc_44a819处。汇编代码中<code>call sub_401000</code>可忽视，里面都是些垃圾代码。</p>
+<p>来到loc_44a819代码。</p>
+<pre><code class="cpp">.text:0044A819 loc_44A819:                             ; CODE XREF: _main+37217j
+.text:0044A819                 push    2
+.text:0044A81B                 push    0
+.text:0044A81D                 mov     edx, [ebp-4]
+.text:0044A820                 push    edx
+.text:0044A821                 call    ds:fseek    ；指向文件末尾
+.text:0044A827                 add     esp, 0Ch
+.text:0044A82A                 call    sub_401000
+.text:0044A82F                 mov     eax, [ebp-4]
+.text:0044A832                 push    eax
+.text:0044A833                 call    ds:ftell     ；计算到文件首的偏移
+.text:0044A839                 add     esp, 4
+.text:0044A83C                 mov     [ebp-10h], eax
+.text:0044A83F                 call    sub_401000
+.text:0044A844                 mov     ecx, [ebp-4]
+.text:0044A847                 push    ecx
+.text:0044A848                 call    ds:rewind     ;重新将文件指针指向文件头
+.text:0044A84E                 add     esp, 4
+.text:0044A851                 call    sub_401000
+.text:0044A856
+.text:0044A856 loc_44A856:                             ; CODE XREF: _main+372B5j
+.text:0044A856                 mov     edx, [ebp-4] ；
+.text:0044A859                 push    edx
+.text:0044A85A                 call    ds:feof
+.text:0044A860                 add     esp, 4
+.text:0044A863                 test    eax, eax
+.text:0044A865                 jnz     short loc_44A897
+.text:0044A867                 call    sub_401000
+.text:0044A86C                 mov     eax, [ebp-4]
+.text:0044A86F                 push    eax
+.text:0044A870                 call    ds:fgetc
+.text:0044A876                 add     esp, 4
+.text:0044A879                 mov     ecx, [ebp-8]；[ebp-8] = fileOffset
+.text:0044A87C                 mov     byte_5415B8[ecx], al
+.text:0044A882                 call    sub_401000
+.text:0044A887                 mov     edx, [ebp-8]
+.text:0044A88A                 add     edx, 1
+.text:0044A88D                 mov     [ebp-8], edx
+.text:0044A890                 call    sub_401000
+.text:0044A895                 jmp     short loc_44A856</code></pre>
+<p>开头代码用 将文件指针移动到文件末尾，计算到文件头的偏移来计算文件大小。然后重新加那个文件指针指向文件头。嗯，下面又是一个循环。主要功能就是把文件内容复制到<code>byte_5415B8</code>指向的内存地址。复制完毕后则跳到loc_44A897，这里是个循环。</p>
+<pre><code class="cpp">.text:0044A897 loc_44A897:                             ; CODE XREF: _main+37285j
+.text:0044A897                 call    sub_401000
+.text:0044A89C                 mov     dword ptr [ebp-8], 0；[ebp-8] = fileOffset
+.text:0044A8A3                 jmp     short loc_44A8AE
+.text:0044A8A5 loc_44A8A5:                             ; CODE XREF: _main+3731Dj
+.text:0044A8A5                 mov     eax, [ebp-8] 
+.text:0044A8A8                 add     eax, 1
+.text:0044A8AB                 mov     [ebp-8], eax
+.text:0044A8AE
+.text:0044A8AE loc_44A8AE:                             ; CODE XREF: _main+372C3j
+.text:0044A8AE                 mov     ecx, [ebp-8]
+.text:0044A8B1                 cmp     ecx, [ebp-10h] ；
+.text:0044A8B4                 jnb     short loc_44A8FF;偏移大于文件长度则退出循环
+.text:0044A8B6                 mov     edx, [ebp-8]
+.text:0044A8B9                 movsx   ecx, byte_5415B8[edx]
+.text:0044A8C0                 mov     eax, [ebp-8]
+.text:0044A8C3                 xor     edx, edx
+.text:0044A8C5                 div     dword ptr [ebp-0Ch] ；[ebp-0c] key长度
+.text:0044A8C8                 movsx   edx, byte_44D370[edx] ；key地址
+.text:0044A8CF                 xor     ecx, edx
+.text:0044A8D1                 mov     eax, [ebp-8]
+.text:0044A8D4                 mov     byte_5415B8[eax], cl
+.text:0044A8DA                 call    sub_401000
+.text:0044A8DF                 mov     ecx, [ebp-8]
+.text:0044A8E2                 movsx   edx, byte_5415B8[ecx]
+.text:0044A8E9                 xor     edx, 0FFh
+.text:0044A8EF                 mov     eax, [ebp-8]
+.text:0044A8F2                 mov     byte_5415B8[eax], dl
+.text:0044A8F8                 call    sub_401000
+.text:0044A8FD                 jmp     short loc_44A8A5</code></pre>
+<p>这段循环代码就是解密代码了。</p>
+
+      
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/posts/ff6aab31.html">reversing.kr Ransomware</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
+        <p><span>发布时间:</span>2016年01月10日 - 23时18分</p>
+        <p><span>最后更新:</span>2020年03月26日 - 14时30分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/posts/ff6aab31.html" title="reversing.kr Ransomware">http://shxi.me/posts/ff6aab31.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/ff6aab31.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+    <a href="/posts/b751c08a.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          Reversing.kr AutoHotkey1
+        
+      </div>
+    </a>
+  
+  
+    <a href="/posts/905112aa.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Far Manager插件编写2</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'ydc1992',
+      repo: 'ydc1992.github.io',
+      oauth: {
+        client_id: '',
+        client_secret: '',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/posts/b751c08a.html" title="上一篇: Reversing.kr AutoHotkey1">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/posts/905112aa.html" title="下一篇: Far Manager插件编写2">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/posts/efe148e3.html">mbr结构和代码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/61225802.html">app.any.run网站样本爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/1736976b.html">debug IDApython script</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9222f001.html">病毒样本快到碗里来，一个样本下载爬虫的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/27be2f79.html">VB Crypt Payload</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/62077d14.html">VirusTotal扫描器 python版</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6155f940.html">pycurl 分块下载</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/c240cede.html">Pwnable.kr leg</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9e24c54e.html">安卓游戏资源解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/b751c08a.html">Reversing.kr AutoHotkey1</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/ff6aab31.html">reversing.kr Ransomware</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/905112aa.html">Far Manager插件编写2</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/88524310.html">pwnable.kr bof</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/741ff96a.html">Pwnable.kr random</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/d8e13760.html">powershell hacker(三): 后门安装 </a></li><li class="post-list-item"><a class="post-list-link" href="/posts/564bd806.html">Pwnable.kr flag</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e2bbbc71.html">powershell hacker(一): Empirse</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/15b3d1e1.html">Pwnable.kr fd</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e6d76b89.html">Reversing.kr Direct3D FPS</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Ken
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+ 
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+  
+</body>
+</html>
