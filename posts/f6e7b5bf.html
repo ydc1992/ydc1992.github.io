@@ -24,7 +24,7 @@
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://t.cn/RGRNYlx">
 <meta property="og:image" content="http://t.cn/RGRNH93">
-<meta property="og:updated_time" content="2020-03-26T14:30:10.124Z">
+<meta property="og:updated_time" content="2020-04-13T04:29:52.719Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pwnable.kr mistake">
 <meta name="twitter:description" content="分析源码，发现下面这段代码有点可疑。 fd=open(&amp;quot;/home/mistake/password&amp;quot;,O_RDONLY,0400) &amp;lt; 0熟悉Linux的童鞋都知道文件描述符是不可能小于0的。计算得fd等于0，因为”&amp;lt;”比”=”优先级高，先计算等式右边，打开的文件描述符不可能小于0，因此右边等式等于0，最后fd=0；文件描述符为0是标准输入，也就是说这个程序实际">
@@ -277,7 +277,7 @@
         <p><span>本文标题:</span><a href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
         <p><span>发布时间:</span>2016年01月31日 - 23时34分</p>
-        <p><span>最后更新:</span>2020年03月26日 - 14时30分</p>
+        <p><span>最后更新:</span>2020年04月13日 - 04时29分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/posts/f6e7b5bf.html" title="pwnable.kr mistake">http://shxi.me/posts/f6e7b5bf.html</a>
             <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/f6e7b5bf.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
