@@ -141,7 +141,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a> <a href="/tags/逆向笔记/" style="font-size: 10px;">逆向笔记</a>
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a> <a href="/tags/逆向笔记/" style="font-size: 13.33px;">逆向笔记</a>
                     </div>
                 </section>
                 
@@ -204,6 +204,86 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-reversing-kr-Ransomware" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/ff6aab31.html" class="article-date">
+      <time datetime="2016-01-10T23:18:49.000Z" itemprop="datePublished">2016-01-10</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/posts/ff6aab31.html">reversing.kr Ransomware</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>首先看程序，发现被加了upx壳，使用脱壳工具脱掉后，看有没有关键的字符串。</p>
+<p>来到引用<code>Key</code>的地方。</p>
+<pre><code class="cpp">.text:0044A775                 push    offset aKey     ; &quot;Key : &quot;
+.text:0044A77A                 call    ds:printf
+.text:0044A780                 add     esp, 4
+.text:0044A783                 call    sub_401000
+.text:0044A788                 push    offset input_key
+.text:0044A78D                 push    offset aS       ; &quot;%s&quot;
+.text:0044A792                 call    ds:scanf
+.text:0044A798                 add     esp, 8
+.text:0044A79B                 mov     dword ptr [ebp-18h], offset input_key
+.text:0044A7A2                 mov     eax, [ebp-18h]
+.text:0044A7A5                 add     eax, 1
+.text:0044A7A8                 mov     [ebp-1Ch], eax</code></pre>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/challenge/">challenge</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reversing/">Reversing</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/posts/ff6aab31.html#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-Far-Manager插件编写2" class="article article-type-post" itemscope itemprop="blogPost">
   

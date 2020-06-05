@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css">
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/x86asm.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <title>逆向XX引擎:通用dump | ydc&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="通用dump就是把该程序在虚拟机内执行完后的内存dump下来,然后扫描引擎进行扫描。对于杀软来说,dump下来的数据不需要是否能够运行。  实际上上图中每个区段的数据都是在样本在虚拟机执行完后的进程内存。 遍历在该进程内创建的所有内存,进程创建的内存类型有   VMA_USER 用户内存 VMA_STACK 栈 VMA_HEAP 堆 VMA_PENV 存放peb 环境数据 VMA_BUILTIN">
+<meta name="keywords" content="逆向笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向XX引擎:通用dump">
+<meta property="og:url" content="http://shxi.me/posts/e50c5b5.html">
+<meta property="og:site_name" content="ydc&#39;s blog">
+<meta property="og:description" content="通用dump就是把该程序在虚拟机内执行完后的内存dump下来,然后扫描引擎进行扫描。对于杀软来说,dump下来的数据不需要是否能够运行。  实际上上图中每个区段的数据都是在样本在虚拟机执行完后的进程内存。 遍历在该进程内创建的所有内存,进程创建的内存类型有   VMA_USER 用户内存 VMA_STACK 栈 VMA_HEAP 堆 VMA_PENV 存放peb 环境数据 VMA_BUILTIN">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed9ed40c2a9a83be5fdf9bd.png">
+<meta property="og:updated_time" content="2020-06-05T07:29:21.111Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="逆向XX引擎:通用dump">
+<meta name="twitter:description" content="通用dump就是把该程序在虚拟机内执行完后的内存dump下来,然后扫描引擎进行扫描。对于杀软来说,dump下来的数据不需要是否能够运行。  实际上上图中每个区段的数据都是在样本在虚拟机执行完后的进程内存。 遍历在该进程内创建的所有内存,进程创建的内存类型有   VMA_USER 用户内存 VMA_STACK 栈 VMA_HEAP 堆 VMA_PENV 存放peb 环境数据 VMA_BUILTIN">
+<meta name="twitter:image" content="https://pic.downk.cc/item/5ed9ed40c2a9a83be5fdf9bd.png">
+  
+    <link rel="alternative" href="/atom.xml" title="ydc&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head></html>
+<body>
+  <div id="container">
+
+ 
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Ken</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a> <a href="/tags/逆向笔记/" style="font-size: 13.33px;">逆向笔记</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://ydc1992.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">这人太懒了,没有添加任何信息</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Ken</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Ken</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-逆向XX引擎-通用dump" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/e50c5b5.html" class="article-date">
+      <time datetime="2020-06-05T06:50:52.000Z" itemprop="datePublished">2020-06-05</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      逆向XX引擎:通用dump
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/逆向笔记/">逆向笔记</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>通用dump就是把该程序在虚拟机内执行完后的内存dump下来,然后扫描引擎进行扫描。对于杀软来说,dump下来的数据不需要是否能够运行。</p>
+<p><img src="https://pic.downk.cc/item/5ed9ed40c2a9a83be5fdf9bd.png" alt></p>
+<p>实际上上图中每个区段的数据都是在样本在虚拟机执行完后的进程内存。</p>
+<p>遍历在该进程内创建的所有内存,进程创建的内存类型有 </p>
+<ul>
+<li>VMA_USER 用户内存</li>
+<li>VMA_STACK 栈</li>
+<li>VMA_HEAP 堆</li>
+<li>VMA_PENV 存放peb 环境数据</li>
+<li>VMA_BUILTIN 存放api模拟代码和通过tdl配置构造的pe文件</li>
+</ul>
+<p>我们只需要 VMA_USER类型的内存和可执行的VMA_HEAP类型的内存</p>
+<p>下列代码为遍历所有创建的内存并将相关信息存如结构体dump_section.</p>
+<pre style="font-family:Fira Code;font-size:13px;color:white;">
+<span style="color:#f92672;">struct</span>&nbsp;<span style="color:#a6e22d;">dump_section</span>&nbsp;<span style="color:deeppink;">{</span>
+    <span style="color:#ae81ff;">_QWORD</span>&nbsp;rva;
+    <span style="color:#f92672;">int</span>&nbsp;vsize;
+    <span style="color:#f92672;">int</span>&nbsp;psize;
+    <span style="color:#f92672;">int</span>&nbsp;flag;
+    <span style="color:#a6e22d;">list_head</span>&nbsp;list;
+<span style="color:deeppink;">}</span>;
+
+<span style="color:#ae81ff;">list_for_each</span><span style="color:deeppink;">(</span>list,&nbsp;&amp;<span style="color:#fd971f;">process</span>-&gt;alloced_vma_head<span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
+    <span style="color:#a6e22d;">CMemInfo</span>*&nbsp;vma&nbsp;=&nbsp;<span style="color:#ae81ff;">container_of</span><span style="color:yellowgreen;">(</span>list,&nbsp;<span style="color:#a6e22d;">CMemInfo</span>,&nbsp;list<span style="color:yellowgreen;">)</span>;
+
+    region&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;vma-&gt;m_region;
+    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>region.mem_start&nbsp;==&nbsp;<span style="color:#fd971f;">process</span>-&gt;m_main_module-&gt;BaseOfDll<span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
+        <span style="color:#75715e;">//主模块的mz头抹掉,因为通用脱壳后不使用这个mz头</span>
+        <span style="color:#fd971f;">process</span>-&gt;<span style="color:#66d9ef;">write_mem</span><span style="color:darkviolet;">(</span><span style="color:#fd971f;">process</span>-&gt;m_main_module-&gt;BaseOfDll,&nbsp;<span style="color:#e8c9bb;">&quot;&quot;</span>,&nbsp;<span style="color:#ae81ff;">2</span>,&nbsp;<span style="color:#ae81ff;">1</span><span style="color:darkviolet;">)</span>;
+    <span style="color:yellowgreen;">}</span>
+
+    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>region.alloc_base&nbsp;!=&nbsp;cur_mod-&gt;BaseOfDll<span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
+        <span style="color:#f92672;">auto</span>&nbsp;pageAttr&nbsp;=&nbsp;region.PageAttr;
+        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>pageAttr.mem_useage&nbsp;!=&nbsp;<span style="color:#ae81ff;">VMA_USER</span>&nbsp;&amp;&amp;
+            <span style="color:#75715e;">//如果类型是堆,则必须是可读可执行的</span>
+            <span style="color:#ff9900;">(</span>pageAttr.mem_useage&nbsp;!=&nbsp;<span style="color:#ae81ff;">VMA_HEAP</span>&nbsp;||&nbsp;pageAttr.host_map_flag&nbsp;!=&nbsp;<span style="color:#ae81ff;">6</span><span style="color:#ff9900;">)</span><span style="color:darkviolet;">)</span>
+            <span style="color:#d8a0df;">continue</span>;
+    <span style="color:yellowgreen;">}</span>
+
+    <span style="color:#f92672;">int</span>&nbsp;vm_size&nbsp;=&nbsp;region.mem_end&nbsp;-&nbsp;region.mem_start;
+    <span style="color:#f92672;">int</span>&nbsp;read_size&nbsp;=&nbsp;<span style="color:#ae81ff;">0x10000</span>;
+    <span style="color:#f92672;">int</span>&nbsp;read_off&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
+    <span style="color:#f92672;">int</span>&nbsp;end&nbsp;=&nbsp;region.mem_end;
+    <span style="color:#d8a0df;">while</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#f92672;">true</span><span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
+        read_size&nbsp;=&nbsp;<span style="color:#ae81ff;">min</span><span style="color:darkviolet;">(</span>vm_size,&nbsp;<span style="color:#ae81ff;">0x10000</span><span style="color:darkviolet;">)</span>;
+        <span style="color:#75715e;">//从尾部开始读</span>
+        read_off&nbsp;=&nbsp;end&nbsp;-&nbsp;read_size;
+        <span style="color:#f92672;">int</span>&nbsp;readed_size&nbsp;=&nbsp;<span style="color:#fd971f;">process</span>-&gt;<span style="color:#66d9ef;">read_mem</span><span style="color:darkviolet;">(</span>read_off,&nbsp;buf,&nbsp;read_size<span style="color:darkviolet;">)</span>;
+        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>readed_size&nbsp;&lt;&nbsp;<span style="color:#ae81ff;">0</span><span style="color:darkviolet;">)</span>
+            <span style="color:#75715e;">//读取失败,可能内存以及被释放了</span>
+            <span style="color:#d8a0df;">break</span>;
+
+        <span style="color:#f92672;">int</span>&nbsp;non_zero_off&nbsp;=&nbsp;readed_size&nbsp;-&nbsp;<span style="color:#ae81ff;">1</span>;
+        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>non_zero_off&nbsp;&lt;&nbsp;<span style="color:#ae81ff;">0</span><span style="color:darkviolet;">)</span>
+            <span style="color:#d8a0df;">continue</span>;
+        <span style="color:#75715e;">//尾部的0可能时为了对齐而填充的,找到非0处,从该位置开始到下一个内存区域前被省略</span>
+        <span style="color:#d8a0df;">while</span>&nbsp;<span style="color:darkviolet;">(</span>!buf<span style="color:#ff9900;">[</span>non_zero_off<span style="color:#ff9900;">]</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
+            <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:#ff9900;">(</span>--non_zero_off&nbsp;&lt;=&nbsp;<span style="color:#ae81ff;">0</span><span style="color:#ff9900;">)</span>
+                <span style="color:#d8a0df;">break</span>;
+        <span style="color:darkviolet;">}</span>
+        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>non_zero_off&nbsp;&gt;&nbsp;<span style="color:#ae81ff;">0</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
+            <span style="color:#a6e22d;">dump_section</span>*&nbsp;ts&nbsp;=&nbsp;<span style="color:#569cd6;">new</span>&nbsp;<span style="color:#a6e22d;">dump_section</span>;
+            ts-&gt;rva&nbsp;=&nbsp;region.mem_start;
+            ts-&gt;vsize&nbsp;=&nbsp;region.mem_end&nbsp;-&nbsp;region.mem_start;
+            ts-&gt;psize&nbsp;=&nbsp;read_off&nbsp;+&nbsp;non_zero_off&nbsp;-&nbsp;region.mem_start;
+            ts-&gt;flag&nbsp;=&nbsp;<span style="color:#ae81ff;">0x40000000</span>;
+            <span style="color:#75715e;">//设置区段属性</span>
+            <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:#ff9900;">(</span>region.PageAttr.proctect&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">VMA_PAGE_WRITE</span><span style="color:#ff9900;">)</span>
+                ts-&gt;flag&nbsp;=&nbsp;<span style="color:#ae81ff;">0xC0000040</span>;
+            <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:#ff9900;">(</span>region.PageAttr.proctect&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">VMA_PAGE_READ</span><span style="color:#ff9900;">)</span>
+                ts-&gt;flag&nbsp;|=&nbsp;<span style="color:#ae81ff;">0x20000020</span>;
+            ++sec_cnt;
+            <span style="color:#66d9ef;">list_add_tail</span><span style="color:#ff9900;">(</span>&amp;ts-&gt;list,&nbsp;&amp;head<span style="color:#ff9900;">)</span>;
+
+            <span style="color:#d8a0df;">break</span>;
+        <span style="color:darkviolet;">}</span>
+
+        end&nbsp;=&nbsp;read_off;
+        vm_size&nbsp;-=&nbsp;readed_size;
+    <span style="color:yellowgreen;">}</span>
+<span style="color:deeppink;">}</span></pre>
+
+<h2 id="构造PE文件"><a href="#构造PE文件" class="headerlink" title="构造PE文件"></a>构造PE文件</h2><p>DOS头固定为下列值</p>
+<pre style="font-family:Fira Code;font-size:13px;color:white;">
+<span style="color:#f92672;">unsigned</span>&nbsp;<span style="color:#f92672;">char</span>&nbsp;genpack_mz_head<span style="color:#ff9900;">[</span><span style="color:#ae81ff;">224</span><span style="color:#ff9900;">]</span>&nbsp;=&nbsp;<span style="color:#ff9900;">{</span>
+    <span style="color:#ae81ff;">0x4D</span>,&nbsp;<span style="color:#ae81ff;">0x5A</span>,&nbsp;<span style="color:#ae81ff;">0x90</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x03</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x04</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0xFF</span>,&nbsp;<span style="color:#ae81ff;">0xFF</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,
+    <span style="color:#ae81ff;">0xB8</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x40</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,
+    <span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,
+    <span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0xE0</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,
+    <span style="color:#ae81ff;">0x0E</span>,&nbsp;<span style="color:#ae81ff;">0x1F</span>,&nbsp;<span style="color:#ae81ff;">0xBA</span>,&nbsp;<span style="color:#ae81ff;">0x0E</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0xB4</span>,&nbsp;<span style="color:#ae81ff;">0x09</span>,&nbsp;<span style="color:#ae81ff;">0xCD</span>,&nbsp;<span style="color:#ae81ff;">0x21</span>,&nbsp;<span style="color:#ae81ff;">0xB8</span>,&nbsp;<span style="color:#ae81ff;">0x01</span>,&nbsp;<span style="color:#ae81ff;">0x4C</span>,&nbsp;<span style="color:#ae81ff;">0xCD</span>,&nbsp;<span style="color:#ae81ff;">0x21</span>,&nbsp;<span style="color:#ae81ff;">0x54</span>,&nbsp;<span style="color:#ae81ff;">0x68</span>,
+    <span style="color:#ae81ff;">0x69</span>,&nbsp;<span style="color:#ae81ff;">0x73</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,&nbsp;<span style="color:#ae81ff;">0x70</span>,&nbsp;<span style="color:#ae81ff;">0x72</span>,&nbsp;<span style="color:#ae81ff;">0x6F</span>,&nbsp;<span style="color:#ae81ff;">0x67</span>,&nbsp;<span style="color:#ae81ff;">0x72</span>,&nbsp;<span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x6D</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,&nbsp;<span style="color:#ae81ff;">0x63</span>,&nbsp;<span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x6E</span>,&nbsp;<span style="color:#ae81ff;">0x6E</span>,&nbsp;<span style="color:#ae81ff;">0x6F</span>,
+    <span style="color:#ae81ff;">0x74</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,&nbsp;<span style="color:#ae81ff;">0x62</span>,&nbsp;<span style="color:#ae81ff;">0x65</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,&nbsp;<span style="color:#ae81ff;">0x72</span>,&nbsp;<span style="color:#ae81ff;">0x75</span>,&nbsp;<span style="color:#ae81ff;">0x6E</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,&nbsp;<span style="color:#ae81ff;">0x69</span>,&nbsp;<span style="color:#ae81ff;">0x6E</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,&nbsp;<span style="color:#ae81ff;">0x44</span>,&nbsp;<span style="color:#ae81ff;">0x4F</span>,&nbsp;<span style="color:#ae81ff;">0x53</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,
+    <span style="color:#ae81ff;">0x6D</span>,&nbsp;<span style="color:#ae81ff;">0x6F</span>,&nbsp;<span style="color:#ae81ff;">0x64</span>,&nbsp;<span style="color:#ae81ff;">0x65</span>,&nbsp;<span style="color:#ae81ff;">0x2E</span>,&nbsp;<span style="color:#ae81ff;">0x0D</span>,&nbsp;<span style="color:#ae81ff;">0x0D</span>,&nbsp;<span style="color:#ae81ff;">0x0A</span>,&nbsp;<span style="color:#ae81ff;">0x24</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,
+    <span style="color:#ae81ff;">0xE6</span>,&nbsp;<span style="color:#ae81ff;">0xFA</span>,&nbsp;<span style="color:#ae81ff;">0x3E</span>,&nbsp;<span style="color:#ae81ff;">0xFC</span>,&nbsp;<span style="color:#ae81ff;">0xA2</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xA2</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xA2</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,
+    <span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x5F</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xA6</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x0D</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xB7</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,
+    <span style="color:#ae81ff;">0xA2</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x51</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0x19</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x0C</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xA3</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,
+    <span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x0E</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xA3</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x0F</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xB3</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,
+    <span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x30</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xE7</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x0A</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xA3</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,
+    <span style="color:#ae81ff;">0x52</span>,&nbsp;<span style="color:#ae81ff;">0x69</span>,&nbsp;<span style="color:#ae81ff;">0x63</span>,&nbsp;<span style="color:#ae81ff;">0x68</span>,&nbsp;<span style="color:#ae81ff;">0xA2</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>
+<span style="color:#ff9900;">}</span>;
+</pre>
+
+<h3 id="填充pe头"><a href="#填充pe头" class="headerlink" title="填充pe头"></a>填充pe头</h3><pre style="font-family:Fira Code;font-size:13px;color:white;"><span style="color:#ae81ff;">peheader</span>&nbsp;pehead&nbsp;=&nbsp;<span style="color:deeppink;">{}</span>;
+<span style="color:#75715e;">//设置pe结构</span>
+pehead.signature&nbsp;=&nbsp;<span style="color:#ae81ff;">0x4550</span>;
+pehead.nobjs&nbsp;=&nbsp;<span style="color:#fd971f;">sec_cnt</span>;
+pehead.machine&nbsp;=&nbsp;<span style="color:#ae81ff;">332</span>;
+pehead.objalign&nbsp;=&nbsp;<span style="color:#ae81ff;">0x1000</span>;
+pehead.filealign&nbsp;=&nbsp;<span style="color:#ae81ff;">0x200</span>;
+pehead.subsys&nbsp;=&nbsp;<span style="color:#ae81ff;">2</span>;
+pehead.stackres&nbsp;=&nbsp;<span style="color:#ae81ff;">0x40000</span>;
+pehead.stackcom&nbsp;=&nbsp;<span style="color:#ae81ff;">0x1000</span>;
+pehead.heapres&nbsp;=&nbsp;<span style="color:#ae81ff;">0x100000</span>;
+pehead.heapcom&nbsp;=&nbsp;<span style="color:#ae81ff;">0x1000</span>;
+pehead.nrvas&nbsp;=&nbsp;<span style="color:#ae81ff;">0x10</span>;
+
+<span style="color:#f92672;">int</span>&nbsp;sec_size&nbsp;=&nbsp;<span style="color:#ae81ff;">0x28</span>&nbsp;*&nbsp;<span style="color:#fd971f;">sec_cnt</span>;
+<span style="color:#a6e22d;">uint32_t</span>&nbsp;min_off&nbsp;=&nbsp;-<span style="color:#ae81ff;">1</span>;
+<span style="color:#a6e22d;">x86_env</span>*&nbsp;env&nbsp;=&nbsp;&amp;<span style="color:#fd971f;">process</span>-&gt;cur_thread-&gt;_x86_env;
+<span style="color:#a6e22d;">CArc_pe</span>*&nbsp;arc_pe&nbsp;=&nbsp;<span style="color:#fd971f;">process</span>-&gt;m_main_module-&gt;m_cpe;
+pehead.flags&nbsp;=&nbsp;<span style="color:#ae81ff;">0x10e</span>;
+pehead.hdrsize&nbsp;=&nbsp;<span style="color:#ae81ff;">0xe0</span>;
+<span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span>arc_pe-&gt;peHead.flags&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0x2000</span><span style="color:deeppink;">)</span>
+    pehead.flags&nbsp;=&nbsp;<span style="color:#ae81ff;">8462</span>;
+pehead.magic&nbsp;=&nbsp;<span style="color:#ae81ff;">267</span>;
+pehead.allhdrsize&nbsp;=&nbsp;<span style="color:deeppink;">(</span>sec_size&nbsp;+&nbsp;<span style="color:#ae81ff;">0x3D7</span><span style="color:deeppink;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFFE00</span>;
+pehead.imagesize&nbsp;=&nbsp;<span style="color:deeppink;">(</span>sec_size&nbsp;+&nbsp;<span style="color:#ae81ff;">0x11D7</span><span style="color:deeppink;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFF000</span>;
+<span style="color:#f92672;">int</span>&nbsp;file_addr&nbsp;=&nbsp;<span style="color:deeppink;">(</span>sec_size&nbsp;+&nbsp;<span style="color:#ae81ff;">0x3D7</span><span style="color:deeppink;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFFE00</span>;
+
+<span style="color:#a6e22d;">list_head</span>*&nbsp;list;
+<span style="color:#75715e;">//计算最小偏移、数据段大小和代码段大小</span>
+<span style="color:#ae81ff;">list_for_each</span><span style="color:deeppink;">(</span>list,&nbsp;<span style="color:#fd971f;">head</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
+    <span style="color:#a6e22d;">dump_section</span>*&nbsp;ds&nbsp;=&nbsp;<span style="color:#ae81ff;">container_of</span><span style="color:yellowgreen;">(</span>list,&nbsp;<span style="color:#a6e22d;">dump_section</span>,&nbsp;list<span style="color:yellowgreen;">)</span>;
+    ds-&gt;vsize&nbsp;=&nbsp;<span style="color:yellowgreen;">(</span>ds-&gt;vsize&nbsp;+&nbsp;<span style="color:#ae81ff;">4095</span><span style="color:yellowgreen;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFF000</span>;
+    pehead.imagesize&nbsp;+=&nbsp;ds-&gt;vsize;
+    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>ds-&gt;rva&nbsp;&lt;&nbsp;min_off<span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
+        min_off&nbsp;=&nbsp;ds-&gt;rva;
+    <span style="color:yellowgreen;">}</span>
+    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>ds-&gt;flag&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0x40</span><span style="color:yellowgreen;">)</span>
+        pehead.dsize&nbsp;+=&nbsp;ds-&gt;vsize;
+    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>ds-&gt;flag&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0x20</span><span style="color:yellowgreen;">)</span>
+        pehead.tsize&nbsp;+=&nbsp;ds-&gt;vsize;
+<span style="color:deeppink;">}</span>
+pehead.imagebase32&nbsp;=&nbsp;min_off&nbsp;-&nbsp;<span style="color:deeppink;">(</span><span style="color:yellowgreen;">(</span>sec_size&nbsp;+&nbsp;<span style="color:#ae81ff;">0x11D7</span><span style="color:yellowgreen;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFF000</span><span style="color:deeppink;">)</span>;
+pehead.text_start&nbsp;=&nbsp;min_off;
+pehead.data_start&nbsp;=&nbsp;min_off;
+
+<span style="color:#75715e;">//多少个目录结构,最大只能由16个</span>
+<span style="color:#f92672;">int</span>&nbsp;nrvars&nbsp;=&nbsp;<span style="color:#ae81ff;">min</span><span style="color:deeppink;">(</span>arc_pe-&gt;peHead.nrvas,&nbsp;<span style="color:#ae81ff;">0x10</span><span style="color:deeppink;">)</span>;
+<span style="color:#a6e22d;">petab</span>&nbsp;mem_pe_tab<span style="color:deeppink;">[</span><span style="color:#ae81ff;">0x10</span><span style="color:deeppink;">]</span>&nbsp;=&nbsp;<span style="color:deeppink;">{}</span>;
+<span style="color:#75715e;">//读取数据目录表</span>
+<span style="color:#ae81ff;">_QWORD</span>&nbsp;va&nbsp;=&nbsp;<span style="color:#fd971f;">process</span>-&gt;m_main_module-&gt;BaseOfDll&nbsp;+&nbsp;arc_pe-&gt;dosHeader.lfanew&nbsp;+&nbsp;<span style="color:#ae81ff;">0x78</span>;
+<span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#fd971f;">process</span>-&gt;<span style="color:#66d9ef;">read_mem</span><span style="color:yellowgreen;">(</span>va,&nbsp;mem_pe_tab,&nbsp;<span style="color:#ae81ff;">0x80</span><span style="color:yellowgreen;">)</span>&nbsp;!=&nbsp;<span style="color:#ae81ff;">0x80</span><span style="color:deeppink;">)</span>
+    <span style="color:#d8a0df;">return</span>;
+<span style="color:#a6e22d;">petab</span>*&nbsp;genpack_petab&nbsp;=&nbsp;&amp;pehead.expdir;
+<span style="color:#d8a0df;">for</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#f92672;">int</span>&nbsp;i&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;&nbsp;i&nbsp;&lt;&nbsp;<span style="color:#ae81ff;">0x10</span>;&nbsp;i++<span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
+    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>i&nbsp;==&nbsp;<span style="color:#ae81ff;">1</span><span style="color:yellowgreen;">)</span><span style="color:#75715e;">//导入表不用管</span>
+        <span style="color:#d8a0df;">continue</span>;
+    <span style="color:#f92672;">auto</span>&nbsp;t&nbsp;=&nbsp;&amp;mem_pe_tab<span style="color:yellowgreen;">[</span>i<span style="color:yellowgreen;">]</span>;
+    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>!t-&gt;rva<span style="color:yellowgreen;">)</span>
+        <span style="color:#d8a0df;">continue</span>;
+    genpack_petab<span style="color:yellowgreen;">[</span>i<span style="color:yellowgreen;">]</span>.size&nbsp;=&nbsp;t-&gt;size;
+    <span style="color:#75715e;">//修复rva地址</span>
+    genpack_petab<span style="color:yellowgreen;">[</span>i<span style="color:yellowgreen;">]</span>.rva&nbsp;=&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#fd971f;">process</span>-&gt;m_main_module-&gt;BaseOfDll&nbsp;+&nbsp;t-&gt;rva<span style="color:yellowgreen;">)</span>&nbsp;-&nbsp;pehead.imagebase32;
+<span style="color:deeppink;">}</span></pre>
+
+<h3 id="填充pesection数据"><a href="#填充pesection数据" class="headerlink" title="填充pesection数据"></a>填充pesection数据</h3><pre style="font-family:Fira Code;font-size:13px;color:white;"><span style="color:#a6e22d;">pesection</span>*&nbsp;sec_buf&nbsp;=&nbsp;<span style="color:deeppink;">(</span><span style="color:#a6e22d;">pesection</span>*<span style="color:deeppink;">)</span><span style="color:#66d9ef;">malloc</span><span style="color:deeppink;">(</span>sec_size<span style="color:deeppink;">)</span>;
+<span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span>!sec_buf<span style="color:deeppink;">)</span>
+    <span style="color:#d8a0df;">return</span>;
+<span style="color:#66d9ef;">memset</span><span style="color:deeppink;">(</span>sec_buf,&nbsp;<span style="color:#ae81ff;">0</span>,&nbsp;sec_size<span style="color:deeppink;">)</span>;
+
+<span style="color:#f92672;">auto</span>&nbsp;sec&nbsp;=&nbsp;sec_buf;
+<span style="color:#f92672;">int</span>&nbsp;sec_index&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
+<span style="color:#75715e;">//插入内存中的各个区段到pe文件</span>
+<span style="color:#ae81ff;">list_for_each</span><span style="color:deeppink;">(</span>list,&nbsp;<span style="color:#fd971f;">head</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
+    <span style="color:#f92672;">auto</span>&nbsp;ds&nbsp;=&nbsp;<span style="color:#ae81ff;">container_of</span><span style="color:yellowgreen;">(</span>list,&nbsp;<span style="color:#a6e22d;">dump_section</span>,&nbsp;list<span style="color:yellowgreen;">)</span>;
+    <span style="color:#66d9ef;">snprintf</span><span style="color:yellowgreen;">(</span>sec-&gt;s_name,&nbsp;<span style="color:#ae81ff;">8</span>,&nbsp;<span style="color:#e8c9bb;">&quot;</span><span style="color:#e6db74;">libvxf%d</span><span style="color:#e8c9bb;">&quot;</span>,&nbsp;sec_index<span style="color:yellowgreen;">)</span>;
+    sec-&gt;s_name<span style="color:yellowgreen;">[</span><span style="color:#ae81ff;">7</span><span style="color:yellowgreen;">]</span>&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
+    sec-&gt;s_vsize&nbsp;=&nbsp;ds-&gt;vsize;
+    sec-&gt;s_vaddr&nbsp;=&nbsp;ds-&gt;rva&nbsp;-&nbsp;pehead.imagebase32;
+    sec-&gt;s_psize&nbsp;=&nbsp;<span style="color:yellowgreen;">(</span>ds-&gt;psize&nbsp;+&nbsp;<span style="color:#ae81ff;">0x1FF</span><span style="color:yellowgreen;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFFE00</span>;
+    sec-&gt;s_scnptr&nbsp;=&nbsp;file_addr;
+    sec-&gt;s_flags&nbsp;=&nbsp;ds-&gt;flag;
+    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#ae81ff;">EIP</span>&nbsp;&gt;=&nbsp;ds-&gt;rva&nbsp;&amp;&amp;&nbsp;<span style="color:#ae81ff;">EIP</span>&nbsp;&lt;&nbsp;ds-&gt;rva&nbsp;+&nbsp;ds-&gt;vsize<span style="color:yellowgreen;">)</span>
+        pehead.entry&nbsp;=&nbsp;<span style="color:#ae81ff;">EIP</span>&nbsp;-&nbsp;pehead.imagebase32;
+
+    file_addr&nbsp;=&nbsp;sec-&gt;s_psize&nbsp;+&nbsp;file_addr;
+    ++sec_index;
+    ++sec;
+<span style="color:deeppink;">}</span></pre>
+
+
+<h3 id="填充区段数据"><a href="#填充区段数据" class="headerlink" title="填充区段数据"></a>填充区段数据</h3><pre style="font-family:Fira Code;font-size:13px;color:white;"><span style="color:#ae81ff;">list_for_each</span><span style="color:deeppink;">(</span>list,&nbsp;<span style="color:#fd971f;">head</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
+    <span style="color:#f92672;">auto</span>&nbsp;ts&nbsp;=&nbsp;<span style="color:#ae81ff;">container_of</span><span style="color:yellowgreen;">(</span>list,&nbsp;<span style="color:#a6e22d;">dump_section</span>,&nbsp;list<span style="color:yellowgreen;">)</span>;
+    cur_off&nbsp;=&nbsp;ts-&gt;rva;
+
+    psize&nbsp;=&nbsp;ts-&gt;psize;
+    write_off&nbsp;=&nbsp;sec-&gt;s_scnptr;
+    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>!psize<span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
+        ++sec;
+        <span style="color:#d8a0df;">continue</span>;
+    <span style="color:yellowgreen;">}</span>
+
+    <span style="color:#d8a0df;">while</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#ae81ff;">1</span><span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
+        read_size2&nbsp;=&nbsp;<span style="color:#ae81ff;">min</span><span style="color:darkviolet;">(</span>psize,&nbsp;<span style="color:#ae81ff;">0x10000</span><span style="color:darkviolet;">)</span>;
+        read_size&nbsp;=&nbsp;<span style="color:#fd971f;">process</span>-&gt;<span style="color:#66d9ef;">read_mem</span><span style="color:darkviolet;">(</span><span style="color:#ff9900;">(</span><span style="color:#ae81ff;">_QWORD</span><span style="color:#ff9900;">)</span>cur_off,&nbsp;<span style="color:#ff9900;">(</span><span style="color:#a6e22d;">DWORD</span>*<span style="color:#ff9900;">)</span><span style="color:#fd971f;">buf</span>,&nbsp;read_size2<span style="color:darkviolet;">)</span>;
+        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>read_size&nbsp;&lt;&nbsp;<span style="color:#ae81ff;">0</span><span style="color:darkviolet;">)</span>
+            read_size&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
+        algin_size&nbsp;=&nbsp;<span style="color:darkviolet;">(</span>read_size2&nbsp;+&nbsp;<span style="color:#ae81ff;">0x1FF</span><span style="color:darkviolet;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFFE00</span>;
+        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>read_size&nbsp;&lt;&nbsp;algin_size<span style="color:darkviolet;">)</span>
+            <span style="color:#66d9ef;">memset</span><span style="color:darkviolet;">(</span><span style="color:#ff9900;">(</span><span style="color:#f92672;">void</span>*<span style="color:#ff9900;">)(</span>read_size&nbsp;+&nbsp;<span style="color:#fd971f;">buf</span><span style="color:#ff9900;">)</span>,&nbsp;<span style="color:#ae81ff;">0</span>,&nbsp;algin_size&nbsp;-&nbsp;read_size<span style="color:darkviolet;">)</span>;
+        write_size&nbsp;=&nbsp;stream-&gt;<span style="color:#66d9ef;">write</span><span style="color:darkviolet;">(</span>write_off,&nbsp;<span style="color:#ff9900;">(</span><span style="color:#a6e22d;">DWORD</span>*<span style="color:#ff9900;">)</span><span style="color:#fd971f;">buf</span>,&nbsp;algin_size<span style="color:darkviolet;">)</span>;
+
+        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>write_size&nbsp;&lt;&nbsp;<span style="color:#ae81ff;">0</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
+            <span style="color:#d8a0df;">return</span>;
+        <span style="color:darkviolet;">}</span>
+        cur_off&nbsp;=&nbsp;read_size2&nbsp;+&nbsp;cur_off;
+        write_off&nbsp;+=&nbsp;read_size2;
+
+        psize&nbsp;-=&nbsp;read_size2;
+        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>!psize<span style="color:darkviolet;">)</span>
+            <span style="color:#d8a0df;">break</span>;
+    <span style="color:yellowgreen;">}</span>
+
+    ++sec;
+<span style="color:deeppink;">}</span></pre>
+      
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/posts/e50c5b5.html">逆向XX引擎:通用dump</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
+        <p><span>发布时间:</span>2020年06月05日 - 06时50分</p>
+        <p><span>最后更新:</span>2020年06月05日 - 07时29分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/posts/e50c5b5.html" title="逆向XX引擎:通用dump">http://shxi.me/posts/e50c5b5.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/e50c5b5.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/posts/78e44487.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">将usercall转换成 __cdecl函数调用</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#构造PE文件"><span class="toc-number">1.</span> <span class="toc-text">构造PE文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#填充pe头"><span class="toc-number">1.1.</span> <span class="toc-text">填充pe头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#填充pesection数据"><span class="toc-number">1.2.</span> <span class="toc-text">填充pesection数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#填充区段数据"><span class="toc-number">1.3.</span> <span class="toc-text">填充区段数据</span></a></li></ol></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'ydc1992',
+      repo: 'ydc1992.github.io',
+      oauth: {
+        client_id: '',
+        client_secret: '',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/posts/78e44487.html" title="下一篇: 将usercall转换成 __cdecl函数调用">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/posts/e50c5b5.html">逆向XX引擎:通用dump</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/78e44487.html">将usercall转换成 __cdecl函数调用</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/efe148e3.html">mbr结构和代码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/61225802.html">app.any.run网站样本爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/258b0a6d.html">逆向XX引擎:库文件解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f88a50e1.html">逆向XX引擎系列(一) 构造系统dll文件</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/1736976b.html">debug IDApython script</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9222f001.html">病毒样本快到碗里来，一个样本下载爬虫的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/27be2f79.html">VB Crypt Payload</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/62077d14.html">VirusTotal扫描器 python版</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6155f940.html">pycurl 分块下载</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/c240cede.html">Pwnable.kr leg</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9e24c54e.html">安卓游戏资源解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/b751c08a.html">Reversing.kr AutoHotkey1</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/ff6aab31.html">reversing.kr Ransomware</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/905112aa.html">Far Manager插件编写2</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/88524310.html">pwnable.kr bof</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/741ff96a.html">Pwnable.kr random</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/d8e13760.html">powershell hacker(三): 后门安装 </a></li><li class="post-list-item"><a class="post-list-link" href="/posts/564bd806.html">Pwnable.kr flag</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e2bbbc71.html">powershell hacker(一): Empirse</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/15b3d1e1.html">Pwnable.kr fd</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e6d76b89.html">Reversing.kr Direct3D FPS</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Ken
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+ 
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+  
+</body>
+</html>

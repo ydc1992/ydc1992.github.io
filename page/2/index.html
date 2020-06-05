@@ -141,7 +141,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a> <a href="/tags/逆向笔记/" style="font-size: 10px;">逆向笔记</a>
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a> <a href="/tags/逆向笔记/" style="font-size: 13.33px;">逆向笔记</a>
                     </div>
                 </section>
                 
@@ -204,6 +204,303 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-VB-Crypt-Payload" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/27be2f79.html" class="article-date">
+      <time datetime="2018-03-01T06:53:37.000Z" itemprop="datePublished">2018-03-01</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/posts/27be2f79.html">VB Crypt Payload</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>分析VB样本的时候发现有几种混淆方式，记录下。</p>
+<h2 id="替换函数指针"><a href="#替换函数指针" class="headerlink" title="替换函数指针"></a>替换函数指针</h2><blockquote>
+<p>样本shah:a66f989e58ada2eff729ac2032ff71a159c521e7372373f4a1c1cf13f8ae2f0c</p>
+</blockquote>
+<p> 载入vb.idc脚本，脚本分析完后，查看event handle函数，</p>
+<pre><code> .text:00463E14 _O_Pub_Obj_Inf1_Ctl_Inf0x3_0x7_lpForm_Load        dd offset Hdr_Jmp_Addr_0x46549A      ; Ptr to Form Load Event Code.
+ ....
+
+ .text:00463E78                 sub     [esp+arg_0], 0FFFFh
+ .text:00463E80                 jmp     _O_Pub_Obj_Inf1_Method0x1
+
+ .text:00463E85          Hdr_Jmp_Addr_0x46549A:       ; DATA XREF:.text:_O_Pub_Obj_Inf1_Ctl_Inf0x3_0x7_lpForm_Load↑o
+ .text:00463E85                 sub     dword ptr [esp+4], 3Bh ; &#39;;&#39; ; Flags and Code Address
+ .text:00463E8D                 jmp     _O_Pub_Obj_Inf1_Event0x2
+</code></pre><p><code>_O_Pub_Obj_Inf1_Event0x2</code>就是处理Form_load的函数，一般malicious code都是在这里实现。<br>接着往下看。<br>这里计算处shellcode的地址。<code>0x43AF4B=1526C77h/（sqr(25.0)）</code></p>
+<pre><code class="asm">.text:00465D83                        mov     [ebp+var_50], 1526C77h
+.text:00465D8A                        fld     ds:dbl_401118   ;25.0
+.text:00465D90                        push    ecx
+.text:00465D91                        push    ecx
+.text:00465D92                        fstp    qword ptr [esp+8+var_8]
+.text:00465D95                        call    rtcSqr
+.text:00465D9A                        call    __vbaFpI4
+.text:00465D9F                        mov     ecx, eax</code></pre>
+<p>在 <code>[eax+0x6f8]</code> 这个函数将shellcode地址替换，arg_0为Form_load的第一个参数，也就是Form类。</p>
+<pre><code class="asm">.text:00465DA8                        mov     eax, [ebp+arg_0]
+.text:00465DAB                        mov     eax, [eax]
+.text:00465DAD                        push    [ebp+arg_0]
+.text:00465DB0                        call    dword ptr [eax+6F8h]</code></pre>
+<p>[eax]中存放的是地址虚表，[eax+6f8h]地址正好是<em>O</em>Pub_Obj_Inf1_Method0x1方法,</p>
+<pre><code class="asm">
+.data:0046737C dd offset msvbvm60_BASIC_CLASS_QueryInterface
+.data:00467380 dd offset msvbvm60_BASIC_CLASS_AddRef
+.data:00467384 dd offset msvbvm60_BASIC_CLASS_Release
+...
+.data:00467A6C dd 72A44A98h
+.data:00467A70 dd 72A44AA0h
+.data:00467A74 dd 463E80h                 ; ptr _O_Pub_Obj_Inf1_Method0x1
+.data:00467A78 dd 463E8Dh                 ; ptr _O_Pub_Obj_Inf1_Event0x2 
+...</code></pre>
+<p>替换指针，进入shellcode执行代码</p>
+<pre><code>.text:00464434 add     eax, 2B0h
+.text:00464439 jo      loc_465495
+.text:0046443F mov     [ebp+var_20], eax
+.text:00464442 push    [ebp+arg_4] ;shellcode地址
+.text:00464445 push    [ebp+var_20] ;[eax+0x2b0]
+.text:00464448 call    replace_ptr
+....
+.text:004644C3 call    dword ptr [eax+2B0h]
+</code></pre><p>在shellcode中并没有使用常规的方式获取api地址，而是先找到msvbvm60模块的地址，再通过到处函数DllFunction来获得对应API的地址。<br>中间穿插了大量的花指令。</p>
+<pre><code>.text:0043B10F get_api_address proc near                                                                           ; CODE XREF: sub_43AF88:loc_43AF89↑p
+.text:0043B10F                                                                                                     ; sub_43B07C+2B↑p
+.text:0043B10F
+.text:0043B10F var_14          = dword ptr -14h
+.text:0043B10F anonymous_2     = dword ptr -10h
+.text:0043B10F anonymous_1     = dword ptr -0Ch
+.text:0043B10F anonymous_0     = dword ptr -8
+.text:0043B10F var_4           = dword ptr -4
+.text:0043B10F
+.text:0043B10F                 mov     eax, large fs:30h ;peb地址
+.text:0043B115                 packuswb mm1, mm1
+.text:0043B118                 mov     eax, [eax+0Ch] ;PEB_LDR_DATA
+.text:0043B11B                 pcmpgtb mm5, mm4
+.text:0043B11E                 mov     eax, [eax+14h];get InMemoryOrderModuleList
+.text:0043B121                 pcmpeqw mm2, mm7
+.text:0043B124
+.text:0043B124 loc_43B124:                                                                                         ; CODE XREF: get_api_address+29↓j
+.text:0043B124                                                                                                     ; get_api_address+36↓j
+.text:0043B124                 mov     eax, [eax]
+.text:0043B126                 punpckhdq mm1, mm3
+.text:0043B129                 mov     ebx, [eax+28h]
+.text:0043B12C                 pcmpgtw xmm7, xmm6
+.text:0043B130                 mov     esi, 53004Ch     ; 
+.text:0043B135                 inc     esi              ;MS for msvbvm60.dll 
+.text:0043B136                 cmp     [ebx], esi
+.text:0043B138                 jnz     short loc_43B124
+.text:0043B13A                 pcmpgtb xmm3, xmm7
+.text:0043B13E                 cmp     dword ptr [ebx+4], 420056h ;VB for MS for msvbvm60.dll 
+.text:0043B145                 jnz     short loc_43B124
+.text:0043B147                 pcmpgtd xmm0, xmm3
+.text:0043B14B                 mov     esi, [eax+10h]
+.text:0043B14E                 pcmpgtw xmm6, xmm6
+.text:0043B152                 push    esi
+.text:0043B153                 pcmpgtb mm3, mm4
+.text:0043B156                 mov     ebx, [esi+3Ch]
+.text:0043B159                 punpckhwd xmm0, xmm2
+.text:0043B15D                 mov     esi, [esp+4+var_4]
+.text:0043B160                 punpckhbw xmm5, xmm1
+.text:0043B164                 add     esi, ebx
+.text:0043B166                 pcmpeqd xmm0, xmm1
+.text:0043B16A                 mov     ebx, [esi+78h]
+.text:0043B16D                 pcmpeqw mm6, mm3
+.text:0043B170                 mov     eax, [esp+4+var_4]
+.text:0043B173                 punpckhwd xmm3, xmm7
+.text:0043B177                 add     eax, ebx
+.text:0043B179                 punpckhbw xmm4, xmm4
+.text:0043B17D                 mov     esi, eax
+.text:0043B17F                 pcmpeqb xmm4, xmm6
+.text:0043B183                 add     esi, 28h ; &#39;(&#39;
+.text:0043B186                 pcmpeqw mm1, mm2
+.text:0043B189
+.text:0043B189 loc_43B189:                                                                                         ; CODE XREF: get_api_address+80↓j
+.text:0043B189                                                                                                    get_api_address+94↓j ...
+.text:0043B189                 lodsd
+.text:0043B18A                 punpckhdq mm0, mm6
+.text:0043B18D                 test    eax, eax
+.text:0043B18F                 jz      short loc_43B189
+.text:0043B191                 packssdw xmm4, xmm7
+.text:0043B195                 add     eax, [esp+4+var_4]
+.text:0043B198                 pcmpeqb xmm6, xmm2
+.text:0043B19C                 mov     ebx, 83EC8B55h    ;DllFunctionCall 函数特征
+.text:0043B1A1                 cmp     [eax], ebx
+.text:0043B1A3                 jnz     short loc_43B189
+.text:0043B1A5                 punpckhwd mm0, mm4
+.text:0043B1A8                 cmp     dword ptr [eax+4], 8D560CECh  ;DllFunctionCall 函数特征
+.text:0043B1AF                 jnz     short loc_43B189
+.text:0043B1B1                 pcmpgtb mm6, mm4
+.text:0043B1B4                 pop     ebx
+.text:0043B1B5                 pcmpeqd xmm0, xmm1
+.text:0043B1B9                 xor     ebx, ebx
+.text:0043B1BB                 pcmpeqw mm6, mm3
+.text:0043B1BE                 push    ebx
+.text:0043B1BF                 punpckhwd xmm3, xmm7
+.text:0043B1C3                 push    ebx
+.text:0043B1C4                 punpckhbw xmm4, xmm4
+.text:0043B1C8                 push    ebx
+.text:0043B1C9                 pcmpeqb xmm4, xmm6
+.text:0043B1CD                 push    esp
+.text:0043B1CE                 pcmpeqw mm1, mm2
+.text:0043B1D1                 push    0
+.text:0043B1D3                 punpckhdq mm0, mm6
+.text:0043B1D6                 add     [esp+14h+var_14], 40000h
+.text:0043B1DD                 packssdw xmm4, xmm7
+.text:0043B1E1                 push    edx
+.text:0043B1E2                 pcmpeqb xmm6, xmm2
+.text:0043B1E6                 push    ecx
+.text:0043B1E7                 punpckhwd mm0, mm4
+.text:0043B1EA                 push    esp
+.text:0043B1EB                 pcmpgtb mm6, mm4
+.text:0043B1EE                 call    eax
+.text:0043B1F0                 pcmpeqd xmm0, xmm1
+.text:0043B1F4                 add     esp, 1Ch
+.text:0043B1F7                 pcmpeqw mm6, mm3
+.text:0043B1FA                 retn
+.text:0043B1FA get_api_address endp</code></pre><p>通过get_api_address函数获得shellNoitdyIconW函数。并调用两次。<br>第一次调用的时候dwMessage参数为NIM_ADD，打开<code>控制面板\所有控制面板项\通知区域图标</code>会发现下面有一个空白的<br>这是因为PNOTIFYICONDATA被垃圾数据填充了。第二次传入NIM_DELETE删除托盘图标。</p>
+<pre><code class="asm">.text:0043AF89 call    get_api_address
+.text:0043AF8E push    eax
+.text:0043AF8F push    dword ptr [ebp+52h] ;NOTIFYICONDATA结构体
+.text:0043AF92 push    0                   ;NIM_ADD
+.text:0043AF94 call    eax
+.text:0043AF96 cmp     eax, 1
+.text:0043AF99 jz      short $+2
+.text:0043AF9B
+.text:0043AF9B loc_43AF9B:                                                                                         ; CODE XREF: .text:0043AF99↑j
+.text:0043AF9B pop     eax
+.text:0043AF9C push    dword ptr [ebp+52h]
+.text:0043AF9F push    2                   ;NIM_DELETE 
+.text:0043AFA1 call    eax</code></pre>
+<p>使用ZwSetInformationProcess绕过DEP保护的原理如下</p>
+<pre><code class="cpp">ULONG ExecuteFlags = MEM_EXECUTE_OPTION_ENABLE;
+
+    NtSetInformationProcess(
+    -1,//当前进程
+    ProcessExecuteFlags, // 0x22
+    &amp;ExecuteFlags, // executeFlag=2; 设置为2关闭DEP
+    sizeof(ExecuteFlags)); // 0x4</code></pre>
+<p>关闭DEP以避免在栈上执行代码出现异常等问题。</p>
+<pre><code>.text:0043B1FF push    &#39;ssf&#39;
+.text:0043B204 dec     dword ptr [esp+0]   ;sse
+.text:0043B207 push    &#39;corQ&#39;
+.text:0043B20C dec     [esp+4+var_4]       ;corP
+.text:0043B20F push    &#39;noiu&#39;
+.text:0043B214 dec     [esp+8+var_8]       ;noit
+.text:0043B217 push    &#39;amrp&#39;
+.text:0043B21C dec     [esp+0Ch+var_C]     ;amro
+.text:0043B21F push    &#39;fnIu&#39;
+.text:0043B224 dec     [esp+10h+var_10]    ;fnIt
+.text:0043B227 push    &#39;eSw[&#39;
+.text:0043B22C dec     [esp+14h+var_14]   ;eSwZ
+.text:0043B22F mov     edx, esp     ZwSetInformationProcess
+.text:0043B231 jmp     loc_43B0A1
+...
+.text:0043B0A1 punpckhwd mm2, mm6
+.text:0043B0A4 pcmpeqd mm2, mm5                                                                                    ; a10
+.text:0043B0A7 call    get_api_address
+.text:0043B0AC add     esp, 18h
+.text:0043B0AF punpckhwd mm0, mm1
+.text:0043B0B2 push    4     ;sizeof(ExecuteFlags)
+.text:0043B0B4 packsswb mm0, mm2
+.text:0043B0B7 push    0  //0
+.text:0043B0B9 pcmpgtw mm7, mm4
+.text:0043B0BC add     [esp+4+var_4], 400004h
+.text:0043B0C3 pcmpeqb mm4, mm0
+.text:0043B0C6 push    22h ; &#39;&quot;&#39; ;ProcessExecuteFlags
+.text:0043B0C8 punpckhwd xmm1, xmm3
+.text:0043B0CC push    0FFFFFFFFh  ;当前进程
+.text:0043B0CE punpckhdq mm5, mm5
+.text:0043B0D1 call    eax ;ZwSetInformationProcess</code></pre><h2 id="反调试"><a href="#反调试" class="headerlink" title="反调试"></a>反调试</h2><p>这里使用三处反调试，</p>
+<ul>
+<li>PEB.BeingDebugged</li>
+<li>PEB.NtGlobalFlag</li>
+</ul>
+<pre><code class="asm">Stack[00000B48]:0012D7A8 push    ebp
+Stack[00000B48]:0012D7A9 mov     ebp, esp
+Stack[00000B48]:0012D7AB mov     eax, large fs:18h
+Stack[00000B48]:0012D7B1 mov     eax, [eax+30h]
+Stack[00000B48]:0012D7B4 cmp     byte ptr [eax+2], 1 ;BeingDebugged，改成0绕过
+Stack[00000B48]:0012D7B8 jz      loc_12DAEF
+Stack[00000B48]:0012D7BE nop
+Stack[00000B48]:0012D7BF nop
+Stack[00000B48]:0012D7C0 mov     eax, large fs:30h
+Stack[00000B48]:0012D7C6 nop
+Stack[00000B48]:0012D7C7 nop
+Stack[00000B48]:0012D7C8 mov     al, [eax+68h]
+Stack[00000B48]:0012D7CB nop
+Stack[00000B48]:0012D7CC nop
+Stack[00000B48]:0012D7CD and     al, 70h ;NtGlobalFlag,将al改成0绕过
+Stack[00000B48]:0012D7CF nop
+Stack[00000B48]:0012D7D0 nop
+Stack[00000B48]:0012D7D1 cmp     al, 70h ; &#39;p&#39;
+Stack[00000B48]:0012D7D3 jz      loc_12DAEF
+Stack[00000B48]:0012D7D9 mov     eax, 1         ;检测虚拟机
+Stack[00000B48]:0012D7DE cpuid
+Stack[00000B48]:0012D7E0 mov     eax, edx
+Stack[00000B48]:0012D7E2 shr     eax, 17h
+Stack[00000B48]:0012D7E5 and     eax, 1
+Stack[00000B48]:0012D7E8 cmp     eax, 1        ;如果为1则是运行在虚拟机内</code></pre>
+<p>接着往下走，还有一处反调试</p>
+<pre><code class="asm">Stack[00000B48]:0012D94B loc_12D94B:                   ; CODE XREF: Stack[00000B48]:0012D965↓j
+Stack[00000B48]:0012D94B push    eax
+Stack[00000B48]:0012D94C push    0Fh
+Stack[00000B48]:0012D94E call    dword ptr [ebp+94h]   ; sleep
+Stack[00000B48]:0012D954 pop     eax
+Stack[00000B48]:0012D955 push    eax
+Stack[00000B48]:0012D956 call    eax                  ; ntdll_NtYieldExecution
+Stack[00000B48]:0012D958 cmp     eax, 40000024h
+Stack[00000B48]:0012D95D jz      short loc_12D960
+Stack[00000B48]:0012D95F inc     edi
+Stack[00000B48]:0012D960
+Stack[00000B48]:0012D960 loc_12D960:                  ; CODE XREF: Stack[00000B48]:0012D95D↑j
+Stack[00000B48]:0012D960 pop     eax
+Stack[00000B48]:0012D961 inc     esi
+Stack[00000B48]:0012D962 cmp     esi, 20h ; &#39; &#39;
+Stack[00000B48]:0012D965 jnz     short loc_12D94B</code></pre>
+
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-豆约翰博客备份专家破解" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -803,86 +1100,6 @@ Segmentation fault
       
         <p class="article-more-link">
           <a  href="/posts/b751c08a.html#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-reversing-kr-Ransomware" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/posts/ff6aab31.html" class="article-date">
-      <time datetime="2016-01-10T23:18:49.000Z" itemprop="datePublished">2016-01-10</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/posts/ff6aab31.html">reversing.kr Ransomware</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>首先看程序，发现被加了upx壳，使用脱壳工具脱掉后，看有没有关键的字符串。</p>
-<p>来到引用<code>Key</code>的地方。</p>
-<pre><code class="cpp">.text:0044A775                 push    offset aKey     ; &quot;Key : &quot;
-.text:0044A77A                 call    ds:printf
-.text:0044A780                 add     esp, 4
-.text:0044A783                 call    sub_401000
-.text:0044A788                 push    offset input_key
-.text:0044A78D                 push    offset aS       ; &quot;%s&quot;
-.text:0044A792                 call    ds:scanf
-.text:0044A798                 add     esp, 8
-.text:0044A79B                 mov     dword ptr [ebp-18h], offset input_key
-.text:0044A7A2                 mov     eax, [ebp-18h]
-.text:0044A7A5                 add     eax, 1
-.text:0044A7A8                 mov     [ebp-1Ch], eax</code></pre>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/challenge/">challenge</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reversing/">Reversing</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/posts/ff6aab31.html#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>
