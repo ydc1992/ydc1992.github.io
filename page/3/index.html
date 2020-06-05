@@ -205,6 +205,84 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-Far-Manager插件编写2" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/905112aa.html" class="article-date">
+      <time datetime="2016-01-09T18:01:33.000Z" itemprop="datePublished">2016-01-09</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/posts/905112aa.html">Far Manager插件编写2</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>在上一篇中，插件显示在插件菜单栏中，但是我们还没有实现该插件的功能。</p>
+<p>开始之前，我们先来科普一下，在Far Manager中调用插件的几种方法，除了从插件菜单中调用插件，Far Manager还提供了Alt+F1(左侧硬盘菜单)、Alt+F2(右侧硬盘菜单)、宏、lua宏、文件查找结果列表、命令行、编辑器、文件面板、对话框等等。可以说在几乎在任意位置都能调用插件。</p>
+<p>要插件实现功能，我们需要导出OpenW函数。当打开插件时会调用OpenW，OpenInfo记录了该插件被触发的信息。结构如下：</p>
+<pre><code class="cpp">struct OpenInfo
+{
+  size_t StructSize;  //结构大小
+  enum OPENFROM OpenFrom;  //触发方式
+  const GUID *Guid;  //如果是通过插件菜单打开的，则该guid是插件菜单guid，如果是宏则是宏的guid。
+  intptr_t Data; //取决于OpenFrom，不同触发方式，该字段表示的数据不同
+};
+</code></pre>
+<h3 id="Message"><a href="#Message" class="headerlink" title="Message"></a>Message</h3><p>在OpenW中我们可以根据OpenFrom打开插件方式的不同来实现不同的功能。这里就实现一个小小功能弹一个消息框。</p>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Far-Manager/">Far Manager</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Far-Manager/">Far Manager</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a  href="/posts/905112aa.html#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-pwnable-kr-bof" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">

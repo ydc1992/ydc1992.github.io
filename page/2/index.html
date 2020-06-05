@@ -205,6 +205,70 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-豆约翰博客备份专家破解" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/9d7b1fcb.html" class="article-date">
+      <time datetime="2016-10-30T20:14:54.000Z" itemprop="datePublished">2016-10-30</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>文笔不好，路过的看官求勿喷。</p>
+<p>官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。<br><img src="http://t.cn/RVuofGm" alt></p>
+<p>F5开始调试。<br><img src="http://t.cn/RVuoITs" alt></p>
+<p>点击ok，程序会出现登陆框，要输入账号密码。第一步我们先实现免账号登陆，先随便输个账号密码，利用堆栈回溯来找到下图中高亮部分，这里面就是登陆流程部分。<br><img src="http://t.cn/RVuoMD5" alt></p>
+<p>跳转到目标代码，很明显就是对账号密码的判断，我们只要将第一个判断语句的等于改成不等于，空账号登陆。</p>
+<p><img src="http://t.cn/RVuoJ4G" alt></p>
+          
+      
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+      
+        <p class="article-more-link">
+          <a  href="/posts/9d7b1fcb.html#more">大航海 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Pwnable-kr-shellshock" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -819,84 +883,6 @@ Segmentation fault
       
         <p class="article-more-link">
           <a  href="/posts/ff6aab31.html#more">大航海 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Far-Manager插件编写2" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/posts/905112aa.html" class="article-date">
-      <time datetime="2016-01-09T18:01:33.000Z" itemprop="datePublished">2016-01-09</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/posts/905112aa.html">Far Manager插件编写2</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>在上一篇中，插件显示在插件菜单栏中，但是我们还没有实现该插件的功能。</p>
-<p>开始之前，我们先来科普一下，在Far Manager中调用插件的几种方法，除了从插件菜单中调用插件，Far Manager还提供了Alt+F1(左侧硬盘菜单)、Alt+F2(右侧硬盘菜单)、宏、lua宏、文件查找结果列表、命令行、编辑器、文件面板、对话框等等。可以说在几乎在任意位置都能调用插件。</p>
-<p>要插件实现功能，我们需要导出OpenW函数。当打开插件时会调用OpenW，OpenInfo记录了该插件被触发的信息。结构如下：</p>
-<pre><code class="cpp">struct OpenInfo
-{
-  size_t StructSize;  //结构大小
-  enum OPENFROM OpenFrom;  //触发方式
-  const GUID *Guid;  //如果是通过插件菜单打开的，则该guid是插件菜单guid，如果是宏则是宏的guid。
-  intptr_t Data; //取决于OpenFrom，不同触发方式，该字段表示的数据不同
-};
-</code></pre>
-<h3 id="Message"><a href="#Message" class="headerlink" title="Message"></a>Message</h3><p>在OpenW中我们可以根据OpenFrom打开插件方式的不同来实现不同的功能。这里就实现一个小小功能弹一个消息框。</p>
-          
-      
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Far-Manager/">Far Manager</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Far-Manager/">Far Manager</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a  href="/posts/905112aa.html#more">大航海 >></a>
         </p>
       
       <div class="clearfix"></div>

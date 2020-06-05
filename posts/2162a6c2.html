@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css">
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/x86asm.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <title>2019-07-31-逆向XX引擎-二-troj-db和hwl-db | ydc&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="hash计算方法‘troj.db’和’hwl.db’使用相同的hash算法计算,具体实现算法再libxsse_50这个函数。对应的hash分为两段,格式为’xxxxx,xxxxx’,匹配的时候是先匹配第一段然后接着匹配第二段 对于一些脚本类的样本，因为主要都是文本数据，只是简单的算了下crc32.        v11 = v20;     for ( j = 0; j &amp;lt; v11; ++j">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019-07-31-逆向XX引擎-二-troj-db和hwl-db">
+<meta property="og:url" content="http://shxi.me/posts/2162a6c2.html">
+<meta property="og:site_name" content="ydc&#39;s blog">
+<meta property="og:description" content="hash计算方法‘troj.db’和’hwl.db’使用相同的hash算法计算,具体实现算法再libxsse_50这个函数。对应的hash分为两段,格式为’xxxxx,xxxxx’,匹配的时候是先匹配第一段然后接着匹配第二段 对于一些脚本类的样本，因为主要都是文本数据，只是简单的算了下crc32.        v11 = v20;     for ( j = 0; j &amp;lt; v11; ++j">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://104.225.236.50/static/20190809/044384b0762a8603f7b1050faa284b2f6e5e340f.png">
+<meta property="og:updated_time" content="2020-04-20T11:41:34.110Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019-07-31-逆向XX引擎-二-troj-db和hwl-db">
+<meta name="twitter:description" content="hash计算方法‘troj.db’和’hwl.db’使用相同的hash算法计算,具体实现算法再libxsse_50这个函数。对应的hash分为两段,格式为’xxxxx,xxxxx’,匹配的时候是先匹配第一段然后接着匹配第二段 对于一些脚本类的样本，因为主要都是文本数据，只是简单的算了下crc32.        v11 = v20;     for ( j = 0; j &amp;lt; v11; ++j">
+<meta name="twitter:image" content="http://104.225.236.50/static/20190809/044384b0762a8603f7b1050faa284b2f6e5e340f.png">
+  
+    <link rel="alternative" href="/atom.xml" title="ydc&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head></html>
+<body>
+  <div id="container">
+
+ 
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Ken</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a> <a href="/tags/逆向笔记/" style="font-size: 10px;">逆向笔记</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://ydc1992.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">这人太懒了,没有添加任何信息</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Ken</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Ken</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-2019-07-31-逆向XX引擎-二-troj-db和hwl-db-1" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/2162a6c2.html" class="article-date">
+      <time datetime="2020-04-20T11:39:57.000Z" itemprop="datePublished">2020-04-20</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      2019-07-31-逆向XX引擎-二-troj-db和hwl-db
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="hash计算方法"><a href="#hash计算方法" class="headerlink" title="hash计算方法"></a>hash计算方法</h2><p>‘troj.db’和’hwl.db’使用相同的hash算法计算,具体实现算法再libxsse_50这个函数。对应的hash分为两段,<br>格式为’xxxxx,xxxxx’,匹配的时候是先匹配第一段然后接着匹配第二段<br><img src="http://104.225.236.50/static/20190809/044384b0762a8603f7b1050faa284b2f6e5e340f.png" style="display:block;margin:auto"></p>
+<p>对于一些脚本类的样本，因为主要都是文本数据，只是简单的算了下crc32.</p>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;">
+ <span style="color:#bd63c5;">
+
+   <span style="color:#00ffff">v11 </span><span style="color:#c0c0c0">= </span><span style="color:#00ffff">v20</span><span style="color:#c0c0c0">;
+    </span><span style="color:#ababab">for </span><span style="color:#c0c0c0">( </span><span style="color:#00ffff">j </span><span style="color:#c0c0c0">= </span><span style="color:#ababab">0</span><span style="color:#c0c0c0">; </span><span style="color:#00ffff">j &lt; v11</span><span style="color:#c0c0c0">; ++</span><span style="color:#00ffff">j </span><span style="color:#c0c0c0">)
+</span>     <span style="color:#c0c0c0">{                                                                                       </span></span>
+      <span style="color:#00ffff">v13 </span><span style="color:#c0c0c0">= </span><span style="color:#00ffff">v22</span><span style="color:#c0c0c0">[</span><span style="color:#00ffff">j</span><span style="color:#c0c0c0">];
+      </span><span style="color:#ababab">if </span><span style="color:#c0c0c0">( </span><span style="color:#00ffff">v13 </span><span style="color:#c0c0c0">!= </span><span style="color:#ababab">13 &amp;&amp; </span><span style="color:#00ffff">v13 </span><span style="color:#c0c0c0">!= </span><span style="color:#ababab">10 &amp;&amp; </span><span style="color:#00ffff">v13 </span><span style="color:#c0c0c0">!= </span><span style="color:#ababab">9 &amp;&amp; </span><span style="color:#00ffff">v13 </span><span style="color:#c0c0c0">!= </span><span style="color:#ababab">32 </span><span style="color:#c0c0c0">)
+      {
+        </span><span style="color:#00ffff">v14 </span><span style="color:#c0c0c0">= </span><span style="color:#00ffff">v22</span><span style="color:#c0c0c0">[</span><span style="color:#00ffff">j</span><span style="color:#c0c0c0">];
+        </span><span style="color:#ababab">if </span><span style="color:#c0c0c0">( (</span><span style="color:#ffd200">unsigned int</span><span style="color:#c0c0c0">)(</span><span style="color:#00ffff">v13 </span><span style="color:#c0c0c0">- </span><span style="color:#ababab">65</span><span style="color:#c0c0c0">) &lt;= </span><span style="color:#ababab">0x19 </span><span style="color:#c0c0c0">)
+          </span><span style="color:#00ffff">v14 </span><span style="color:#c0c0c0">= </span><span style="color:#00ffff">v13 </span><span style="color:#c0c0c0">+ </span><span style="color:#ababab">32</span><span style="color:#c0c0c0">;
+        </span><span style="color:#00ffff">v21 </span><span style="color:#c0c0c0">= </span><span style="color:#00ffff">v14</span><span style="color:#c0c0c0">;
+        </span><span style="color:#00ffff">i </span><span style="color:#c0c0c0">= </span><span style="color:#ffecbb">rhash_get_crc32</span><span style="color:#c0c0c0">((</span><span style="color:#ffd200">unsigned int</span><span style="color:#c0c0c0">)&amp;</span><span style="color:#00ffff">v21</span><span style="color:#c0c0c0">, </span><span style="color:#00ffff">i</span><span style="color:#c0c0c0">, </span><span style="color:#ababab">1</span><span style="color:#c0c0c0">);
+      </span> <span style="color:#c0c0c0">}
+</span>    <span style="background:#aaaaaa"></span><span style="background:#646464"> }                                                                                       </span>
+</pre>
+
+
+<h3 id="pe样本hash计算"><a href="#pe样本hash计算" class="headerlink" title="pe样本hash计算"></a>pe样本hash计算</h3><p>第一段hash计算如下，以文件大小来计算初始crc值，然后每隔0x400取一个字节算crc32</p>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;">
+ <span style="color:#bd63c5;">_QWORD</span>&nbsp;<span style="color:#c8c8c8;">cinit</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">size</span>&nbsp;<span style="color:#b4b4b4;">&gt;&gt;</span>&nbsp;<span style="color:#b5cea8;">12</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">rhash_get_crc32</span><span style="color:deeppink;">(</span><span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#569cd6;">unsigned</span>&nbsp;<span style="color:#569cd6;">char</span><span style="color:#b4b4b4;">*</span><span style="color:yellowgreen;">)</span><span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#c8c8c8;">cinit</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">8</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span> <br>
+<span style="color:#569cd6;">for</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">rhash_get_crc32</span><span style="color:darkviolet;">(</span><span style="color:#c8c8c8;">i</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#569cd6;">unsigned</span>&nbsp;<span style="color:#569cd6;">char</span><span style="color:#b4b4b4;">*</span><span style="color:#ff9900;">)</span><span style="color:#c8c8c8;">buf</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">readed_bytes</span><span style="color:darkviolet;">)</span><span style="color:#b4b4b4;">;</span>&nbsp;<span style="color:#c8c8c8;">addr</span>&nbsp;<span style="color:#b4b4b4;">&lt;</span>&nbsp;<span style="color:#c8c8c8;">totalCalcSize</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">rhash_get_crc32</span><span style="color:darkviolet;">(</span><span style="color:#c8c8c8;">i</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#569cd6;">unsigned</span>&nbsp;<span style="color:#569cd6;">char</span><span style="color:#b4b4b4;">*</span><span style="color:#ff9900;">)</span><span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#c8c8c8;">ch</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:darkviolet;">)</span><span style="color:yellowgreen;">)</span>
+<span style="color:yellowgreen;">{</span>
+    <span style="color:#569cd6;">if</span>&nbsp;<span style="color:darkviolet;">(</span><span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">read</span><span style="color:#ff9900;">(</span><span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">addr</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">ch</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:#ff9900;">)</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:darkviolet;">)</span>
+        <span style="color:#569cd6;">break</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#c8c8c8;">addr</span>&nbsp;<span style="color:#b4b4b4;">+=</span>&nbsp;<span style="color:#b5cea8;">0x400</span><span style="color:#b4b4b4;">;</span>
+<span style="color:yellowgreen;">}</span></pre>
+
+<p>第二段的计算就有点复杂了。<br>主要就是先把pe中一些结构清0，然后计算hash。</p>
+<h4 id="checksum和timestamp"><a href="#checksum和timestamp" class="headerlink" title="checksum和timestamp"></a>checksum和timestamp</h4><pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">magic</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">peHead</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">magic</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">lfanew</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">dosHeader</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">lfanew</span><span style="color:#b4b4b4;">;</span>
+<span style="font-style:italic;color:#608b4e;">//将pe种checksum和timestamp字段填0</span>
+<span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">write</span><span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">lfanew</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">0x58</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">zero_val</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">4</span><span style="color:#ff9900;">)</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">write</span><span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">lfanew</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">0x8</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">zero_val</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">4</span><span style="color:#ff9900;">)</span><span style="color:#b4b4b4;">;</span></pre>
+
+<h4 id="导出表的size字段"><a href="#导出表的size字段" class="headerlink" title="导出表的size字段"></a>导出表的size字段</h4><pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">pe_va</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">magic</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#b5cea8;">0x20B</span>&nbsp;<span style="color:#b4b4b4;">?</span>&nbsp;<span style="color:#b5cea8;">0x108</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#b5cea8;">0x118</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#4ec9b0;">petab</span><span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:#c8c8c8;">tab</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#4ec9b0;">petab</span><span style="color:#b4b4b4;">*</span><span style="color:#ff9900;">)(</span><span style="color:deeppink;">(</span><span style="color:#569cd6;">char</span><span style="color:#b4b4b4;">*</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">ref</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#c8c8c8;">pe_va</span><span style="color:#ff9900;">)</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">fva</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#569cd6;">if</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">tab</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">rva</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>&nbsp;<span style="color:#c8c8c8;">tab</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">size</span><span style="color:#ff9900;">)</span>
+<span style="color:#ff9900;">{</span>
+    <span style="font-style:italic;color:#608b4e;">//导出表的的size清空</span>
+    <span style="color:#c8c8c8;">fva</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">vtbl</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">va2fva</span><span style="color:deeppink;">(</span><span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">tab</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">rva</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">write</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">fva</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">4</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">zero_val</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">4</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#ff9900;">}</span></pre>
+
+
+<h4 id="security-数据目录清空"><a href="#security-数据目录清空" class="headerlink" title="security 数据目录清空"></a>security 数据目录清空</h4><pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="font-style:italic;color:#608b4e;">//security&nbsp;数据目录清空</span>
+<span style="color:#c8c8c8;">pe_va</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">magic</span>&nbsp;<span style="color:#b4b4b4;">==</span>&nbsp;<span style="color:#b5cea8;">0x20b</span>&nbsp;<span style="color:#b4b4b4;">?</span>&nbsp;<span style="color:#c8c8c8;">lfanew</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">0xA8</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#c8c8c8;">lfanew</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">0x98</span><span style="color:#b4b4b4;">;</span>
+
+<span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">write</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">pe_va</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">zero_val</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x8</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span></pre>
+
+<h4 id="debug-数据目录清0"><a href="#debug-数据目录清0" class="headerlink" title="debug 数据目录清0"></a>debug 数据目录清0</h4><pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="font-style:italic;color:#608b4e;">//debug&nbsp;dir</span>
+                <span style="color:#c8c8c8;">pe_va</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">magic</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#b5cea8;">0x20B</span>&nbsp;<span style="color:#b4b4b4;">?</span>&nbsp;<span style="color:#b5cea8;">0x138</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#b5cea8;">0x148</span><span style="color:#b4b4b4;">;</span>
+                <span style="color:#c8c8c8;">tab</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#4ec9b0;">petab</span><span style="color:#b4b4b4;">*</span><span style="color:deeppink;">)(</span><span style="color:yellowgreen;">(</span><span style="color:#569cd6;">char</span><span style="color:#b4b4b4;">*</span><span style="color:yellowgreen;">)</span><span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">ref</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#c8c8c8;">pe_va</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+                <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">tab</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">rva</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>&nbsp;<span style="color:#c8c8c8;">tab</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">size</span><span style="color:deeppink;">)</span>
+                <span style="color:deeppink;">{</span>
+                    <span style="color:#569cd6;">if</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">tab</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">size</span>&nbsp;<span style="color:#b4b4b4;">&gt;=</span>&nbsp;<span style="color:#b5cea8;">0x1c</span><span style="color:yellowgreen;">)</span>
+                    <span style="color:yellowgreen;">{</span>
+                        <span style="color:#c8c8c8;">fva</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">vtbl</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">va2fva</span><span style="color:darkviolet;">(</span><span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">tab</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">rva</span><span style="color:darkviolet;">)</span><span style="color:#b4b4b4;">;</span>
+                        <span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">dbgdir_size</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">dbgdir</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">size</span><span style="color:#b4b4b4;">;</span>
+                        <span style="color:#569cd6;">do</span>
+                        <span style="color:darkviolet;">{</span>
+                            <span style="color:#569cd6;">if</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">read</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">fva</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#569cd6;">char</span><span style="color:#b4b4b4;">*</span><span style="color:yellowgreen;">)</span><span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#c8c8c8;">dbgdir</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1C</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#b5cea8;">0x1c</span><span style="color:#ff9900;">)</span>
+                                <span style="color:#569cd6;">break</span><span style="color:#b4b4b4;">;</span>
+
+                            <span style="color:#569cd6;">if</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">dbgdir</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">file_offset</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>&nbsp;<span style="color:#c8c8c8;">dbgdir</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">size</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>
+                                <span style="color:#c8c8c8;">dbgdir</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">file_offset</span>&nbsp;<span style="color:#b4b4b4;">&lt;</span>&nbsp;<span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">fileSize</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">QuadPart</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>
+                                <span style="color:#c8c8c8;">dbgdir</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">file_offset</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#c8c8c8;">dbgdir</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">size</span>&nbsp;<span style="color:#b4b4b4;">&lt;=</span>&nbsp;<span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">fileSize</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">QuadPart</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>
+                                <span style="color:#c8c8c8;">dbgdir</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">size</span><span style="color:#b4b4b4;">&gt;</span><span style="color:#b5cea8;">0</span><span style="color:#ff9900;">)</span>
+                            <span style="color:#ff9900;">{</span>
+                                <span style="font-style:italic;color:#608b4e;">//往dbgdir写入0</span>
+                                <span style="color:#569cd6;">char</span>&nbsp;<span style="color:#c8c8c8;">ch</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>
+                                <span style="color:#569cd6;">for</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>&nbsp;<span style="color:#c8c8c8;">i</span><span style="color:#b4b4b4;">++;</span>&nbsp;<span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">&lt;</span>&nbsp;<span style="color:#c8c8c8;">dbgdir</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">size</span><span style="color:deeppink;">)</span>
+                                <span style="color:deeppink;">{</span>
+                                    <span style="color:#569cd6;">if</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">write</span><span style="color:darkviolet;">(</span><span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#c8c8c8;">dbgdir</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">file_offset</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">ch</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:yellowgreen;">)</span>
+                                        <span style="color:#569cd6;">break</span><span style="color:#b4b4b4;">;</span>
+                                <span style="color:deeppink;">}</span>
+                            <span style="color:#ff9900;">}</span>
+                            <span style="color:#c8c8c8;">dbgdir_size</span>&nbsp;<span style="color:#b4b4b4;">-=</span>&nbsp;<span style="color:#b5cea8;">0x1c</span><span style="color:#b4b4b4;">;</span>
+                            <span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">write</span><span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">fva</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">4</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">zero_val</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x8</span><span style="color:#ff9900;">)</span><span style="color:#b4b4b4;">;</span>
+                            <span style="color:#c8c8c8;">fva</span>&nbsp;<span style="color:#b4b4b4;">+=</span>&nbsp;<span style="color:#b5cea8;">0x1c</span><span style="color:#b4b4b4;">;</span>
+                        <span style="color:darkviolet;">}</span>&nbsp;<span style="color:#569cd6;">while</span>&nbsp;<span style="color:darkviolet;">(</span><span style="color:#c8c8c8;">dbgdir_size</span>&nbsp;<span style="color:#b4b4b4;">&lt;</span>&nbsp;<span style="color:#b5cea8;">0x1C</span><span style="color:darkviolet;">)</span><span style="color:#b4b4b4;">;</span>
+                    <span style="color:yellowgreen;">}</span>
+                <span style="color:deeppink;">}</span></pre>
+
+<p>接着计算整个文件的Crc32,下面这个函数是libxsse.dll里封装的一个计算crc32的函数</p>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#569cd6;">void</span>&nbsp;&nbsp;&nbsp;<span style="color:#c8c8c8;">calc_file_sha1_with_fva</span><span style="color:#ff9900;">(</span><span style="color:#4ec9b0;">libxsse_stream</span><span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:#7f7f7f;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#4ec9b0;">libxsse_pe</span><span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#569cd6;">int</span>&nbsp;<span style="color:#7f7f7f;">offset</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#569cd6;">int</span>&nbsp;<span style="color:#7f7f7f;">size</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#4ec9b0;">sha1_ctx</span><span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:#7f7f7f;">ctx</span><span style="color:#ff9900;">)</span>
+<span style="color:#ff9900;">{</span>
+    <span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">left</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#7f7f7f;">size</span>&nbsp;<span style="color:#b4b4b4;">&lt;=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:deeppink;">)</span>
+        <span style="color:#569cd6;">return</span><span style="color:#b4b4b4;">;</span>
+
+    <span style="color:#4ec9b0;">byte</span><span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:#c8c8c8;">msg</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">buffer</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#bd63c5;">_QWORD</span>&nbsp;<span style="color:#c8c8c8;">readSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#569cd6;">do</span>
+    <span style="color:deeppink;">{</span>
+        <span style="font-style:italic;color:#608b4e;">//读取pe数据用作msg</span>
+        <span style="color:#c8c8c8;">readSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">read</span><span style="color:yellowgreen;">(</span><span style="color:#7f7f7f;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#7f7f7f;">offset</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">msg</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#bd63c5;">min</span><span style="color:darkviolet;">(</span><span style="color:#b5cea8;">0x10000</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#7f7f7f;">size</span><span style="color:darkviolet;">)</span><span style="color:yellowgreen;">)</span><span style="color:#b4b4b4;">;</span>
+        <span style="color:#569cd6;">if</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">readSize</span>&nbsp;<span style="color:#b4b4b4;">&gt;</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:yellowgreen;">)</span>
+        <span style="color:yellowgreen;">{</span>
+            <span style="color:#c8c8c8;">left</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">size</span>&nbsp;<span style="color:#b4b4b4;">-</span>&nbsp;<span style="color:#c8c8c8;">readSize</span><span style="color:#b4b4b4;">;</span>
+            <span style="color:#7f7f7f;">offset</span>&nbsp;<span style="color:#b4b4b4;">+=</span>&nbsp;<span style="color:#c8c8c8;">readSize</span><span style="color:#b4b4b4;">;</span>
+            <span style="color:#c8c8c8;">rhash_sha1_update</span><span style="color:darkviolet;">(</span><span style="color:#7f7f7f;">ctx</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">msg</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">readSize</span><span style="color:darkviolet;">)</span><span style="color:#b4b4b4;">;</span>
+            <span style="color:#7f7f7f;">size</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">left</span><span style="color:#b4b4b4;">;</span>
+        <span style="color:yellowgreen;">}</span>
+    <span style="color:deeppink;">}</span>&nbsp;<span style="color:#569cd6;">while</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">left</span>&nbsp;<span style="color:#b4b4b4;">&gt;</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+
+    <span style="color:#569cd6;">return</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#ff9900;">}</span>
+
+</pre>
+
+<h4 id="计算NT头部"><a href="#计算NT头部" class="headerlink" title="计算NT头部"></a>计算NT头部</h4><pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#569cd6;">int</span>    <span style="color:#c8c8c8;">va</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">peHead</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">hdrsize</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">0x18</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">dosHeader</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">lfanew</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#569cd6;">if</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">va</span>&nbsp;<span style="color:#b4b4b4;">&gt;</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#ff9900;">)</span>
+<span style="color:#ff9900;">{</span>
+    <span style="color:#c8c8c8;">bufSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">va</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#c8c8c8;">calc_file_sha1_with_fva</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">offset</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">bufSize</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">ctx</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#ff9900;">}</span></pre>
+
+<h4 id="计算区段"><a href="#计算区段" class="headerlink" title="计算区段"></a>计算区段</h4><pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="font-style:italic;color:#608b4e;">//计算节表的hash</span>
+<span style="color:#4ec9b0;">pesection</span>&nbsp;<span style="color:#c8c8c8;">sec</span><span style="color:#b4b4b4;">;</span>
+
+<span style="color:#569cd6;">for</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>&nbsp;<span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">&lt;</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">peHead</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">nobjs</span><span style="color:#b4b4b4;">;</span>&nbsp;<span style="color:#b4b4b4;">++</span><span style="color:#c8c8c8;">i</span><span style="color:#ff9900;">)</span>
+<span style="color:#ff9900;">{</span>
+    <span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">read_sec_size</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">read</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">va</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">sec</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x28</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">read_sec_size</span>&nbsp;<span style="color:#b4b4b4;">&gt;</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:deeppink;">)</span>
+    <span style="color:deeppink;">{</span>
+        <span style="color:#c8c8c8;">rhash_sha1_update</span><span style="color:yellowgreen;">(</span><span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">ctx</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:darkviolet;">(</span><span style="color:#569cd6;">unsigned</span>&nbsp;<span style="color:#569cd6;">char</span><span style="color:#b4b4b4;">*</span><span style="color:darkviolet;">)</span><span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#c8c8c8;">sec</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x28</span><span style="color:yellowgreen;">)</span><span style="color:#b4b4b4;">;</span>
+        <span style="color:#c8c8c8;">bufSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#bd63c5;">min</span><span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">sec</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">s_psize</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x10000</span><span style="color:yellowgreen;">)</span><span style="color:#b4b4b4;">;</span>
+        <span style="color:#c8c8c8;">offset</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">sec</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">s_scnptr</span><span style="color:#b4b4b4;">;</span>
+        <span style="color:#c8c8c8;">calc_file_sha1_with_fva</span><span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#7f7f7f;">pe</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">offset</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">bufSize</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">ctx</span><span style="color:yellowgreen;">)</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:deeppink;">}</span>
+    <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">read_sec_size</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#b5cea8;">0x28</span><span style="color:deeppink;">)</span>
+        <span style="color:#569cd6;">break</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#c8c8c8;">va</span>&nbsp;<span style="color:#b4b4b4;">+=</span>&nbsp;<span style="color:#b5cea8;">0x28</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#ff9900;">}</span></pre>
+      
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/posts/2162a6c2.html">2019-07-31-逆向XX引擎-二-troj-db和hwl-db</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
+        <p><span>发布时间:</span>2020年04月20日 - 11时39分</p>
+        <p><span>最后更新:</span>2020年04月20日 - 11时41分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/posts/2162a6c2.html" title="2019-07-31-逆向XX引擎-二-troj-db和hwl-db">http://shxi.me/posts/2162a6c2.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/2162a6c2.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+    <a href="/posts/0.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/posts/78e44487.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">hook usercall修饰的函数</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#hash计算方法"><span class="toc-number">1.</span> <span class="toc-text">hash计算方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pe样本hash计算"><span class="toc-number">1.1.</span> <span class="toc-text">pe样本hash计算</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#checksum和timestamp"><span class="toc-number">1.1.1.</span> <span class="toc-text">checksum和timestamp</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#导出表的size字段"><span class="toc-number">1.1.2.</span> <span class="toc-text">导出表的size字段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#security-数据目录清空"><span class="toc-number">1.1.3.</span> <span class="toc-text">security 数据目录清空</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#debug-数据目录清0"><span class="toc-number">1.1.4.</span> <span class="toc-text">debug 数据目录清0</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#计算NT头部"><span class="toc-number">1.1.5.</span> <span class="toc-text">计算NT头部</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#计算区段"><span class="toc-number">1.1.6.</span> <span class="toc-text">计算区段</span></a></li></ol></li></ol></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'ydc1992',
+      repo: 'ydc1992.github.io',
+      oauth: {
+        client_id: '',
+        client_secret: '',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/posts/0.html" title="上一篇: ">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/posts/78e44487.html" title="下一篇: hook usercall修饰的函数">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/posts/0.html">逆向XX引擎系列-二-通用脱壳</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2162a6c2.html">2019-07-31-逆向XX引擎-二-troj-db和hwl-db</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/78e44487.html">hook usercall修饰的函数</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/efe148e3.html">mbr结构和代码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/61225802.html">app.any.run网站样本爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f88a50e1.html">逆向XX引擎系列(一) 构造系统dll文件</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/1736976b.html">debug IDApython script</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9222f001.html">病毒样本快到碗里来，一个样本下载爬虫的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/27be2f79.html">VB Crypt Payload</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/62077d14.html">VirusTotal扫描器 python版</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6155f940.html">pycurl 分块下载</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/c240cede.html">Pwnable.kr leg</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9e24c54e.html">安卓游戏资源解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/b751c08a.html">Reversing.kr AutoHotkey1</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/ff6aab31.html">reversing.kr Ransomware</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/905112aa.html">Far Manager插件编写2</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/88524310.html">pwnable.kr bof</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/741ff96a.html">Pwnable.kr random</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/d8e13760.html">powershell hacker(三): 后门安装 </a></li><li class="post-list-item"><a class="post-list-link" href="/posts/564bd806.html">Pwnable.kr flag</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e2bbbc71.html">powershell hacker(一): Empirse</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/15b3d1e1.html">Pwnable.kr fd</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e6d76b89.html">Reversing.kr Direct3D FPS</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Ken
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+ 
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+  
+</body>
+</html>

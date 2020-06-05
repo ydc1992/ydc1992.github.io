@@ -12,19 +12,19 @@
   
   <script>hljs.initHighlightingOnLoad();</script>
 
-  <title>hook usercall修饰的函数 | ydc&#39;s blog</title>
+  <title>将usercall转换成 __cdecl函数调用 | ydc&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="usercall不是标准的调用约定，用IDA反编译时经常能看到 int __usercall sub_10017FF0@&amp;lt;eax&amp;gt;(int a1@&amp;lt;eax&amp;gt;, int a2@&amp;lt;ecx&amp;gt;, _BYTE *a3, _BYTE *a4) 这样的函数声明，这个是IDA自己定义的，这种使用寄存器传参可能是编译时被编译器优化的结果。 如上例子则表示参数a1使用eax传递，参">
+  <meta name="description" content="usercall不是标准的调用约定，但是用IDA反编译时经常能看到,应该是IDA特有的 int __usercall sub_10017FF0@&amp;lt;eax&amp;gt;(int a1@&amp;lt;eax&amp;gt;, int a2@&amp;lt;ecx&amp;gt;, _BYTE *a3, _BYTE *a4) 这样的函数声明，这个是IDA自己定义的，这种使用寄存器传参可能是编译时被编译器优化的结果。 如上例子则表示参">
 <meta property="og:type" content="article">
-<meta property="og:title" content="hook usercall修饰的函数">
+<meta property="og:title" content="将usercall转换成 __cdecl函数调用">
 <meta property="og:url" content="http://shxi.me/posts/78e44487.html">
 <meta property="og:site_name" content="ydc&#39;s blog">
-<meta property="og:description" content="usercall不是标准的调用约定，用IDA反编译时经常能看到 int __usercall sub_10017FF0@&amp;lt;eax&amp;gt;(int a1@&amp;lt;eax&amp;gt;, int a2@&amp;lt;ecx&amp;gt;, _BYTE *a3, _BYTE *a4) 这样的函数声明，这个是IDA自己定义的，这种使用寄存器传参可能是编译时被编译器优化的结果。 如上例子则表示参数a1使用eax传递，参">
+<meta property="og:description" content="usercall不是标准的调用约定，但是用IDA反编译时经常能看到,应该是IDA特有的 int __usercall sub_10017FF0@&amp;lt;eax&amp;gt;(int a1@&amp;lt;eax&amp;gt;, int a2@&amp;lt;ecx&amp;gt;, _BYTE *a3, _BYTE *a4) 这样的函数声明，这个是IDA自己定义的，这种使用寄存器传参可能是编译时被编译器优化的结果。 如上例子则表示参">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-04-13T04:29:52.006Z">
+<meta property="og:updated_time" content="2020-06-05T06:48:07.684Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="hook usercall修饰的函数">
-<meta name="twitter:description" content="usercall不是标准的调用约定，用IDA反编译时经常能看到 int __usercall sub_10017FF0@&amp;lt;eax&amp;gt;(int a1@&amp;lt;eax&amp;gt;, int a2@&amp;lt;ecx&amp;gt;, _BYTE *a3, _BYTE *a4) 这样的函数声明，这个是IDA自己定义的，这种使用寄存器传参可能是编译时被编译器优化的结果。 如上例子则表示参数a1使用eax传递，参">
+<meta name="twitter:title" content="将usercall转换成 __cdecl函数调用">
+<meta name="twitter:description" content="usercall不是标准的调用约定，但是用IDA反编译时经常能看到,应该是IDA特有的 int __usercall sub_10017FF0@&amp;lt;eax&amp;gt;(int a1@&amp;lt;eax&amp;gt;, int a2@&amp;lt;ecx&amp;gt;, _BYTE *a3, _BYTE *a4) 这样的函数声明，这个是IDA自己定义的，这种使用寄存器传参可能是编译时被编译器优化的结果。 如上例子则表示参">
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s blog" type="application/atom+xml">
   
@@ -221,7 +221,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      hook usercall修饰的函数
+      将usercall转换成 __cdecl函数调用
     </h1>
   
 
@@ -238,7 +238,7 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>usercall不是标准的调用约定，用IDA反编译时经常能看到</p>
+        <p>usercall不是标准的调用约定，但是用IDA反编译时经常能看到,应该是IDA特有的</p>
 <pre><code class="c">int __usercall sub_10017FF0@&lt;eax&gt;(int a1@&lt;eax&gt;, int a2@&lt;ecx&gt;, _BYTE *a3, _BYTE *a4)</code></pre>
 <p>这样的函数声明，这个是IDA自己定义的，这种使用寄存器传参可能是编译时被编译器优化的结果。</p>
 <p>如上例子则表示参数a1使用eax传递，参数a2使用ecx传递的。a2和a4是压栈</p>
@@ -246,9 +246,9 @@
 <pre><code>//
 int __cdecl sub_10017FF0 (int a1 , int a2, _BYTE *a3, _BYTE *a4)
 {
-//......
+//......具体实现代码
 }
-
+//中转stub
 static void __declspec(naked) stub_sub_10017FF0()
 {
         __asm
@@ -278,12 +278,12 @@ static void __declspec(naked) stub_sub_10017FF0()
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/posts/78e44487.html">hook usercall修饰的函数</a></p>
+        <p><span>本文标题:</span><a href="/posts/78e44487.html">将usercall转换成 __cdecl函数调用</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
         <p><span>发布时间:</span>2020年04月12日 - 20时07分</p>
-        <p><span>最后更新:</span>2020年04月13日 - 04时29分</p>
+        <p><span>最后更新:</span>2020年06月05日 - 06时48分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/posts/78e44487.html" title="hook usercall修饰的函数">http://shxi.me/posts/78e44487.html</a>
+            <span>原始链接:</span><a class="post-url" href="/posts/78e44487.html" title="将usercall转换成 __cdecl函数调用">http://shxi.me/posts/78e44487.html</a>
             <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/78e44487.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
@@ -373,7 +373,7 @@ static void __declspec(naked) stub_sub_10017FF0()
             </a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/posts/78e44487.html">hook usercall修饰的函数</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/efe148e3.html">mbr结构和代码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/61225802.html">app.any.run网站样本爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f88a50e1.html">逆向XX引擎系列(一) 构造系统dll文件</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/1736976b.html">debug IDApython script</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9222f001.html">病毒样本快到碗里来，一个样本下载爬虫的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/27be2f79.html">VB Crypt Payload</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/62077d14.html">VirusTotal扫描器 python版</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6155f940.html">pycurl 分块下载</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/c240cede.html">Pwnable.kr leg</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9e24c54e.html">安卓游戏资源解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/b751c08a.html">Reversing.kr AutoHotkey1</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/ff6aab31.html">reversing.kr Ransomware</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/905112aa.html">Far Manager插件编写2</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/88524310.html">pwnable.kr bof</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/741ff96a.html">Pwnable.kr random</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/d8e13760.html">powershell hacker(三): 后门安装 </a></li><li class="post-list-item"><a class="post-list-link" href="/posts/564bd806.html">Pwnable.kr flag</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e2bbbc71.html">powershell hacker(一): Empirse</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/15b3d1e1.html">Pwnable.kr fd</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e6d76b89.html">Reversing.kr Direct3D FPS</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/posts/78e44487.html">将usercall转换成 __cdecl函数调用</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/efe148e3.html">mbr结构和代码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/61225802.html">app.any.run网站样本爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/258b0a6d.html">逆向XX引擎:库文件解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f88a50e1.html">逆向XX引擎系列(一) 构造系统dll文件</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/1736976b.html">debug IDApython script</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9222f001.html">病毒样本快到碗里来，一个样本下载爬虫的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/27be2f79.html">VB Crypt Payload</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/62077d14.html">VirusTotal扫描器 python版</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6155f940.html">pycurl 分块下载</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/c240cede.html">Pwnable.kr leg</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9e24c54e.html">安卓游戏资源解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/b751c08a.html">Reversing.kr AutoHotkey1</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/ff6aab31.html">reversing.kr Ransomware</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/905112aa.html">Far Manager插件编写2</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/88524310.html">pwnable.kr bof</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/741ff96a.html">Pwnable.kr random</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/d8e13760.html">powershell hacker(三): 后门安装 </a></li><li class="post-list-item"><a class="post-list-link" href="/posts/564bd806.html">Pwnable.kr flag</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e2bbbc71.html">powershell hacker(一): Empirse</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/15b3d1e1.html">Pwnable.kr fd</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e6d76b89.html">Reversing.kr Direct3D FPS</a></li></ul>
     <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
     <script>
         $(".post-list").addClass("toc-article");

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai.min.css">
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/x86asm.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <title>逆向XX引擎:库文件解密 | ydc&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="火绒所有的库文件都使用同一种方法解密的，具体解密算法都是在libxsse_30中实现的.数据库头部数据都是通用的，结构如下:  struct&amp;nbsp;&amp;nbsp;&amp;nbsp; database_header {     _DWORD&amp;nbsp;DRAV;     _DWORD&amp;nbsp;SFHY;     _WORD&amp;nbsp;lowVersion;     _WORD&amp;nbsp;hiVersi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向XX引擎:库文件解密">
+<meta property="og:url" content="http://shxi.me/posts/258b0a6d.html">
+<meta property="og:site_name" content="ydc&#39;s blog">
+<meta property="og:description" content="火绒所有的库文件都使用同一种方法解密的，具体解密算法都是在libxsse_30中实现的.数据库头部数据都是通用的，结构如下:  struct&amp;nbsp;&amp;nbsp;&amp;nbsp; database_header {     _DWORD&amp;nbsp;DRAV;     _DWORD&amp;nbsp;SFHY;     _WORD&amp;nbsp;lowVersion;     _WORD&amp;nbsp;hiVersi">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/24/YzpL5R.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/24/Yz9SKO.png">
+<meta property="og:updated_time" content="2020-05-24T02:11:23.367Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="逆向XX引擎:库文件解密">
+<meta name="twitter:description" content="火绒所有的库文件都使用同一种方法解密的，具体解密算法都是在libxsse_30中实现的.数据库头部数据都是通用的，结构如下:  struct&amp;nbsp;&amp;nbsp;&amp;nbsp; database_header {     _DWORD&amp;nbsp;DRAV;     _DWORD&amp;nbsp;SFHY;     _WORD&amp;nbsp;lowVersion;     _WORD&amp;nbsp;hiVersi">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/05/24/YzpL5R.png">
+  
+    <link rel="alternative" href="/atom.xml" title="ydc&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head></html>
+<body>
+  <div id="container">
+
+ 
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.jpg" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="Hi Mate">Ken</a></h1>
+        </hgroup>
+
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">博客首页</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Far-Manager/" style="font-size: 10px;">Far Manager</a> <a href="/tags/Pwnable/" style="font-size: 20px;">Pwnable</a> <a href="/tags/Reversing/" style="font-size: 16.67px;">Reversing</a> <a href="/tags/hacker/" style="font-size: 13.33px;">hacker</a> <a href="/tags/powershell/" style="font-size: 13.33px;">powershell</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/爬虫/" style="font-size: 10px;">爬虫</a> <a href="/tags/病毒分析/" style="font-size: 10px;">病毒分析</a> <a href="/tags/逆向笔记/" style="font-size: 10px;">逆向笔记</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://ydc1992.github.io/">name</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">这人太懒了,没有添加任何信息</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">Ken</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/head.jpg" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">Ken</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">博客首页</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/ydc1992" title="github">github</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-逆向XX引擎-库文件解密" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/posts/258b0a6d.html" class="article-date">
+      <time datetime="2019-05-24T01:55:27.000Z" itemprop="datePublished">2019-05-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      逆向XX引擎:库文件解密
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>火绒所有的库文件都使用同一种方法解密的，具体解密算法都是在libxsse_30中实现的.<br>数据库头部数据都是通用的，结构如下:</p>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;">
+<span style="color:#569cd6;">struct</span>&nbsp;&nbsp;&nbsp;
+<span style="color:#4ec9b0;">database_header</span>
+<span style="color:#ff9900;">{</span>
+    <span style="color:#bd63c5;">_DWORD</span>&nbsp;<span style="color:#dadada;">DRAV</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#bd63c5;">_DWORD</span>&nbsp;<span style="color:#dadada;">SFHY</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#bd63c5;">_WORD</span>&nbsp;<span style="color:#dadada;">lowVersion</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#bd63c5;">_WORD</span>&nbsp;<span style="color:#dadada;">hiVersion</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#bd63c5;">_QWORD</span>&nbsp;<span style="color:#dadada;">timeStamp</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#bd63c5;">_DWORD</span>&nbsp;<span style="color:#dadada;">db_attr</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#bd63c5;">_DWORD</span>&nbsp;<span style="color:#dadada;">recordCount</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#bd63c5;">_DWORD</span>&nbsp;<span style="color:#dadada;">propSize</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#bd63c5;">_DWORD</span>&nbsp;<span style="color:#dadada;">origin_size</span><span style="color:#b4b4b4;">;</span>&nbsp;<span style="font-style:italic;color:#608b4e;">//未加密前的数据大小</span>
+    <span style="color:#bd63c5;">_DWORD</span>&nbsp;<span style="color:#dadada;">compress_size</span><span style="color:#b4b4b4;">;</span><span style="font-style:italic;color:#608b4e;">//zlib压缩数据的大小</span>
+    <span style="color:#bd63c5;">_DWORD</span>&nbsp;<span style="color:#dadada;">key2</span><span style="color:deeppink;">[</span><span style="color:#b5cea8;">32</span><span style="color:deeppink;">]</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#569cd6;">char</span>&nbsp;<span style="color:#dadada;">dbName</span><span style="color:deeppink;">[</span><span style="color:#b5cea8;">8</span><span style="color:deeppink;">]</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#bd63c5;">_DWORD</span>&nbsp;<span style="color:#dadada;">end</span><span style="color:deeppink;">[</span><span style="color:#b5cea8;">4</span><span style="color:deeppink;">]</span><span style="color:#b4b4b4;">;</span><span style="font-style:italic;color:#608b4e;">//0结尾</span>
+<span style="color:#ff9900;">}</span><span style="color:#b4b4b4;">;</span>
+</pre>
+
+
+<p>pset.db的如图<br><img src="https://s1.ax1x.com/2020/05/24/YzpL5R.png" alt="YzpL5R.png"></p>
+<a id="more"></a>
+
+<p>dbName是数据库的类型,找了几个库看了下，发现有如下几种</p>
+<pre><code>DB:RAW    解密后就是原始数据
+DB:HWL和DB:TROJ 是hash类的特征，格式比较简单
+DB:PSET和DB:PROP 特征库,解密后数据是按照一定格式组织的</code></pre><p>读取头部0xc0个字节。</p>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#4ec9b0;">database_header</span><span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:#c8c8c8;">dh</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">db</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">readytes</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">pread</span><span style="color:deeppink;">(</span><span style="color:#7f7f7f;">stream</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">dh</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC0</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#b4b4b4;">!</span><span style="color:#c8c8c8;">readytes</span><span style="color:deeppink;">)</span>
+    <span style="color:#569cd6;">return</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">readytes</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#b5cea8;">0xc0</span><span style="color:deeppink;">)</span>
+    <span style="color:#569cd6;">return</span>&nbsp;<span style="color:#b4b4b4;">-</span><span style="color:#b5cea8;">5</span><span style="color:#b4b4b4;">;</span></pre>
+
+
+<p> 首先判断是不是火绒的病毒库，通过文件magic<br> <pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="font-style:italic;color:#608b4e;">//判断db文件的magic</span><br><span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">dh</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">DRAV</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#d69d85;">&#39;DRAV&#39;</span>&nbsp;<span style="color:#b4b4b4;">||</span>&nbsp;<span style="color:#c8c8c8;">dh</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">SFHY</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#d69d85;">&#39;SFHY&#39;</span>&nbsp;<span style="color:#b4b4b4;">||</span>&nbsp;<span style="color:#7f7f7f;">a3</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>&nbsp;<span style="color:#b4b4b4;">*</span><span style="color:yellowgreen;">(</span><span style="color:#bd63c5;">_WORD</span><span style="color:#b4b4b4;">*</span><span style="color:yellowgreen;">)(</span><span style="color:#7f7f7f;">a3</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">2</span><span style="color:yellowgreen;">)</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#bd63c5;">HIWORD</span><span style="color:yellowgreen;">(</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">db</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">lowVersion</span><span style="color:yellowgreen;">)</span><span style="color:deeppink;">)</span><br>    <span style="color:#569cd6;">return</span>&nbsp;<span style="color:#b4b4b4;">-</span><span style="color:#b5cea8;">9</span><span style="color:#b4b4b4;">;</span><br></pre></p>
+<p>简单的异或生成另一个key。然后生成的key再通过gen_new_xor_key函数算法生成另一个key。这个函数比较复杂就不说了。</p>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#569cd6;">unsigned</span>&nbsp;<span style="color:#569cd6;">char</span>&nbsp;<span style="color:#c8c8c8;">g_xor_key</span><span style="color:deeppink;">[</span><span style="color:#b5cea8;">260</span><span style="color:deeppink;">]</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:deeppink;">{</span>
+    <span style="color:#b5cea8;">0x42</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xE6</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x70</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x7B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x08</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x64</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x27</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x04</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xFD</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x7C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC2</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x73</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x6C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x8A</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x8F</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0x0C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x36</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1E</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x3C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x91</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x10</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x28</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x28</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x8C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xD1</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xD7</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x4D</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x5D</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x93</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xEB</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x0D</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0xC2</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x16</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xDA</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xBC</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x5C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xA8</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1A</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xD9</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x45</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xD4</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xE9</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x03</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x47</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x85</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x77</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x35</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0x6E</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x92</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xF5</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x24</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x6E</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x4D</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xFA</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x9A</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x12</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC8</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x3B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x91</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x35</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xFA</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x21</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x41</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0x13</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xF5</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x26</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x89</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xF5</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC3</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x03</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x93</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC6</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x81</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1D</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xA0</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xF4</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xA1</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x48</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1A</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0x77</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC6</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xD7</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xD8</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xE4</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xA7</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x3C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x96</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x6E</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x73</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xA6</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xDD</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xD9</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xB5</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x6D</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x38</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0x4D</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x28</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xB9</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC9</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x63</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x6C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x9C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x54</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x74</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x00</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xAC</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC9</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x67</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xD2</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x8B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x14</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0xB5</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x26</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xBE</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1F</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x5A</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xB1</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xDE</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xFB</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xEB</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xE9</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x18</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xF3</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x7A</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xF3</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x0B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC8</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0x47</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x42</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x64</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC6</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC8</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x81</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x2B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x2A</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xB2</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC6</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xCB</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x5B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x6B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xF6</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x9C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x99</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0x4D</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x45</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x6C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xF8</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x04</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x85</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x30</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x2E</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xCC</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xFA</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xE9</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1F</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x85</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x3B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x2E</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x5C</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0x0A</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x7F</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x10</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x07</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xB8</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xAA</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xAF</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xB1</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xCB</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x07</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1E</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xEE</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xFA</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x4E</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xD9</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1D</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0xB5</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x45</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x98</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x2C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x04</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x8C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x6B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x6A</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xD8</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xCA</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x39</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xA4</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x8E</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x3C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xD9</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x97</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0xF1</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xDC</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x7C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x6A</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x65</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xF1</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x85</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1A</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xA3</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xBE</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xFB</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC3</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x67</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x24</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x88</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0x5D</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xCD</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x62</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x10</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x8D</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xB4</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xA1</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xDE</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xFC</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x62</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x91</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x87</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x3A</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x2B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x3E</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x33</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0x9B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x0C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xE3</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x61</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x03</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x49</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xCE</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x16</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xAB</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xFE</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x07</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xDF</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x9C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xBF</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x68</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x84</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0xC5</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x5C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xA1</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xAD</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x00</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x0D</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xE8</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x12</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x41</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xF2</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x21</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xDB</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xB6</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xA3</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x26</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x81</span><span style="color:#b4b4b4;">,</span>
+    <span style="color:#b5cea8;">0x47</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xDD</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xF4</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xA3</span>
+    <span style="color:deeppink;">}</span><span style="color:#b4b4b4;">;</span>
+
+    <span style="font-style:italic;color:#608b4e;">//异或计算key</span>
+    <span style="color:#569cd6;">char</span>&nbsp;<span style="color:#c8c8c8;">key1</span><span style="color:deeppink;">[</span><span style="color:#b5cea8;">260</span><span style="color:deeppink;">]</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:deeppink;">{}</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#c8c8c8;">memcpy</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">key1</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">g_xor_key</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#569cd6;">sizeof</span><span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">g_xor_key</span><span style="color:yellowgreen;">)</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#569cd6;">for</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>&nbsp;<span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">&lt;</span>&nbsp;<span style="color:#b5cea8;">0x101</span><span style="color:#b4b4b4;">;</span>&nbsp;<span style="color:#b4b4b4;">++</span><span style="color:#c8c8c8;">i</span><span style="color:deeppink;">)</span>
+        <span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#bd63c5;">_DWORD</span><span style="color:#b4b4b4;">*</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#c8c8c8;">key1</span><span style="color:deeppink;">[</span><span style="color:#c8c8c8;">i</span><span style="color:deeppink;">]</span>&nbsp;<span style="color:#b4b4b4;">^=</span>&nbsp;<span style="color:#b5cea8;">0xF00DBEEF</span>&nbsp;<span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">^</span>&nbsp;<span style="color:#b5cea8;">0xC0DEC0DE</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#569cd6;">unsigned</span>&nbsp;<span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">rt</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">gen_new_xor_key</span><span style="color:deeppink;">(</span><span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">key_size</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#c8c8c8;">xor_gen_key</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">db</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">key2</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x80</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">key1</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+
+</pre>
+
+
+<p>现在开始解密被加密的数据，使用最后生成的key</p>
+<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#569cd6;">void</span><span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:#c8c8c8;">origin_buffer</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">malloc</span><span style="color:deeppink;">(</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">db</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">origin_size</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#b4b4b4;">!</span><span style="color:#c8c8c8;">origin_buffer</span><span style="color:deeppink;">)</span>
+    <span style="color:#569cd6;">return</span>&nbsp;<span style="color:#b4b4b4;">-</span><span style="color:#b5cea8;">12</span><span style="color:#b4b4b4;">;</span>
+
+<span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">compress_size</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">db</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">compress_size</span><span style="color:#b4b4b4;">;</span>
+<span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">compress_size</span><span style="color:deeppink;">)</span>
+<span style="color:deeppink;">{</span>
+    <span style="font-style:italic;color:#608b4e;">//!压缩的数据先异或解密</span>
+    <span style="color:#569cd6;">char</span><span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:#c8c8c8;">compress_buf</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#569cd6;">char</span><span style="color:#b4b4b4;">*</span><span style="color:yellowgreen;">)</span><span style="color:#c8c8c8;">malloc</span><span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">compress_size</span><span style="color:yellowgreen;">)</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:#569cd6;">if</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#b4b4b4;">!</span><span style="color:#c8c8c8;">compress_buf</span><span style="color:yellowgreen;">)</span>
+        <span style="color:#569cd6;">return</span>&nbsp;<span style="color:#b4b4b4;">-</span><span style="color:#b5cea8;">1</span><span style="color:#b4b4b4;">;</span>
+    <span style="font-style:italic;color:#608b4e;">//读取压缩数据，&nbsp;在文件偏移0xc0</span>
+    <span style="color:#c8c8c8;">stream</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">pread</span><span style="color:yellowgreen;">(</span><span style="color:#7f7f7f;">a2</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">compress_buf</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">compress_size</span><span style="color:yellowgreen;">)</span><span style="color:#b4b4b4;">;</span>
+    <span style="font-style:italic;color:#608b4e;">//异或解密数据</span>
+    <span style="color:#569cd6;">if</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">db</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">db_attr</span>&nbsp;<span style="color:#b4b4b4;">&gt;=</span>&nbsp;<span style="color:#b5cea8;">0x80000000</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>&nbsp;<span style="color:#c8c8c8;">compress_size</span><span style="color:yellowgreen;">)</span>
+    <span style="color:yellowgreen;">{</span>
+        <span style="color:#569cd6;">for</span>&nbsp;<span style="color:darkviolet;">(</span><span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>&nbsp;<span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">&lt;</span>&nbsp;<span style="color:#c8c8c8;">compress_size</span><span style="color:#b4b4b4;">;</span>&nbsp;<span style="color:#c8c8c8;">i</span><span style="color:#b4b4b4;">++</span><span style="color:darkviolet;">)</span>
+        <span style="color:darkviolet;">{</span>
+            <span style="color:#c8c8c8;">compress_buf</span><span style="color:#ff9900;">[</span><span style="color:#c8c8c8;">i</span><span style="color:#ff9900;">]</span>&nbsp;<span style="color:#b4b4b4;">^=</span>&nbsp;<span style="color:#c8c8c8;">xor_gen_key</span><span style="color:#ff9900;">[</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#b5cea8;">7</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">0x14</span><span style="color:#ff9900;">]</span><span style="color:#b4b4b4;">;</span>
+        <span style="color:darkviolet;">}</span>
+    <span style="color:yellowgreen;">}</span>
+    <span style="font-style:italic;color:#608b4e;">//////////////////////////////////////////////////////////////////////////</span>
+    <span style="font-style:italic;color:#608b4e;">//计算hash是为了验证文件有没有被修改</span>
+    <span style="font-style:italic;color:#608b4e;">//rhash_sha1_update(&amp;ctx,&nbsp;(const&nbsp;unsigned&nbsp;char*)compress_buf,&nbsp;a1-&gt;db.compress_size);</span>
+
+    <span style="font-style:italic;color:#608b4e;">//unsigned&nbsp;char&nbsp;sha1[0x14]&nbsp;=&nbsp;{};</span>
+    <span style="font-style:italic;color:#608b4e;">//rhash_sha1_final(&amp;ctx,&nbsp;(unsigned&nbsp;char*)&amp;&nbsp;sha1);</span>
+
+    <span style="font-style:italic;color:#608b4e;">//////////////////////////////////////////////////////////////////////////</span>
+    <span style="font-style:italic;color:#608b4e;">//!原代码还会比较sha1和xor_gen_key的前0x10字节是否相同，去掉了</span>
+    <span style="color:#569cd6;">if</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">db</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">db_attr</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#b5cea8;">0x40000000</span><span style="color:yellowgreen;">)</span>
+    <span style="color:yellowgreen;">{</span>
+        <span style="font-style:italic;color:#608b4e;">//zlib解压</span>
+        <span style="color:#c8c8c8;">rt</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">uncompress</span><span style="color:darkviolet;">(</span><span style="color:#ff9900;">(</span><span style="color:#4ec9b0;">Bytef</span><span style="color:#b4b4b4;">*</span><span style="color:#ff9900;">)</span><span style="color:#c8c8c8;">origin_buffer</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#4ec9b0;">uLongf</span><span style="color:#b4b4b4;">*</span><span style="color:#ff9900;">)</span><span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">db</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">origin_size</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#4ec9b0;">Bytef</span><span style="color:#b4b4b4;">*</span><span style="color:#ff9900;">)</span><span style="color:#c8c8c8;">compress_buf</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#c8c8c8;">compress_size</span><span style="color:darkviolet;">)</span><span style="color:#b4b4b4;">;</span>
+    <span style="color:yellowgreen;">}</span>
+    <span style="font-style:italic;color:#608b4e;">/////将解压的文件写入文件</span>
+<span style="color:deeppink;">}</span></pre>
+
+<p>uncompress是zlib的解压缩函数，只要hook这个地方就能把解密后的数据dump出来</p>
+<p>下图就是解密后的prop.db和pset.db<br><img src="https://s1.ax1x.com/2020/05/24/Yz9SKO.png" alt="Yz9SKO.png"></p>
+
+      
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/posts/258b0a6d.html">逆向XX引擎:库文件解密</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 Ken 的个人博客">Ken</a></p>
+        <p><span>发布时间:</span>2019年05月24日 - 01时55分</p>
+        <p><span>最后更新:</span>2020年05月24日 - 02时11分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/posts/258b0a6d.html" title="逆向XX引擎:库文件解密">http://shxi.me/posts/258b0a6d.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://shxi.me/posts/258b0a6d.html　　作者: Ken" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+    <a href="/posts/61225802.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          app.any.run网站样本爬虫
+        
+      </div>
+    </a>
+  
+  
+    <a href="/posts/f88a50e1.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">逆向XX引擎系列(一) 构造系统dll文件</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+
+
+    
+        <div id="gitments"></div>
+<script src="/js/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+      id: window.location.pathname,
+      owner: 'ydc1992',
+      repo: 'ydc1992.github.io',
+      oauth: {
+        client_id: '',
+        client_secret: '',
+      },
+    })
+    gitment.render('gitments')
+</script>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/posts/61225802.html" title="上一篇: app.any.run网站样本爬虫">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/posts/f88a50e1.html" title="下一篇: 逆向XX引擎系列(一) 构造系统dll文件">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/posts/78e44487.html">将usercall转换成 __cdecl函数调用</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/efe148e3.html">mbr结构和代码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/61225802.html">app.any.run网站样本爬虫</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/258b0a6d.html">逆向XX引擎:库文件解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f88a50e1.html">逆向XX引擎系列(一) 构造系统dll文件</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/1736976b.html">debug IDApython script</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6193d55c.html">调用jscript引擎接口的malware分析</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9222f001.html">病毒样本快到碗里来，一个样本下载爬虫的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/27be2f79.html">VB Crypt Payload</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9d7b1fcb.html">豆约翰博客备份专家破解</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/8f13cc3.html">Pwnable.kr shellshock</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/62077d14.html">VirusTotal扫描器 python版</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/6155f940.html">pycurl 分块下载</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/2bf6b638.html">Reversing.kr Windows kernal</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/c240cede.html">Pwnable.kr leg</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/f6e7b5bf.html">pwnable.kr mistake</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/9e24c54e.html">安卓游戏资源解密</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/b751c08a.html">Reversing.kr AutoHotkey1</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/ff6aab31.html">reversing.kr Ransomware</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/905112aa.html">Far Manager插件编写2</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/88524310.html">pwnable.kr bof</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/741ff96a.html">Pwnable.kr random</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/d8e13760.html">powershell hacker(三): 后门安装 </a></li><li class="post-list-item"><a class="post-list-link" href="/posts/564bd806.html">Pwnable.kr flag</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e2bbbc71.html">powershell hacker(一): Empirse</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/15b3d1e1.html">Pwnable.kr fd</a></li><li class="post-list-item"><a class="post-list-link" href="/posts/e6d76b89.html">Reversing.kr Direct3D FPS</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Ken
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/luuman/hexo-theme-spfk" target="_blank">spfk</a> by luuman
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >海贼到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 24;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+ 
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+  
+</body>
+</html>
