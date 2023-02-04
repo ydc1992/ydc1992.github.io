@@ -546,232 +546,10 @@ var _hmt = _hmt || [];
 	  <!-- 添加分类与标签 -->
 	  
 		  
-		  <p>通用dump就是把该程序在虚拟机内执行完后的内存dump下来,然后扫描引擎进行扫描。对于杀软来说,dump下来的数据不需要是否能够运行。</p>
+			<p>通用dump就是把该程序在虚拟机内执行完后的内存dump下来,然后扫描引擎进行扫描。对于杀软来说,dump下来的数据不需要是否能够运行。</p>
 <p><img src="https://pic.downk.cc/item/5ed9f6f8c2a9a83be510fd91.png"></p>
 <p>实际上上图中每个区段的数据都是在样本在虚拟机执行完后的进程内存。</p>
-<p>遍历在该进程内创建的所有内存,进程创建的内存类型有 </p>
-<ul>
-<li>VMA_USER 用户内存</li>
-<li>VMA_STACK 栈</li>
-<li>VMA_HEAP 堆</li>
-<li>VMA_PENV 存放peb 环境数据</li>
-<li>VMA_BUILTIN 存放api模拟代码和通过tdl配置构造的pe文件</li>
-</ul>
-<p>我们只需要 VMA_USER类型的内存和可执行的VMA_HEAP类型的内存</p>
-<p>下列代码为遍历所有创建的内存并将相关信息存如结构体dump_section.</p>
-<pre style="font-family:Fira Code;font-size:13px;color:white;">
-<span style="color:#f92672;">struct</span>&nbsp;<span style="color:#a6e22d;">dump_section</span>&nbsp;<span style="color:deeppink;">{</span>
-    <span style="color:#ae81ff;">_QWORD</span>&nbsp;rva;
-    <span style="color:#f92672;">int</span>&nbsp;vsize;
-    <span style="color:#f92672;">int</span>&nbsp;psize;
-    <span style="color:#f92672;">int</span>&nbsp;flag;
-    <span style="color:#a6e22d;">list_head</span>&nbsp;list;
-<span style="color:deeppink;">}</span>;
- 
-<span style="color:#ae81ff;">list_for_each</span><span style="color:deeppink;">(</span>list,&nbsp;&amp;<span style="color:#fd971f;">process</span>-&gt;alloced_vma_head<span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
-    <span style="color:#a6e22d;">CMemInfo</span>*&nbsp;vma&nbsp;=&nbsp;<span style="color:#ae81ff;">container_of</span><span style="color:yellowgreen;">(</span>list,&nbsp;<span style="color:#a6e22d;">CMemInfo</span>,&nbsp;list<span style="color:yellowgreen;">)</span>;
- 
-    region&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;vma-&gt;m_region;
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>region.mem_start&nbsp;==&nbsp;<span style="color:#fd971f;">process</span>-&gt;m_main_module-&gt;BaseOfDll<span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
-        <span style="color:#75715e;">//主模块的mz头抹掉,因为通用脱壳后不使用这个mz头</span>
-        <span style="color:#fd971f;">process</span>-&gt;<span style="color:#66d9ef;">write_mem</span><span style="color:darkviolet;">(</span><span style="color:#fd971f;">process</span>-&gt;m_main_module-&gt;BaseOfDll,&nbsp;<span style="color:#e8c9bb;">&quot;&quot;</span>,&nbsp;<span style="color:#ae81ff;">2</span>,&nbsp;<span style="color:#ae81ff;">1</span><span style="color:darkviolet;">)</span>;
-    <span style="color:yellowgreen;">}</span>
- 
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>region.alloc_base&nbsp;!=&nbsp;cur_mod-&gt;BaseOfDll<span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
-        <span style="color:#f92672;">auto</span>&nbsp;pageAttr&nbsp;=&nbsp;region.PageAttr;
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>pageAttr.mem_useage&nbsp;!=&nbsp;<span style="color:#ae81ff;">VMA_USER</span>&nbsp;&amp;&amp;
-            <span style="color:#75715e;">//如果类型是堆,则必须是可读可执行的</span>
-            <span style="color:#ff9900;">(</span>pageAttr.mem_useage&nbsp;!=&nbsp;<span style="color:#ae81ff;">VMA_HEAP</span>&nbsp;||&nbsp;pageAttr.host_map_flag&nbsp;!=&nbsp;<span style="color:#ae81ff;">6</span><span style="color:#ff9900;">)</span><span style="color:darkviolet;">)</span>
-            <span style="color:#d8a0df;">continue</span>;
-    <span style="color:yellowgreen;">}</span>
- 
-    <span style="color:#f92672;">int</span>&nbsp;vm_size&nbsp;=&nbsp;region.mem_end&nbsp;-&nbsp;region.mem_start;
-    <span style="color:#f92672;">int</span>&nbsp;read_size&nbsp;=&nbsp;<span style="color:#ae81ff;">0x10000</span>;
-    <span style="color:#f92672;">int</span>&nbsp;read_off&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
-    <span style="color:#f92672;">int</span>&nbsp;end&nbsp;=&nbsp;region.mem_end;
-    <span style="color:#d8a0df;">while</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#f92672;">true</span><span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
-        read_size&nbsp;=&nbsp;<span style="color:#ae81ff;">min</span><span style="color:darkviolet;">(</span>vm_size,&nbsp;<span style="color:#ae81ff;">0x10000</span><span style="color:darkviolet;">)</span>;
-        <span style="color:#75715e;">//从尾部开始读</span>
-        read_off&nbsp;=&nbsp;end&nbsp;-&nbsp;read_size;
-        <span style="color:#f92672;">int</span>&nbsp;readed_size&nbsp;=&nbsp;<span style="color:#fd971f;">process</span>-&gt;<span style="color:#66d9ef;">read_mem</span><span style="color:darkviolet;">(</span>read_off,&nbsp;buf,&nbsp;read_size<span style="color:darkviolet;">)</span>;
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>readed_size&nbsp;&lt;&nbsp;<span style="color:#ae81ff;">0</span><span style="color:darkviolet;">)</span>
-            <span style="color:#75715e;">//读取失败,可能内存以及被释放了</span>
-            <span style="color:#d8a0df;">break</span>;
- 
-        <span style="color:#f92672;">int</span>&nbsp;non_zero_off&nbsp;=&nbsp;readed_size&nbsp;-&nbsp;<span style="color:#ae81ff;">1</span>;
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>non_zero_off&nbsp;&lt;&nbsp;<span style="color:#ae81ff;">0</span><span style="color:darkviolet;">)</span>
-            <span style="color:#d8a0df;">continue</span>;
-        <span style="color:#75715e;">//尾部的0可能时为了对齐而填充的,找到非0处,从该位置开始到下一个内存区域前被省略</span>
-        <span style="color:#d8a0df;">while</span>&nbsp;<span style="color:darkviolet;">(</span>!buf<span style="color:#ff9900;">[</span>non_zero_off<span style="color:#ff9900;">]</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
-            <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:#ff9900;">(</span>--non_zero_off&nbsp;&lt;=&nbsp;<span style="color:#ae81ff;">0</span><span style="color:#ff9900;">)</span>
-                <span style="color:#d8a0df;">break</span>;
-        <span style="color:darkviolet;">}</span>
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>non_zero_off&nbsp;&gt;&nbsp;<span style="color:#ae81ff;">0</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
-            <span style="color:#a6e22d;">dump_section</span>*&nbsp;ts&nbsp;=&nbsp;<span style="color:#569cd6;">new</span>&nbsp;<span style="color:#a6e22d;">dump_section</span>;
-            ts-&gt;rva&nbsp;=&nbsp;region.mem_start;
-            ts-&gt;vsize&nbsp;=&nbsp;region.mem_end&nbsp;-&nbsp;region.mem_start;
-            ts-&gt;psize&nbsp;=&nbsp;read_off&nbsp;+&nbsp;non_zero_off&nbsp;-&nbsp;region.mem_start;
-            ts-&gt;flag&nbsp;=&nbsp;<span style="color:#ae81ff;">0x40000000</span>;
-            <span style="color:#75715e;">//设置区段属性</span>
-            <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:#ff9900;">(</span>region.PageAttr.proctect&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">VMA_PAGE_WRITE</span><span style="color:#ff9900;">)</span>
-                ts-&gt;flag&nbsp;=&nbsp;<span style="color:#ae81ff;">0xC0000040</span>;
-            <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:#ff9900;">(</span>region.PageAttr.proctect&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">VMA_PAGE_READ</span><span style="color:#ff9900;">)</span>
-                ts-&gt;flag&nbsp;|=&nbsp;<span style="color:#ae81ff;">0x20000020</span>;
-            ++sec_cnt;
-            <span style="color:#66d9ef;">list_add_tail</span><span style="color:#ff9900;">(</span>&amp;ts-&gt;list,&nbsp;&amp;head<span style="color:#ff9900;">)</span>;
- 
-            <span style="color:#d8a0df;">break</span>;
-        <span style="color:darkviolet;">}</span>
- 
-        end&nbsp;=&nbsp;read_off;
-        vm_size&nbsp;-=&nbsp;readed_size;
-    <span style="color:yellowgreen;">}</span>
-<span style="color:deeppink;">}</span></pre>
-
-<h2 id="构造PE文件"><a href="#构造PE文件" class="headerlink" title="构造PE文件"></a>构造PE文件</h2><p>DOS头固定为下列值</p>
-<pre style="font-family:Fira Code;font-size:13px;color:white;">
-<span style="color:#f92672;">unsigned</span>&nbsp;<span style="color:#f92672;">char</span>&nbsp;genpack_mz_head<span style="color:#ff9900;">[</span><span style="color:#ae81ff;">224</span><span style="color:#ff9900;">]</span>&nbsp;=&nbsp;<span style="color:#ff9900;">{</span>
-    <span style="color:#ae81ff;">0x4D</span>,&nbsp;<span style="color:#ae81ff;">0x5A</span>,&nbsp;<span style="color:#ae81ff;">0x90</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x03</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x04</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0xFF</span>,&nbsp;<span style="color:#ae81ff;">0xFF</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,
-    <span style="color:#ae81ff;">0xB8</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x40</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,
-    <span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,
-    <span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0xE0</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,
-    <span style="color:#ae81ff;">0x0E</span>,&nbsp;<span style="color:#ae81ff;">0x1F</span>,&nbsp;<span style="color:#ae81ff;">0xBA</span>,&nbsp;<span style="color:#ae81ff;">0x0E</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0xB4</span>,&nbsp;<span style="color:#ae81ff;">0x09</span>,&nbsp;<span style="color:#ae81ff;">0xCD</span>,&nbsp;<span style="color:#ae81ff;">0x21</span>,&nbsp;<span style="color:#ae81ff;">0xB8</span>,&nbsp;<span style="color:#ae81ff;">0x01</span>,&nbsp;<span style="color:#ae81ff;">0x4C</span>,&nbsp;<span style="color:#ae81ff;">0xCD</span>,&nbsp;<span style="color:#ae81ff;">0x21</span>,&nbsp;<span style="color:#ae81ff;">0x54</span>,&nbsp;<span style="color:#ae81ff;">0x68</span>,
-    <span style="color:#ae81ff;">0x69</span>,&nbsp;<span style="color:#ae81ff;">0x73</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,&nbsp;<span style="color:#ae81ff;">0x70</span>,&nbsp;<span style="color:#ae81ff;">0x72</span>,&nbsp;<span style="color:#ae81ff;">0x6F</span>,&nbsp;<span style="color:#ae81ff;">0x67</span>,&nbsp;<span style="color:#ae81ff;">0x72</span>,&nbsp;<span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x6D</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,&nbsp;<span style="color:#ae81ff;">0x63</span>,&nbsp;<span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x6E</span>,&nbsp;<span style="color:#ae81ff;">0x6E</span>,&nbsp;<span style="color:#ae81ff;">0x6F</span>,
-    <span style="color:#ae81ff;">0x74</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,&nbsp;<span style="color:#ae81ff;">0x62</span>,&nbsp;<span style="color:#ae81ff;">0x65</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,&nbsp;<span style="color:#ae81ff;">0x72</span>,&nbsp;<span style="color:#ae81ff;">0x75</span>,&nbsp;<span style="color:#ae81ff;">0x6E</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,&nbsp;<span style="color:#ae81ff;">0x69</span>,&nbsp;<span style="color:#ae81ff;">0x6E</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,&nbsp;<span style="color:#ae81ff;">0x44</span>,&nbsp;<span style="color:#ae81ff;">0x4F</span>,&nbsp;<span style="color:#ae81ff;">0x53</span>,&nbsp;<span style="color:#ae81ff;">0x20</span>,
-    <span style="color:#ae81ff;">0x6D</span>,&nbsp;<span style="color:#ae81ff;">0x6F</span>,&nbsp;<span style="color:#ae81ff;">0x64</span>,&nbsp;<span style="color:#ae81ff;">0x65</span>,&nbsp;<span style="color:#ae81ff;">0x2E</span>,&nbsp;<span style="color:#ae81ff;">0x0D</span>,&nbsp;<span style="color:#ae81ff;">0x0D</span>,&nbsp;<span style="color:#ae81ff;">0x0A</span>,&nbsp;<span style="color:#ae81ff;">0x24</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,
-    <span style="color:#ae81ff;">0xE6</span>,&nbsp;<span style="color:#ae81ff;">0xFA</span>,&nbsp;<span style="color:#ae81ff;">0x3E</span>,&nbsp;<span style="color:#ae81ff;">0xFC</span>,&nbsp;<span style="color:#ae81ff;">0xA2</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xA2</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xA2</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,
-    <span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x5F</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xA6</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x0D</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xB7</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,
-    <span style="color:#ae81ff;">0xA2</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x51</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0x19</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x0C</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xA3</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,
-    <span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x0E</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xA3</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x0F</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xB3</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,
-    <span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x30</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xE7</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0x61</span>,&nbsp;<span style="color:#ae81ff;">0x94</span>,&nbsp;<span style="color:#ae81ff;">0x0A</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0xA3</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,
-    <span style="color:#ae81ff;">0x52</span>,&nbsp;<span style="color:#ae81ff;">0x69</span>,&nbsp;<span style="color:#ae81ff;">0x63</span>,&nbsp;<span style="color:#ae81ff;">0x68</span>,&nbsp;<span style="color:#ae81ff;">0xA2</span>,&nbsp;<span style="color:#ae81ff;">0x9B</span>,&nbsp;<span style="color:#ae81ff;">0x50</span>,&nbsp;<span style="color:#ae81ff;">0xAF</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>,&nbsp;<span style="color:#ae81ff;">0x00</span>
-<span style="color:#ff9900;">}</span>;
-</pre>
-
-<h3 id="填充pe头"><a href="#填充pe头" class="headerlink" title="填充pe头"></a>填充pe头</h3><pre style="font-family:Fira Code;font-size:13px;color:white;"><span style="color:#ae81ff;">peheader</span>&nbsp;pehead&nbsp;=&nbsp;<span style="color:deeppink;">{}</span>;
-<span style="color:#75715e;">//设置pe结构</span>
-pehead.signature&nbsp;=&nbsp;<span style="color:#ae81ff;">0x4550</span>;
-pehead.nobjs&nbsp;=&nbsp;<span style="color:#fd971f;">sec_cnt</span>;
-pehead.machine&nbsp;=&nbsp;<span style="color:#ae81ff;">332</span>;
-pehead.objalign&nbsp;=&nbsp;<span style="color:#ae81ff;">0x1000</span>;
-pehead.filealign&nbsp;=&nbsp;<span style="color:#ae81ff;">0x200</span>;
-pehead.subsys&nbsp;=&nbsp;<span style="color:#ae81ff;">2</span>;
-pehead.stackres&nbsp;=&nbsp;<span style="color:#ae81ff;">0x40000</span>;
-pehead.stackcom&nbsp;=&nbsp;<span style="color:#ae81ff;">0x1000</span>;
-pehead.heapres&nbsp;=&nbsp;<span style="color:#ae81ff;">0x100000</span>;
-pehead.heapcom&nbsp;=&nbsp;<span style="color:#ae81ff;">0x1000</span>;
-pehead.nrvas&nbsp;=&nbsp;<span style="color:#ae81ff;">0x10</span>;
- 
-<span style="color:#f92672;">int</span>&nbsp;sec_size&nbsp;=&nbsp;<span style="color:#ae81ff;">0x28</span>&nbsp;*&nbsp;<span style="color:#fd971f;">sec_cnt</span>;
-<span style="color:#a6e22d;">uint32_t</span>&nbsp;min_off&nbsp;=&nbsp;-<span style="color:#ae81ff;">1</span>;
-<span style="color:#a6e22d;">x86_env</span>*&nbsp;env&nbsp;=&nbsp;&amp;<span style="color:#fd971f;">process</span>-&gt;cur_thread-&gt;_x86_env;
-<span style="color:#a6e22d;">CArc_pe</span>*&nbsp;arc_pe&nbsp;=&nbsp;<span style="color:#fd971f;">process</span>-&gt;m_main_module-&gt;m_cpe;
-pehead.flags&nbsp;=&nbsp;<span style="color:#ae81ff;">0x10e</span>;
-pehead.hdrsize&nbsp;=&nbsp;<span style="color:#ae81ff;">0xe0</span>;
-<span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span>arc_pe-&gt;peHead.flags&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0x2000</span><span style="color:deeppink;">)</span>
-    pehead.flags&nbsp;=&nbsp;<span style="color:#ae81ff;">8462</span>;
-pehead.magic&nbsp;=&nbsp;<span style="color:#ae81ff;">267</span>;
-pehead.allhdrsize&nbsp;=&nbsp;<span style="color:deeppink;">(</span>sec_size&nbsp;+&nbsp;<span style="color:#ae81ff;">0x3D7</span><span style="color:deeppink;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFFE00</span>;
-pehead.imagesize&nbsp;=&nbsp;<span style="color:deeppink;">(</span>sec_size&nbsp;+&nbsp;<span style="color:#ae81ff;">0x11D7</span><span style="color:deeppink;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFF000</span>;
-<span style="color:#f92672;">int</span>&nbsp;file_addr&nbsp;=&nbsp;<span style="color:deeppink;">(</span>sec_size&nbsp;+&nbsp;<span style="color:#ae81ff;">0x3D7</span><span style="color:deeppink;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFFE00</span>;
- 
-<span style="color:#a6e22d;">list_head</span>*&nbsp;list;
-<span style="color:#75715e;">//计算最小偏移、数据段大小和代码段大小</span>
-<span style="color:#ae81ff;">list_for_each</span><span style="color:deeppink;">(</span>list,&nbsp;<span style="color:#fd971f;">head</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
-    <span style="color:#a6e22d;">dump_section</span>*&nbsp;ds&nbsp;=&nbsp;<span style="color:#ae81ff;">container_of</span><span style="color:yellowgreen;">(</span>list,&nbsp;<span style="color:#a6e22d;">dump_section</span>,&nbsp;list<span style="color:yellowgreen;">)</span>;
-    ds-&gt;vsize&nbsp;=&nbsp;<span style="color:yellowgreen;">(</span>ds-&gt;vsize&nbsp;+&nbsp;<span style="color:#ae81ff;">4095</span><span style="color:yellowgreen;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFF000</span>;
-    pehead.imagesize&nbsp;+=&nbsp;ds-&gt;vsize;
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>ds-&gt;rva&nbsp;&lt;&nbsp;min_off<span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
-        min_off&nbsp;=&nbsp;ds-&gt;rva;
-    <span style="color:yellowgreen;">}</span>
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>ds-&gt;flag&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0x40</span><span style="color:yellowgreen;">)</span>
-        pehead.dsize&nbsp;+=&nbsp;ds-&gt;vsize;
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>ds-&gt;flag&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0x20</span><span style="color:yellowgreen;">)</span>
-        pehead.tsize&nbsp;+=&nbsp;ds-&gt;vsize;
-<span style="color:deeppink;">}</span>
-pehead.imagebase32&nbsp;=&nbsp;min_off&nbsp;-&nbsp;<span style="color:deeppink;">(</span><span style="color:yellowgreen;">(</span>sec_size&nbsp;+&nbsp;<span style="color:#ae81ff;">0x11D7</span><span style="color:yellowgreen;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFF000</span><span style="color:deeppink;">)</span>;
-pehead.text_start&nbsp;=&nbsp;min_off;
-pehead.data_start&nbsp;=&nbsp;min_off;
- 
-<span style="color:#75715e;">//多少个目录结构,最大只能由16个</span>
-<span style="color:#f92672;">int</span>&nbsp;nrvars&nbsp;=&nbsp;<span style="color:#ae81ff;">min</span><span style="color:deeppink;">(</span>arc_pe-&gt;peHead.nrvas,&nbsp;<span style="color:#ae81ff;">0x10</span><span style="color:deeppink;">)</span>;
-<span style="color:#a6e22d;">petab</span>&nbsp;mem_pe_tab<span style="color:deeppink;">[</span><span style="color:#ae81ff;">0x10</span><span style="color:deeppink;">]</span>&nbsp;=&nbsp;<span style="color:deeppink;">{}</span>;
-<span style="color:#75715e;">//读取数据目录表</span>
-<span style="color:#ae81ff;">_QWORD</span>&nbsp;va&nbsp;=&nbsp;<span style="color:#fd971f;">process</span>-&gt;m_main_module-&gt;BaseOfDll&nbsp;+&nbsp;arc_pe-&gt;dosHeader.lfanew&nbsp;+&nbsp;<span style="color:#ae81ff;">0x78</span>;
-<span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#fd971f;">process</span>-&gt;<span style="color:#66d9ef;">read_mem</span><span style="color:yellowgreen;">(</span>va,&nbsp;mem_pe_tab,&nbsp;<span style="color:#ae81ff;">0x80</span><span style="color:yellowgreen;">)</span>&nbsp;!=&nbsp;<span style="color:#ae81ff;">0x80</span><span style="color:deeppink;">)</span>
-    <span style="color:#d8a0df;">return</span>;
-<span style="color:#a6e22d;">petab</span>*&nbsp;genpack_petab&nbsp;=&nbsp;&amp;pehead.expdir;
-<span style="color:#d8a0df;">for</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#f92672;">int</span>&nbsp;i&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;&nbsp;i&nbsp;&lt;&nbsp;<span style="color:#ae81ff;">0x10</span>;&nbsp;i++<span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>i&nbsp;==&nbsp;<span style="color:#ae81ff;">1</span><span style="color:yellowgreen;">)</span><span style="color:#75715e;">//导入表不用管</span>
-        <span style="color:#d8a0df;">continue</span>;
-    <span style="color:#f92672;">auto</span>&nbsp;t&nbsp;=&nbsp;&amp;mem_pe_tab<span style="color:yellowgreen;">[</span>i<span style="color:yellowgreen;">]</span>;
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>!t-&gt;rva<span style="color:yellowgreen;">)</span>
-        <span style="color:#d8a0df;">continue</span>;
-    genpack_petab<span style="color:yellowgreen;">[</span>i<span style="color:yellowgreen;">]</span>.size&nbsp;=&nbsp;t-&gt;size;
-    <span style="color:#75715e;">//修复rva地址</span>
-    genpack_petab<span style="color:yellowgreen;">[</span>i<span style="color:yellowgreen;">]</span>.rva&nbsp;=&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#fd971f;">process</span>-&gt;m_main_module-&gt;BaseOfDll&nbsp;+&nbsp;t-&gt;rva<span style="color:yellowgreen;">)</span>&nbsp;-&nbsp;pehead.imagebase32;
-<span style="color:deeppink;">}</span></pre>
-
-<h3 id="填充pesection数据"><a href="#填充pesection数据" class="headerlink" title="填充pesection数据"></a>填充pesection数据</h3><pre style="font-family:Fira Code;font-size:13px;color:white;"><span style="color:#a6e22d;">pesection</span>*&nbsp;sec_buf&nbsp;=&nbsp;<span style="color:deeppink;">(</span><span style="color:#a6e22d;">pesection</span>*<span style="color:deeppink;">)</span><span style="color:#66d9ef;">malloc</span><span style="color:deeppink;">(</span>sec_size<span style="color:deeppink;">)</span>;
-<span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span>!sec_buf<span style="color:deeppink;">)</span>
-    <span style="color:#d8a0df;">return</span>;
-<span style="color:#66d9ef;">memset</span><span style="color:deeppink;">(</span>sec_buf,&nbsp;<span style="color:#ae81ff;">0</span>,&nbsp;sec_size<span style="color:deeppink;">)</span>;
- 
-<span style="color:#f92672;">auto</span>&nbsp;sec&nbsp;=&nbsp;sec_buf;
-<span style="color:#f92672;">int</span>&nbsp;sec_index&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
-<span style="color:#75715e;">//插入内存中的各个区段到pe文件</span>
-<span style="color:#ae81ff;">list_for_each</span><span style="color:deeppink;">(</span>list,&nbsp;<span style="color:#fd971f;">head</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
-    <span style="color:#f92672;">auto</span>&nbsp;ds&nbsp;=&nbsp;<span style="color:#ae81ff;">container_of</span><span style="color:yellowgreen;">(</span>list,&nbsp;<span style="color:#a6e22d;">dump_section</span>,&nbsp;list<span style="color:yellowgreen;">)</span>;
-    <span style="color:#66d9ef;">snprintf</span><span style="color:yellowgreen;">(</span>sec-&gt;s_name,&nbsp;<span style="color:#ae81ff;">8</span>,&nbsp;<span style="color:#e8c9bb;">&quot;</span><span style="color:#e6db74;">libvxf%d</span><span style="color:#e8c9bb;">&quot;</span>,&nbsp;sec_index<span style="color:yellowgreen;">)</span>;
-    sec-&gt;s_name<span style="color:yellowgreen;">[</span><span style="color:#ae81ff;">7</span><span style="color:yellowgreen;">]</span>&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
-    sec-&gt;s_vsize&nbsp;=&nbsp;ds-&gt;vsize;
-    sec-&gt;s_vaddr&nbsp;=&nbsp;ds-&gt;rva&nbsp;-&nbsp;pehead.imagebase32;
-    sec-&gt;s_psize&nbsp;=&nbsp;<span style="color:yellowgreen;">(</span>ds-&gt;psize&nbsp;+&nbsp;<span style="color:#ae81ff;">0x1FF</span><span style="color:yellowgreen;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFFE00</span>;
-    sec-&gt;s_scnptr&nbsp;=&nbsp;file_addr;
-    sec-&gt;s_flags&nbsp;=&nbsp;ds-&gt;flag;
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#ae81ff;">EIP</span>&nbsp;&gt;=&nbsp;ds-&gt;rva&nbsp;&amp;&amp;&nbsp;<span style="color:#ae81ff;">EIP</span>&nbsp;&lt;&nbsp;ds-&gt;rva&nbsp;+&nbsp;ds-&gt;vsize<span style="color:yellowgreen;">)</span>
-        pehead.entry&nbsp;=&nbsp;<span style="color:#ae81ff;">EIP</span>&nbsp;-&nbsp;pehead.imagebase32;
- 
-    file_addr&nbsp;=&nbsp;sec-&gt;s_psize&nbsp;+&nbsp;file_addr;
-    ++sec_index;
-    ++sec;
-<span style="color:deeppink;">}</span></pre>
-
-
-<h3 id="填充区段数据"><a href="#填充区段数据" class="headerlink" title="填充区段数据"></a>填充区段数据</h3><pre style="font-family:Fira Code;font-size:13px;color:white;"><span style="color:#ae81ff;">list_for_each</span><span style="color:deeppink;">(</span>list,&nbsp;<span style="color:#fd971f;">head</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
-    <span style="color:#f92672;">auto</span>&nbsp;ts&nbsp;=&nbsp;<span style="color:#ae81ff;">container_of</span><span style="color:yellowgreen;">(</span>list,&nbsp;<span style="color:#a6e22d;">dump_section</span>,&nbsp;list<span style="color:yellowgreen;">)</span>;
-    cur_off&nbsp;=&nbsp;ts-&gt;rva;
- 
-    psize&nbsp;=&nbsp;ts-&gt;psize;
-    write_off&nbsp;=&nbsp;sec-&gt;s_scnptr;
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>!psize<span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
-        ++sec;
-        <span style="color:#d8a0df;">continue</span>;
-    <span style="color:yellowgreen;">}</span>
- 
-    <span style="color:#d8a0df;">while</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#ae81ff;">1</span><span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
-        read_size2&nbsp;=&nbsp;<span style="color:#ae81ff;">min</span><span style="color:darkviolet;">(</span>psize,&nbsp;<span style="color:#ae81ff;">0x10000</span><span style="color:darkviolet;">)</span>;
-        read_size&nbsp;=&nbsp;<span style="color:#fd971f;">process</span>-&gt;<span style="color:#66d9ef;">read_mem</span><span style="color:darkviolet;">(</span><span style="color:#ff9900;">(</span><span style="color:#ae81ff;">_QWORD</span><span style="color:#ff9900;">)</span>cur_off,&nbsp;<span style="color:#ff9900;">(</span><span style="color:#a6e22d;">DWORD</span>*<span style="color:#ff9900;">)</span><span style="color:#fd971f;">buf</span>,&nbsp;read_size2<span style="color:darkviolet;">)</span>;
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>read_size&nbsp;&lt;&nbsp;<span style="color:#ae81ff;">0</span><span style="color:darkviolet;">)</span>
-            read_size&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
-        algin_size&nbsp;=&nbsp;<span style="color:darkviolet;">(</span>read_size2&nbsp;+&nbsp;<span style="color:#ae81ff;">0x1FF</span><span style="color:darkviolet;">)</span>&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">0xFFFFFE00</span>;
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>read_size&nbsp;&lt;&nbsp;algin_size<span style="color:darkviolet;">)</span>
-            <span style="color:#66d9ef;">memset</span><span style="color:darkviolet;">(</span><span style="color:#ff9900;">(</span><span style="color:#f92672;">void</span>*<span style="color:#ff9900;">)(</span>read_size&nbsp;+&nbsp;<span style="color:#fd971f;">buf</span><span style="color:#ff9900;">)</span>,&nbsp;<span style="color:#ae81ff;">0</span>,&nbsp;algin_size&nbsp;-&nbsp;read_size<span style="color:darkviolet;">)</span>;
-        write_size&nbsp;=&nbsp;stream-&gt;<span style="color:#66d9ef;">write</span><span style="color:darkviolet;">(</span>write_off,&nbsp;<span style="color:#ff9900;">(</span><span style="color:#a6e22d;">DWORD</span>*<span style="color:#ff9900;">)</span><span style="color:#fd971f;">buf</span>,&nbsp;algin_size<span style="color:darkviolet;">)</span>;
- 
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>write_size&nbsp;&lt;&nbsp;<span style="color:#ae81ff;">0</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
-            <span style="color:#d8a0df;">return</span>;
-        <span style="color:darkviolet;">}</span>
-        cur_off&nbsp;=&nbsp;read_size2&nbsp;+&nbsp;cur_off;
-        write_off&nbsp;+=&nbsp;read_size2;
- 
-        psize&nbsp;-=&nbsp;read_size2;
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>!psize<span style="color:darkviolet;">)</span>
-            <span style="color:#d8a0df;">break</span>;
-    <span style="color:yellowgreen;">}</span>
- 
-    ++sec;
-<span style="color:deeppink;">}</span></pre>
+		  
 				  
 	  
       
@@ -915,12 +693,6 @@ pehead.data_start&nbsp;=&nbsp;min_off;
 <p><img src="https://pic.downk.cc/item/5e9c4843c2a9a83be54430fe.jpg"></p>
 <p>通过顺序找到如下函数。<br><img src="https://pic.downk.cc/item/5e9c48e0c2a9a83be5451045.jpg"></p>
 <p><code>libxsse_31</code>这个函数内解密<code>libxscore.bundle</code>,有几个重要的dll是存放在这个文件内,其中<code>libvxf.dll</code>的导出函数<code>libvxf_alloc</code><br>是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。</p>
-<p>包含如下四个文件</p>
-<blockquote>
-<p>libvxf.dll 虚拟机相关<br>  libnat.dll 用来跟nxeng.sys虚拟化执行驱动通讯<br>  libdt.dll  动态翻译执行,使用的是qemu的tcg<br>  libexscan.dll</p>
-</blockquote>
-<p><img src="https://pic.downk.cc/item/5e9c4925c2a9a83be545838e.jpg"></p>
-<p>我在逆向某个api模拟实现的时候发现该api对应的模块是在内存中创建的<br><img src="https://pic.downk.cc/item/5e9c4acfc2a9a83be54804a9.jpg"></p>
 		  
 				  
 	  
@@ -1373,7 +1145,7 @@ pehead.data_start&nbsp;=&nbsp;min_off;
 	  <!-- 添加分类与标签 -->
 	  
 		  
-		  <p>分析VB样本的时候发现有几种混淆方式，记录下。</p>
+			<p>分析VB样本的时候发现有几种混淆方式，记录下。</p>
 <h2 id="替换函数指针"><a href="#替换函数指针" class="headerlink" title="替换函数指针"></a>替换函数指针</h2><blockquote>
 <p>样本shah:a66f989e58ada2eff729ac2032ff71a159c521e7372373f4a1c1cf13f8ae2f0c</p>
 </blockquote>
@@ -1382,37 +1154,7 @@ pehead.data_start&nbsp;=&nbsp;min_off;
 
 <p><code>_O_Pub_Obj_Inf1_Event0x2</code>就是处理Form_load的函数，一般malicious code都是在这里实现。<br>接着往下看。<br>这里计算处shellcode的地址。<code>0x43AF4B=1526C77h/（sqr(25.0)）</code></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.text:00465D83                        mov     [ebp+var_50], 1526C77h</span><br><span class="line">.text:00465D8A                        fld     ds:dbl_401118   ;25.0</span><br><span class="line">.text:00465D90                        push    ecx</span><br><span class="line">.text:00465D91                        push    ecx</span><br><span class="line">.text:00465D92                        fstp    qword ptr [esp+8+var_8]</span><br><span class="line">.text:00465D95                        call    rtcSqr</span><br><span class="line">.text:00465D9A                        call    __vbaFpI4</span><br><span class="line">.text:00465D9F                        mov     ecx, eax</span><br></pre></td></tr></table></figure>
-
-<p>在 <code>[eax+0x6f8]</code> 这个函数将shellcode地址替换，arg_0为Form_load的第一个参数，也就是Form类。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">.text:00465DA8                        mov     eax, [ebp+arg_0]</span><br><span class="line">.text:00465DAB                        mov     eax, [eax]</span><br><span class="line">.text:00465DAD                        push    [ebp+arg_0]</span><br><span class="line">.text:00465DB0                        call    dword ptr [eax+6F8h]</span><br></pre></td></tr></table></figure>
-
-<p>[eax]中存放的是地址虚表，[eax+6f8h]地址正好是_O_Pub_Obj_Inf1_Method0x1方法,</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">.data:0046737C dd offset msvbvm60_BASIC_CLASS_QueryInterface</span><br><span class="line">.data:00467380 dd offset msvbvm60_BASIC_CLASS_AddRef</span><br><span class="line">.data:00467384 dd offset msvbvm60_BASIC_CLASS_Release</span><br><span class="line">...</span><br><span class="line">.data:00467A6C dd 72A44A98h</span><br><span class="line">.data:00467A70 dd 72A44AA0h</span><br><span class="line">.data:00467A74 dd 463E80h                 ; ptr _O_Pub_Obj_Inf1_Method0x1</span><br><span class="line">.data:00467A78 dd 463E8Dh                 ; ptr _O_Pub_Obj_Inf1_Event0x2 </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>替换指针，进入shellcode执行代码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">.text:00464434 add     eax, 2B0h</span><br><span class="line">.text:00464439 jo      loc_465495</span><br><span class="line">.text:0046443F mov     [ebp+var_20], eax</span><br><span class="line">.text:00464442 push    [ebp+arg_4] ;shellcode地址</span><br><span class="line">.text:00464445 push    [ebp+var_20] ;[eax+0x2b0]</span><br><span class="line">.text:00464448 call    replace_ptr</span><br><span class="line">....</span><br><span class="line">.text:004644C3 call    dword ptr [eax+2B0h]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>在shellcode中并没有使用常规的方式获取api地址，而是先找到msvbvm60模块的地址，再通过到处函数DllFunction来获得对应API的地址。<br>中间穿插了大量的花指令。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line">.text:0043B10F get_api_address proc near                                                                           ; CODE XREF: sub_43AF88:loc_43AF89↑p</span><br><span class="line">.text:0043B10F                                                                                                     ; sub_43B07C+2B↑p</span><br><span class="line">.text:0043B10F</span><br><span class="line">.text:0043B10F var_14          = dword ptr -14h</span><br><span class="line">.text:0043B10F anonymous_2     = dword ptr -10h</span><br><span class="line">.text:0043B10F anonymous_1     = dword ptr -0Ch</span><br><span class="line">.text:0043B10F anonymous_0     = dword ptr -8</span><br><span class="line">.text:0043B10F var_4           = dword ptr -4</span><br><span class="line">.text:0043B10F</span><br><span class="line">.text:0043B10F                 mov     eax, large fs:30h ;peb地址</span><br><span class="line">.text:0043B115                 packuswb mm1, mm1</span><br><span class="line">.text:0043B118                 mov     eax, [eax+0Ch] ;PEB_LDR_DATA</span><br><span class="line">.text:0043B11B                 pcmpgtb mm5, mm4</span><br><span class="line">.text:0043B11E                 mov     eax, [eax+14h];get InMemoryOrderModuleList</span><br><span class="line">.text:0043B121                 pcmpeqw mm2, mm7</span><br><span class="line">.text:0043B124</span><br><span class="line">.text:0043B124 loc_43B124:                                                                                         ; CODE XREF: get_api_address+29↓j</span><br><span class="line">.text:0043B124                                                                                                     ; get_api_address+36↓j</span><br><span class="line">.text:0043B124                 mov     eax, [eax]</span><br><span class="line">.text:0043B126                 punpckhdq mm1, mm3</span><br><span class="line">.text:0043B129                 mov     ebx, [eax+28h]</span><br><span class="line">.text:0043B12C                 pcmpgtw xmm7, xmm6</span><br><span class="line">.text:0043B130                 mov     esi, 53004Ch     ; </span><br><span class="line">.text:0043B135                 inc     esi              ;MS for msvbvm60.dll </span><br><span class="line">.text:0043B136                 cmp     [ebx], esi</span><br><span class="line">.text:0043B138                 jnz     short loc_43B124</span><br><span class="line">.text:0043B13A                 pcmpgtb xmm3, xmm7</span><br><span class="line">.text:0043B13E                 cmp     dword ptr [ebx+4], 420056h ;VB for MS for msvbvm60.dll </span><br><span class="line">.text:0043B145                 jnz     short loc_43B124</span><br><span class="line">.text:0043B147                 pcmpgtd xmm0, xmm3</span><br><span class="line">.text:0043B14B                 mov     esi, [eax+10h]</span><br><span class="line">.text:0043B14E                 pcmpgtw xmm6, xmm6</span><br><span class="line">.text:0043B152                 push    esi</span><br><span class="line">.text:0043B153                 pcmpgtb mm3, mm4</span><br><span class="line">.text:0043B156                 mov     ebx, [esi+3Ch]</span><br><span class="line">.text:0043B159                 punpckhwd xmm0, xmm2</span><br><span class="line">.text:0043B15D                 mov     esi, [esp+4+var_4]</span><br><span class="line">.text:0043B160                 punpckhbw xmm5, xmm1</span><br><span class="line">.text:0043B164                 add     esi, ebx</span><br><span class="line">.text:0043B166                 pcmpeqd xmm0, xmm1</span><br><span class="line">.text:0043B16A                 mov     ebx, [esi+78h]</span><br><span class="line">.text:0043B16D                 pcmpeqw mm6, mm3</span><br><span class="line">.text:0043B170                 mov     eax, [esp+4+var_4]</span><br><span class="line">.text:0043B173                 punpckhwd xmm3, xmm7</span><br><span class="line">.text:0043B177                 add     eax, ebx</span><br><span class="line">.text:0043B179                 punpckhbw xmm4, xmm4</span><br><span class="line">.text:0043B17D                 mov     esi, eax</span><br><span class="line">.text:0043B17F                 pcmpeqb xmm4, xmm6</span><br><span class="line">.text:0043B183                 add     esi, 28h ; &#x27;(&#x27;</span><br><span class="line">.text:0043B186                 pcmpeqw mm1, mm2</span><br><span class="line">.text:0043B189</span><br><span class="line">.text:0043B189 loc_43B189:                                                                                         ; CODE XREF: get_api_address+80↓j</span><br><span class="line">.text:0043B189                                                                                                    get_api_address+94↓j ...</span><br><span class="line">.text:0043B189                 lodsd</span><br><span class="line">.text:0043B18A                 punpckhdq mm0, mm6</span><br><span class="line">.text:0043B18D                 test    eax, eax</span><br><span class="line">.text:0043B18F                 jz      short loc_43B189</span><br><span class="line">.text:0043B191                 packssdw xmm4, xmm7</span><br><span class="line">.text:0043B195                 add     eax, [esp+4+var_4]</span><br><span class="line">.text:0043B198                 pcmpeqb xmm6, xmm2</span><br><span class="line">.text:0043B19C                 mov     ebx, 83EC8B55h    ;DllFunctionCall 函数特征</span><br><span class="line">.text:0043B1A1                 cmp     [eax], ebx</span><br><span class="line">.text:0043B1A3                 jnz     short loc_43B189</span><br><span class="line">.text:0043B1A5                 punpckhwd mm0, mm4</span><br><span class="line">.text:0043B1A8                 cmp     dword ptr [eax+4], 8D560CECh  ;DllFunctionCall 函数特征</span><br><span class="line">.text:0043B1AF                 jnz     short loc_43B189</span><br><span class="line">.text:0043B1B1                 pcmpgtb mm6, mm4</span><br><span class="line">.text:0043B1B4                 pop     ebx</span><br><span class="line">.text:0043B1B5                 pcmpeqd xmm0, xmm1</span><br><span class="line">.text:0043B1B9                 xor     ebx, ebx</span><br><span class="line">.text:0043B1BB                 pcmpeqw mm6, mm3</span><br><span class="line">.text:0043B1BE                 push    ebx</span><br><span class="line">.text:0043B1BF                 punpckhwd xmm3, xmm7</span><br><span class="line">.text:0043B1C3                 push    ebx</span><br><span class="line">.text:0043B1C4                 punpckhbw xmm4, xmm4</span><br><span class="line">.text:0043B1C8                 push    ebx</span><br><span class="line">.text:0043B1C9                 pcmpeqb xmm4, xmm6</span><br><span class="line">.text:0043B1CD                 push    esp</span><br><span class="line">.text:0043B1CE                 pcmpeqw mm1, mm2</span><br><span class="line">.text:0043B1D1                 push    0</span><br><span class="line">.text:0043B1D3                 punpckhdq mm0, mm6</span><br><span class="line">.text:0043B1D6                 add     [esp+14h+var_14], 40000h</span><br><span class="line">.text:0043B1DD                 packssdw xmm4, xmm7</span><br><span class="line">.text:0043B1E1                 push    edx</span><br><span class="line">.text:0043B1E2                 pcmpeqb xmm6, xmm2</span><br><span class="line">.text:0043B1E6                 push    ecx</span><br><span class="line">.text:0043B1E7                 punpckhwd mm0, mm4</span><br><span class="line">.text:0043B1EA                 push    esp</span><br><span class="line">.text:0043B1EB                 pcmpgtb mm6, mm4</span><br><span class="line">.text:0043B1EE                 call    eax</span><br><span class="line">.text:0043B1F0                 pcmpeqd xmm0, xmm1</span><br><span class="line">.text:0043B1F4                 add     esp, 1Ch</span><br><span class="line">.text:0043B1F7                 pcmpeqw mm6, mm3</span><br><span class="line">.text:0043B1FA                 retn</span><br><span class="line">.text:0043B1FA get_api_address endp</span><br></pre></td></tr></table></figure>
-
-<p>通过get_api_address函数获得shellNoitdyIconW函数。并调用两次。<br>第一次调用的时候dwMessage参数为NIM_ADD，打开<code>控制面板\所有控制面板项\通知区域图标</code>会发现下面有一个空白的<br>这是因为PNOTIFYICONDATA被垃圾数据填充了。第二次传入NIM_DELETE删除托盘图标。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">.text:0043AF89 call    get_api_address</span><br><span class="line">.text:0043AF8E push    eax</span><br><span class="line">.text:0043AF8F push    dword ptr [ebp+52h] ;NOTIFYICONDATA结构体</span><br><span class="line">.text:0043AF92 push    0                   ;NIM_ADD</span><br><span class="line">.text:0043AF94 call    eax</span><br><span class="line">.text:0043AF96 cmp     eax, 1</span><br><span class="line">.text:0043AF99 jz      short $+2</span><br><span class="line">.text:0043AF9B</span><br><span class="line">.text:0043AF9B loc_43AF9B:                                                                                         ; CODE XREF: .text:0043AF99↑j</span><br><span class="line">.text:0043AF9B pop     eax</span><br><span class="line">.text:0043AF9C push    dword ptr [ebp+52h]</span><br><span class="line">.text:0043AF9F push    2                   ;NIM_DELETE </span><br><span class="line">.text:0043AFA1 call    eax</span><br></pre></td></tr></table></figure>
-
-
-
-<p>使用ZwSetInformationProcess绕过DEP保护的原理如下</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ULONG ExecuteFlags = MEM_EXECUTE_OPTION_ENABLE;</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">NtSetInformationProcess</span>(</span><br><span class="line">    <span class="number">-1</span>,<span class="comment">//当前进程</span></span><br><span class="line">    ProcessExecuteFlags, <span class="comment">// 0x22</span></span><br><span class="line">    &amp;ExecuteFlags, <span class="comment">// executeFlag=2; 设置为2关闭DEP</span></span><br><span class="line">    <span class="built_in">sizeof</span>(ExecuteFlags)); <span class="comment">// 0x4</span></span><br></pre></td></tr></table></figure>
-<p>关闭DEP以避免在栈上执行代码出现异常等问题。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">.text:0043B1FF push    &#x27;ssf&#x27;</span><br><span class="line">.text:0043B204 dec     dword ptr [esp+0]   ;sse</span><br><span class="line">.text:0043B207 push    &#x27;corQ&#x27;</span><br><span class="line">.text:0043B20C dec     [esp+4+var_4]       ;corP</span><br><span class="line">.text:0043B20F push    &#x27;noiu&#x27;</span><br><span class="line">.text:0043B214 dec     [esp+8+var_8]       ;noit</span><br><span class="line">.text:0043B217 push    &#x27;amrp&#x27;</span><br><span class="line">.text:0043B21C dec     [esp+0Ch+var_C]     ;amro</span><br><span class="line">.text:0043B21F push    &#x27;fnIu&#x27;</span><br><span class="line">.text:0043B224 dec     [esp+10h+var_10]    ;fnIt</span><br><span class="line">.text:0043B227 push    &#x27;eSw[&#x27;</span><br><span class="line">.text:0043B22C dec     [esp+14h+var_14]   ;eSwZ</span><br><span class="line">.text:0043B22F mov     edx, esp     ZwSetInformationProcess</span><br><span class="line">.text:0043B231 jmp     loc_43B0A1</span><br><span class="line">...</span><br><span class="line">.text:0043B0A1 punpckhwd mm2, mm6</span><br><span class="line">.text:0043B0A4 pcmpeqd mm2, mm5                                                                                    ; a10</span><br><span class="line">.text:0043B0A7 call    get_api_address</span><br><span class="line">.text:0043B0AC add     esp, 18h</span><br><span class="line">.text:0043B0AF punpckhwd mm0, mm1</span><br><span class="line">.text:0043B0B2 push    4     ;sizeof(ExecuteFlags)</span><br><span class="line">.text:0043B0B4 packsswb mm0, mm2</span><br><span class="line">.text:0043B0B7 push    0  //0</span><br><span class="line">.text:0043B0B9 pcmpgtw mm7, mm4</span><br><span class="line">.text:0043B0BC add     [esp+4+var_4], 400004h</span><br><span class="line">.text:0043B0C3 pcmpeqb mm4, mm0</span><br><span class="line">.text:0043B0C6 push    22h ; &#x27;&quot;&#x27; ;ProcessExecuteFlags</span><br><span class="line">.text:0043B0C8 punpckhwd xmm1, xmm3</span><br><span class="line">.text:0043B0CC push    0FFFFFFFFh  ;当前进程</span><br><span class="line">.text:0043B0CE punpckhdq mm5, mm5</span><br><span class="line">.text:0043B0D1 call    eax ;ZwSetInformationProcess</span><br></pre></td></tr></table></figure>
-
-<h2 id="反调试"><a href="#反调试" class="headerlink" title="反调试"></a>反调试</h2><p>这里使用三处反调试，</p>
-<ul>
-<li>PEB.BeingDebugged</li>
-<li>PEB.NtGlobalFlag</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Stack[00000B48]:0012D7A8 push    ebp</span><br><span class="line">Stack[00000B48]:0012D7A9 mov     ebp, esp</span><br><span class="line">Stack[00000B48]:0012D7AB mov     eax, large fs:18h</span><br><span class="line">Stack[00000B48]:0012D7B1 mov     eax, [eax+30h]</span><br><span class="line">Stack[00000B48]:0012D7B4 cmp     byte ptr [eax+2], 1 ;BeingDebugged，改成0绕过</span><br><span class="line">Stack[00000B48]:0012D7B8 jz      loc_12DAEF</span><br><span class="line">Stack[00000B48]:0012D7BE nop</span><br><span class="line">Stack[00000B48]:0012D7BF nop</span><br><span class="line">Stack[00000B48]:0012D7C0 mov     eax, large fs:30h</span><br><span class="line">Stack[00000B48]:0012D7C6 nop</span><br><span class="line">Stack[00000B48]:0012D7C7 nop</span><br><span class="line">Stack[00000B48]:0012D7C8 mov     al, [eax+68h]</span><br><span class="line">Stack[00000B48]:0012D7CB nop</span><br><span class="line">Stack[00000B48]:0012D7CC nop</span><br><span class="line">Stack[00000B48]:0012D7CD and     al, 70h ;NtGlobalFlag,将al改成0绕过</span><br><span class="line">Stack[00000B48]:0012D7CF nop</span><br><span class="line">Stack[00000B48]:0012D7D0 nop</span><br><span class="line">Stack[00000B48]:0012D7D1 cmp     al, 70h ; &#x27;p&#x27;</span><br><span class="line">Stack[00000B48]:0012D7D3 jz      loc_12DAEF</span><br><span class="line">Stack[00000B48]:0012D7D9 mov     eax, 1         ;检测虚拟机</span><br><span class="line">Stack[00000B48]:0012D7DE cpuid</span><br><span class="line">Stack[00000B48]:0012D7E0 mov     eax, edx</span><br><span class="line">Stack[00000B48]:0012D7E2 shr     eax, 17h</span><br><span class="line">Stack[00000B48]:0012D7E5 and     eax, 1</span><br><span class="line">Stack[00000B48]:0012D7E8 cmp     eax, 1        ;如果为1则是运行在虚拟机内</span><br></pre></td></tr></table></figure>
-
-<p>接着往下走，还有一处反调试</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Stack[00000B48]:0012D94B loc_12D94B:                   ; CODE XREF: Stack[00000B48]:0012D965↓j</span><br><span class="line">Stack[00000B48]:0012D94B push    eax</span><br><span class="line">Stack[00000B48]:0012D94C push    0Fh</span><br><span class="line">Stack[00000B48]:0012D94E call    dword ptr [ebp+94h]   ; sleep</span><br><span class="line">Stack[00000B48]:0012D954 pop     eax</span><br><span class="line">Stack[00000B48]:0012D955 push    eax</span><br><span class="line">Stack[00000B48]:0012D956 call    eax                  ; ntdll_NtYieldExecution</span><br><span class="line">Stack[00000B48]:0012D958 cmp     eax, 40000024h</span><br><span class="line">Stack[00000B48]:0012D95D jz      short loc_12D960</span><br><span class="line">Stack[00000B48]:0012D95F inc     edi</span><br><span class="line">Stack[00000B48]:0012D960</span><br><span class="line">Stack[00000B48]:0012D960 loc_12D960:                  ; CODE XREF: Stack[00000B48]:0012D95D↑j</span><br><span class="line">Stack[00000B48]:0012D960 pop     eax</span><br><span class="line">Stack[00000B48]:0012D961 inc     esi</span><br><span class="line">Stack[00000B48]:0012D962 cmp     esi, 20h ; &#x27; &#x27;</span><br><span class="line">Stack[00000B48]:0012D965 jnz     short loc_12D94B</span><br></pre></td></tr></table></figure>
+		  
 				  
 	  
       
@@ -1917,6 +1659,150 @@ pehead.data_start&nbsp;=&nbsp;min_off;
 
 <!-- 文章页添加mathjax公式 -->
   
+    <article id="post-安卓游戏资源解密" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title_code_ant" href="/post/9e24c54e.html">安卓游戏资源解密</a>
+    </h2>
+  
+
+        
+		
+		  <a href="/post/9e24c54e.html" class="archive-article-date">
+  	<time datetime="2016-01-31T13:40:52.000Z" itemprop="datePublished">
+	<!-- <i class="icon-calendar icon"></i> -->
+
+	<i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+	&nbsp;
+	2016-01-31</time>
+	
+	<!-- busuanzi阅读量统计
+	
+	-->
+	
+    <!-- waline阅读量统计 -->
+	
+
+</a>
+
+
+        
+		
+		
+		  <!-- 添加标题栏文字统计效果 -->
+<div class="word-count">
+	
+      
+        <span class="article-type" style="
+          color: white;
+          font-size: 14px;
+          background: #0088CC;
+          padding: 0 5px 1px 5px;
+          margin-right: 5px;
+          border-radius: 2px;">原创</span>
+		  &nbsp; 
+      
+    
+	
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
+        <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
+        <span class="post-meta-item-text">字数统计: </span>
+        <span class="post-count">830字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+	    <i class="fa fa-pagelines" aria-hidden="true"></i>
+        <span class="post-meta-item-text">阅读时长: </span>
+        <span class="post-count">3min</span>
+      </span>
+    </span>
+	
+
+</div>
+<!-- 添加标题栏文字统计效果结束 -->
+		
+      </header>
+    
+	
+    <div class="article-entry" itemprop="articleBody">
+	  <!-- 添加分类与标签 -->
+	  
+		  
+			<h1 id="安卓游戏资源解密"><a href="#安卓游戏资源解密" class="headerlink" title="安卓游戏资源解密"></a>安卓游戏资源解密</h1><p>一个同学在群里发了个游戏，要解密游戏的资源。反编译看了下源码，没看出什么，用Android Killer看了下资源，发现在res/raw目录下有个文件比较大，t0.zip解压后有t0.pak;文件有点大，3M多，并且是以PAK格式的文 件，通过搜索得知这个格式为PAK格式——是一种文件打包的格式。</p>
+<p><img src="http://t.cn/RGRCrxm"></p>
+<p>在网上搜了下 打开PAK文件的软件，发现都不能打开。  搞不定就不搞了。</p>
+<p>这几天看了 &lt;&lt;揭秘数据解密的关键技术&gt;&gt;，下面图片框框内的像文件名，我们可以知道这个文件是一种文件打包的格式。具体是什么结构不知道。<br><img src="http://t.cn/RGRCgpS"></p>
+		  
+				  
+	  
+      
+	  <!-- 添加打赏 -->
+	  
+	
+	  <!-- 添加版权声明 -->
+      
+	  
+	</div>
+	
+	<!-- 添加置顶 -->
+    <div class="article-info article-info-index">
+      
+	  
+	  <!-- 分类页 -->
+      
+      
+
+	  
+	  <!-- 添加展开全文 -->
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/post/9e24c54e.html">展开全文 >></a>
+        </p>
+      
+	  
+	  <!-- 添加分享 -->
+      
+	  
+      <div class="clearfix"></div>
+	  
+    </div>
+  </div>
+</article>
+
+
+
+<!-- 添加回到顶部和文章目录 -->
+<aside class="wrap-side-operation">
+  <div class="mod-side-operation">
+    
+      <div class="jump-container" id="js-jump-container" style="display:none;">
+        <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+          <i class="icon-font icon-back"></i>
+        </a>
+      </div>
+    
+    
+  </div>
+</aside>
+
+<!-- 添加评论 -->
+
+
+<!-- 文章页添加mathjax公式 -->
+
+  
+
+<!-- 文章页添加mathjax公式 -->
+  
   
 
 
@@ -1967,10 +1853,10 @@ window.MathJax = {
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 9 篇</span>
+		<span> 10 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">14.4k</span></span>
+		<span> <span class="post-count">15.2k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
