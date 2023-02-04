@@ -3,11 +3,11 @@
   <title>ydc&#39;s Blog</title>
   
   
-  <link href="http://example.com/atom.xml" rel="self"/>
+  <link href="http://shxi.tk/atom.xml" rel="self"/>
   
-  <link href="http://example.com/"/>
-  <updated>2023-02-04T11:44:53.212Z</updated>
-  <id>http://example.com/</id>
+  <link href="http://shxi.tk/"/>
+  <updated>2023-02-04T11:59:27.616Z</updated>
+  <id>http://shxi.tk/</id>
   
   <author>
     <name>KenYang</name>
@@ -18,27 +18,23 @@
   
   <entry>
     <title>豆约翰博客备份专家破解</title>
-    <link href="http://example.com/post/9d7b1fcb.html"/>
-    <id>http://example.com/post/9d7b1fcb.html</id>
+    <link href="http://shxi.tk/post/9d7b1fcb.html"/>
+    <id>http://shxi.tk/post/9d7b1fcb.html</id>
     <published>2016-10-30T12:14:54.000Z</published>
-    <updated>2023-02-04T11:44:53.212Z</updated>
+    <updated>2023-02-04T11:59:27.616Z</updated>
     
-    <content type="html"><![CDATA[<p>文笔不好，路过的看官求勿喷。</p><p>官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。<br><img src="http://t.cn/RVuofGm"></p><p>F5开始调试。<br><img src="http://t.cn/RVuoITs"></p><p>点击ok，程序会出现登陆框，要输入账号密码。第一步我们先实现免账号登陆，先随便输个账号密码，利用堆栈回溯来找到下图中高亮部分，这里面就是登陆流程部分。<br><img src="http://t.cn/RVuoMD5"></p><p>跳转到目标代码，很明显就是对账号密码的判断，我们只要将第一个判断语句的等于改成不等于，空账号登陆。</p><p><img src="http://t.cn/RVuoJ4G"></p><span id="more"></span><p>选中第一行if判断语句，右键编辑IL指令。<br><img src="http://t.cn/RVuoiQB"><br>再来看看修改后的语句，等于号已经换成不等于了。<br><img src="http://t.cn/RVuo6BW"></p><p>修改完成后，我们需要将我们修改的内容保存到文件。文件菜单中选保存模块或者保存所有来把修改后的文件保存到新文件。用这个文件替换原来的文件就ok了。</p><p>现在不需要账号就能使用了，但是还是有限制，只能下载5篇博客，</p><p>字符串搜索vip，找到如下结果。<br><img src="http://t.cn/RVuoSGH"></p><p>选中m_bVip 按下Ctrl+R,发现m_bVip在如下图地方被赋值，直接修改false为true,就没有只能下5篇博客的限制。<br><img src="http://t.cn/RVuoKeA"><br>同样是编辑il指令。<br><img src="http://t.cn/RVuooCA"></p><p>修改完成后保存到文件，注意此处属于BlogGather.dll文件的代码部分，用这个文件替换BlogGather.dll就可以去掉只能下载5篇博客的限制。</p>]]></content>
+    <content type="html"><![CDATA[<p>文笔不好，路过的看官求勿喷。</p><p>官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。<br><img src="http://t.cn/RVuofGm"></p><span id="more"></span><p>F5开始调试。<br><img src="http://t.cn/RVuoITs"></p><p>点击ok，程序会出现登陆框，要输入账号密码。第一步我们先实现免账号登陆，先随便输个账号密码，利用堆栈回溯来找到下图中高亮部分，这里面就是登陆流程部分。<br><img src="http://t.cn/RVuoMD5"></p><p>跳转到目标代码，很明显就是对账号密码的判断，我们只要将第一个判断语句的等于改成不等于，空账号登陆。</p><p><img src="http://t.cn/RVuoJ4G"></p><!-- more --><p>选中第一行if判断语句，右键编辑IL指令。<br><img src="http://t.cn/RVuoiQB"><br>再来看看修改后的语句，等于号已经换成不等于了。<br><img src="http://t.cn/RVuo6BW"></p><p>修改完成后，我们需要将我们修改的内容保存到文件。文件菜单中选保存模块或者保存所有来把修改后的文件保存到新文件。用这个文件替换原来的文件就ok了。</p><p>现在不需要账号就能使用了，但是还是有限制，只能下载5篇博客，</p><p>字符串搜索vip，找到如下结果。<br><img src="http://t.cn/RVuoSGH"></p><p>选中m_bVip 按下Ctrl+R,发现m_bVip在如下图地方被赋值，直接修改false为true,就没有只能下5篇博客的限制。<br><img src="http://t.cn/RVuoKeA"><br>同样是编辑il指令。<br><img src="http://t.cn/RVuooCA"></p><p>修改完成后保存到文件，注意此处属于BlogGather.dll文件的代码部分，用这个文件替换BlogGather.dll就可以去掉只能下载5篇博客的限制。</p>]]></content>
     
     
     <summary type="html">&lt;p&gt;文笔不好，路过的看官求勿喷。&lt;/p&gt;
-&lt;p&gt;官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。&lt;br&gt;&lt;img src=&quot;http://t.cn/RVuofGm&quot;&gt;&lt;/p&gt;
-&lt;p&gt;F5开始调试。&lt;br&gt;&lt;img src=&quot;http://t.cn/RVuoITs&quot;&gt;&lt;/p&gt;
-&lt;p&gt;点击ok，程序会出现登陆框，要输入账号密码。第一步我们先实现免账号登陆，先随便输个账号密码，利用堆栈回溯来找到下图中高亮部分，这里面就是登陆流程部分。&lt;br&gt;&lt;img src=&quot;http://t.cn/RVuoMD5&quot;&gt;&lt;/p&gt;
-&lt;p&gt;跳转到目标代码，很明显就是对账号密码的判断，我们只要将第一个判断语句的等于改成不等于，空账号登陆。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://t.cn/RVuoJ4G&quot;&gt;&lt;/p&gt;</summary>
+&lt;p&gt;官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。&lt;br&gt;&lt;img src=&quot;http://t.cn/RVuofGm&quot;&gt;&lt;/p&gt;</summary>
     
     
     
-    <category term="逆向" scheme="http://example.com/categories/%E9%80%86%E5%90%91/"/>
+    <category term="逆向" scheme="http://shxi.tk/categories/%E9%80%86%E5%90%91/"/>
     
     
-    <category term="逆向" scheme="http://example.com/tags/%E9%80%86%E5%90%91/"/>
+    <category term="逆向" scheme="http://shxi.tk/tags/%E9%80%86%E5%90%91/"/>
     
   </entry>
   
