@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2023-02-04T07:38:28.839Z</updated>
+  <updated>2023-02-04T11:44:53.212Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -17,51 +17,28 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>math</title>
-    <link href="http://example.com/post/a927044d.html"/>
-    <id>http://example.com/post/a927044d.html</id>
-    <published>2023-02-04T07:36:19.330Z</published>
-    <updated>2023-02-04T07:38:28.839Z</updated>
+    <title>豆约翰博客备份专家破解</title>
+    <link href="http://example.com/post/9d7b1fcb.html"/>
+    <id>http://example.com/post/9d7b1fcb.html</id>
+    <published>2016-10-30T12:14:54.000Z</published>
+    <updated>2023-02-04T11:44:53.212Z</updated>
     
-    <content type="html"><![CDATA[<p>如 $\lim_{x \to 0} \frac{\sin x}{x}$ 渲染的是</p><p>$$<br>\begin{eqnarray}<br> \lim_{x \to 0} \frac{\sin x + x^2 + x^3}{x} &amp; = &amp; \lim_{x \to 0} \frac{\sin x }{x} + \lim_{x \to 0} \frac{x^2 }{x} + \lim_{x \to 0}\frac{x^3}{x}<br>\\ &amp; = &amp; \lim_{x \to 0}\frac{\sin x}{x}<br>\\ &amp; = &amp; 1<br>\end{eqnarray}<br>$$</p><span id="more"></span><p>斐波那契数列$A_n=A_{n-1}+A_{n-2}$,前后两项的比值逐渐收敛到黄金分割比例<br>$$\lim_{n\to \infty}\frac{A_{n-1}}{A_n}=\frac{\sqrt{5}-1}{2}.$$</p><p>因式分解<br>$$\begin{split}(x−1)(x−3)&amp;=x^2−4x+3 \<br>&amp;=x^2−4x+4−1 \<br>&amp;=(x−2)^2−1<br>\end{split}<br>$$</p><p>狄利克雷函数</p><p>$$<br>D(x)=<br>\begin{cases}<br>1,&amp; x \in Q \<br>0,&amp; x \notin Q<br>\end{cases}<br>$$</p><p>高斯公式<br>$$<br>\iiint_{\Omega}\left(\frac{\partial P}{\partial x}+\frac{\partial Q}{\partial y}+\frac{\partial R}{\partial z}\right) d v=\iint_{\Sigma} P d y d z+Q d z d x+R d x d y<br>$$</p><h2 id="物理公式"><a href="#物理公式" class="headerlink" title="物理公式"></a>物理公式</h2><ul><li>牛顿第一定律: $\sum \vec{F}_{i}=\frac{\mathrm{d} \vec{v}}{\mathrm{d} t}=0$</li><li>牛顿第二定律: $\vec{F}=\frac{\mathrm{d} m}{\mathrm{d} t} \vec{v}+m \frac{\mathrm{d} \vec{v}}{\mathrm{d} t}=\frac{\mathrm{d} m}{\mathrm{d} t} \vec{v}+m \vec{a}=\frac{\mathrm{d} m}{\mathrm{d} t} \vec{v}+m \frac{\mathrm{d}^{2} \vec{r}}{\mathrm{d} t^{2}}$</li><li>牛顿第三定律: $\overrightarrow{F_{12}}=-\overrightarrow{F_{21}}$</li><li>质能守恒: $E=mc^2$</li></ul><h2 id="化学公式"><a href="#化学公式" class="headerlink" title="化学公式"></a>化学公式</h2><p>离子反应与沉淀: $\ce{SO4^2- + Ba^2+ -&gt; BaSO4 v}$</p><h2 id="生物公式"><a href="#生物公式" class="headerlink" title="生物公式"></a>生物公式</h2><p>光合作用<br>范德蒙行列式<br>$$D_{n-1}=\left|\begin{array}{cccc}<br>1 &amp; 1 &amp; \dots &amp; 1 \<br>x_{2} &amp; x_{3} &amp; \dots &amp; x_{n} \<br>\vdots &amp; \vdots &amp; &amp; \vdots \<br>x_{2}^{n-2} &amp; x_{3}^{n-2} &amp; \dots &amp; x_{n}^{n-2}<br>\end{array}\right|=\prod_{2 \leq j&lt;i \leq n}\left(x_{i}-x_{j}\right)$$</p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;如 $\lim_{x \to 0} \frac{\sin x}{x}$ 渲染的是&lt;/p&gt;
-&lt;p&gt;$$&lt;br&gt;\begin{eqnarray}&lt;br&gt; \lim_{x \to 0} \frac{\sin x + x^2 + x^3}{x} &amp;amp; = &amp;amp; \lim_{x \to 0} \frac{\sin x }{x} + \lim_{x \to 0} \frac{x^2 }{x} + \lim_{x \to 0}\frac{x^3}{x}&lt;br&gt;\\ &amp;amp; = &amp;amp; \lim_{x \to 0}\frac{\sin x}{x}&lt;br&gt;\\ &amp;amp; = &amp;amp; 1&lt;br&gt;\end{eqnarray}&lt;br&gt;$$&lt;/p&gt;</summary>
+    <content type="html"><![CDATA[<p>文笔不好，路过的看官求勿喷。</p><p>官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。<br><img src="http://t.cn/RVuofGm"></p><p>F5开始调试。<br><img src="http://t.cn/RVuoITs"></p><p>点击ok，程序会出现登陆框，要输入账号密码。第一步我们先实现免账号登陆，先随便输个账号密码，利用堆栈回溯来找到下图中高亮部分，这里面就是登陆流程部分。<br><img src="http://t.cn/RVuoMD5"></p><p>跳转到目标代码，很明显就是对账号密码的判断，我们只要将第一个判断语句的等于改成不等于，空账号登陆。</p><p><img src="http://t.cn/RVuoJ4G"></p><span id="more"></span><p>选中第一行if判断语句，右键编辑IL指令。<br><img src="http://t.cn/RVuoiQB"><br>再来看看修改后的语句，等于号已经换成不等于了。<br><img src="http://t.cn/RVuo6BW"></p><p>修改完成后，我们需要将我们修改的内容保存到文件。文件菜单中选保存模块或者保存所有来把修改后的文件保存到新文件。用这个文件替换原来的文件就ok了。</p><p>现在不需要账号就能使用了，但是还是有限制，只能下载5篇博客，</p><p>字符串搜索vip，找到如下结果。<br><img src="http://t.cn/RVuoSGH"></p><p>选中m_bVip 按下Ctrl+R,发现m_bVip在如下图地方被赋值，直接修改false为true,就没有只能下5篇博客的限制。<br><img src="http://t.cn/RVuoKeA"><br>同样是编辑il指令。<br><img src="http://t.cn/RVuooCA"></p><p>修改完成后保存到文件，注意此处属于BlogGather.dll文件的代码部分，用这个文件替换BlogGather.dll就可以去掉只能下载5篇博客的限制。</p>]]></content>
     
     
-    
-    <category term="math" scheme="http://example.com/categories/math/"/>
-    
-    
-    <category term="math" scheme="http://example.com/tags/math/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Hello World</title>
-    <link href="http://example.com/post/4a17b156.html"/>
-    <id>http://example.com/post/4a17b156.html</id>
-    <published>2023-02-04T07:36:19.329Z</published>
-    <updated>2023-02-04T07:38:28.842Z</updated>
-    
-    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><span id="more"></span><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for more info. If you get any problems when using Hexo, you can find the answer in &lt;a href=&quot;https://hexo.io/docs/troubleshooting.html&quot;&gt;troubleshooting&lt;/a&gt; or you can ask me on &lt;a href=&quot;https://github.com/hexojs/hexo/issues&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;文笔不好，路过的看官求勿喷。&lt;/p&gt;
+&lt;p&gt;官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。&lt;br&gt;&lt;img src=&quot;http://t.cn/RVuofGm&quot;&gt;&lt;/p&gt;
+&lt;p&gt;F5开始调试。&lt;br&gt;&lt;img src=&quot;http://t.cn/RVuoITs&quot;&gt;&lt;/p&gt;
+&lt;p&gt;点击ok，程序会出现登陆框，要输入账号密码。第一步我们先实现免账号登陆，先随便输个账号密码，利用堆栈回溯来找到下图中高亮部分，这里面就是登陆流程部分。&lt;br&gt;&lt;img src=&quot;http://t.cn/RVuoMD5&quot;&gt;&lt;/p&gt;
+&lt;p&gt;跳转到目标代码，很明显就是对账号密码的判断，我们只要将第一个判断语句的等于改成不等于，空账号登陆。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://t.cn/RVuoJ4G&quot;&gt;&lt;/p&gt;</summary>
     
     
     
-    <category term="博客Blog" scheme="http://example.com/categories/%E5%8D%9A%E5%AE%A2Blog/"/>
-    
-    <category term="hexo" scheme="http://example.com/categories/%E5%8D%9A%E5%AE%A2Blog/hexo/"/>
-    
-    <category term="new-yilia" scheme="http://example.com/categories/%E5%8D%9A%E5%AE%A2Blog/new-yilia/"/>
+    <category term="逆向" scheme="http://example.com/categories/%E9%80%86%E5%90%91/"/>
     
     
-    <category term="hexo" scheme="http://example.com/tags/hexo/"/>
-    
-    <category term="new-yilia" scheme="http://example.com/tags/new-yilia/"/>
+    <category term="逆向" scheme="http://example.com/tags/%E9%80%86%E5%90%91/"/>
     
   </entry>
   
