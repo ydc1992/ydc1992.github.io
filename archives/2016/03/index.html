@@ -7,18 +7,14 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <meta http-equiv="Content-Language" content="zh-cn">
   <link rel="dns-prefetch" href="http://shxi.tk">
-  <title>AOSP-docker编译安卓源码绕过反调试 | ydc&#39;s Blog</title>
+  <title>归档: 2016/3 | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="看了很多编译源码的文章，发现很多都有坑，大部分都是环境配置问题，编译不同版本的源码jdk版本不一样，ubuntu版本也不一样。这很让人蛋疼，光是折腾环境就得半天了。 自从有了docker就不一样了，有人把Android源码编译的环境打包成了docker，就是AOSP docker;这样我们就不需要去折腾环境,直接拿人家弄好的来用。 推荐使用linux装docker，不用管是debian还是ubun">
-<meta property="og:type" content="article">
-<meta property="og:title" content="AOSP-docker编译安卓源码绕过反调试">
-<meta property="og:url" content="http://shxi.tk/post/7b82cd68.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="ydc&#39;s Blog">
+<meta property="og:url" content="http://shxi.tk/archives/2016/03/index.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="看了很多编译源码的文章，发现很多都有坑，大部分都是环境配置问题，编译不同版本的源码jdk版本不一样，ubuntu版本也不一样。这很让人蛋疼，光是折腾环境就得半天了。 自从有了docker就不一样了，有人把Android源码编译的环境打包成了docker，就是AOSP docker;这样我们就不需要去折腾环境,直接拿人家弄好的来用。 推荐使用linux装docker，不用管是debian还是ubun">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2018-04-14T12:05:37.000Z">
-<meta property="article:modified_time" content="2023-02-04T12:06:26.576Z">
 <meta property="article:author" content="KenYang">
 <meta name="twitter:card" content="summary">
   
@@ -313,461 +309,101 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-AOSP-docker编译安卓源码绕过反调试" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
+            
+  
+  
     
-      <header class="article-header">
-        
-  
-    <h1 class="article-title_code_ant" itemprop="name">
-	  <a href="/post/7b82cd68.html">AOSP-docker编译安卓源码绕过反调试</a>
-	</h1>
-  
-
-        
-		
-		  <a href="/post/7b82cd68.html" class="archive-article-date">
-  	<time datetime="2018-04-14T12:05:37.000Z" itemprop="datePublished">
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2016" class="archive-year">2016</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/post/5ca97896.html" class="archive-article-date">
+  	<time datetime="2016-03-06T13:50:53.000Z" itemprop="datePublished">
 	<!-- <i class="icon-calendar icon"></i> -->
 
 	<i class="fa fa-calendar-check-o" aria-hidden="true"></i>
 	&nbsp;
-	2018-04-14</time>
+	2016-03-06</time>
 	
 	<!-- busuanzi阅读量统计
-	
-	<span>
-		&nbsp; &nbsp; &nbsp;
-		<span class="post-meta-item-text">阅读量:</span>
-		<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
-		<span class="post-meta-item-text">次</span>
-	</span>
 	
 	-->
 	
     <!-- waline阅读量统计 -->
 	
-	<span>
-		&nbsp; &nbsp; &nbsp;
-		<i class="fa fa-eye" aria-hidden="true"></i>
-		&nbsp;
-		<span class="waline-pageview-count" data-path="/post/7b82cd68.html"><i class="fa fa-spinner fa-spin"></i></span>
-	</span>
-	
 
 </a>
 
 
-        
-		
-		
-		  <!-- 添加标题栏文字统计效果 -->
-<div class="word-count">
-	
-      
-        <span class="article-type" style="
-          color: white;
-          font-size: 14px;
-          background: #0088CC;
-          padding: 0 5px 1px 5px;
-          margin-right: 5px;
-          border-radius: 2px;">原创</span>
-		  &nbsp; 
-      
-    
-	
-    <span class="post-time">
-      <span class="post-meta-item-icon">
-	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
-        <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
-        <span class="post-meta-item-text">字数统计: </span>
-        <span class="post-count">1.4k字</span>
-      </span>
-    </span>
-
-    <span class="post-time">
-      &nbsp; | &nbsp;
-      <span class="post-meta-item-icon">
-	    <i class="fa fa-pagelines" aria-hidden="true"></i>
-        <span class="post-meta-item-text">阅读时长: </span>
-        <span class="post-count">6min</span>
-      </span>
-    </span>
-	
-
-</div>
-<!-- 添加标题栏文字统计效果结束 -->
-		
-      </header>
-    
-	
-    <div class="article-entry" itemprop="articleBody">
-	  <!-- 添加分类与标签 -->
-	  
-		  
-		  <p>看了很多编译源码的文章，发现很多都有坑，大部分都是环境配置问题，编译不同版本的源码jdk版本不一样，ubuntu版本也不一样。这很让人蛋疼，光是折腾环境就得半天了。</p>
-<p>自从有了docker就不一样了，有人把Android源码编译的环境打包成了docker，就是AOSP docker;这样我们就不需要去折腾环境,直接拿人家弄好的来用。</p>
-<p>推荐使用linux装docker，不用管是debian还是ubuntu;虽然windows也可以使用docker，但是还是有点小问题。</p>
-<span id="more"></span>
-<h2 id="分配硬盘"><a href="#分配硬盘" class="headerlink" title="分配硬盘"></a>分配硬盘</h2><p>linux至少要分配100g的硬盘空间。空间足够的可以跳过，原本装有VMWare linux，但是空间不足，又不想重新装个虚拟机。 可以参考 这篇文章<a target="_blank" rel="noopener" href="http://blog.csdn.net/u010372981/article/details/46514011">http://blog.csdn.net/u010372981/article/details/46514011</a> 给虚拟机加块硬盘。</p>
-<h2 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h2><p>默认源中没有docker,我们需要在添加backports源，在/etc/apt/sources.list文件 加入下面这行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deb http://http.debian.net/debian jessie-backports main</span><br></pre></td></tr></table></figure>
-
-<p>运行如下命令安装docker</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get update</span><br><span class="line">apt-get install docker.io</span><br></pre></td></tr></table></figure>
-<h2 id="开始编译"><a href="#开始编译" class="headerlink" title="开始编译"></a>开始编译</h2><p>1.开始之前先启动docker服务,不然到后面会报错</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/docker start</span><br></pre></td></tr></table></figure>
-
-<p>2.设置AOSP_VOL环境变量,设置为你要存放源码的路径,给VMWare添加硬盘扩容的设置成挂载的硬盘的路径。我设置的/Android路径</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export AOSP_VOL=/Android</span><br></pre></td></tr></table></figure>
-
-<p>3.下载Wrapper脚本,我这里演示编译kitkat(Android 4.4),编译其他版本可以参考<a target="_blank" rel="noopener" href="https://github.com/tiann/docker-aosp">https://github.com/tiann/docker-aosp</a>, 脚本根对国内环境做了优化，使用速度比较快的清华源。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -O https://raw.githubusercontent.com/tiann/docker-aosp/master/tests/build-kitkat.sh</span><br></pre></td></tr></table></figure>
-
-<p>4.编译源码,直接运行上一步下载下来的源码。该脚本会下载docker镜像，并且下载Android源码到AOSP_VOL指定的路径，然后编译。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh ./build-kitkat.sh</span><br></pre></td></tr></table></figure>
-
-<p>编译完成后,使用的是系统默认自带的内核，我们还需要重新修改编译内核绕过反调试</p>
-<h2 id="编译内核"><a href="#编译内核" class="headerlink" title="编译内核"></a>编译内核</h2><ol>
-<li> clone内核源码 我使用的手机是Nexus 5,对应的内核源码为kernel/msm。设备名是hammerhead</li>
-</ol>
-<p>在存放源码的目录创建kernel文件夹，我这里存放源码目录为/Android</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /Android/aosp</span><br><span class="line">mkdir kernel</span><br><span class="line">cd kernel</span><br><span class="line">git clone https://aosp.tuna.tsinghua.edu.cn/kernel/msm.git</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li> 选择系统版本 切换到克隆下来的源码目录，切换分支</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -a</span><br></pre></td></tr></table></figure>
-
-<p>找到名字带有 hammerhead的。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout remotes/origin/android-msm-hammerhead-3.4-kitkat-mr1</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li> 修改源码</li>
-</ol>
-<p>需要修改<code>kernel/msm/fs/proc/base.c</code>和<code>kernel/msm/fs/proc/array.c</code>两个文件</p>
-<p>base.c中 <code>proc_pid_wchan</code>函数部分修改成如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//省略</span><br><span class="line">else &#123;</span><br><span class="line">           if (strstr(symname, &quot;trace&quot;)) &#123;</span><br><span class="line">                return sprintf(buffer, &quot;%s&quot;, &quot;sys_epoll_wait&quot;);</span><br><span class="line">           &#125;</span><br><span class="line">           return sprintf(buffer, &quot;%s&quot;, symname);</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
-
-<p>array.c中<code>tast_state</code>函数部分修改成</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&quot;Gid:\t%d\t%d\t%d\t%d\n&quot;,</span><br><span class="line">              get_task_state(p),</span><br><span class="line">              task_tgid_nr_ns(p, ns),</span><br><span class="line">              pid_nr_ns(pid, ns),</span><br><span class="line">              ppid, /*tpid*/0,</span><br><span class="line">              cred-&gt;uid, cred-&gt;euid, cred-&gt;suid, cred-&gt;fsuid,</span><br><span class="line">              cred-&gt;gid, cred-&gt;egid, cred-&gt;sgid, cred-&gt;fsgid);</span><br></pre></td></tr></table></figure>
-
-<p><code>task_state_array</code>变量修改成</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="type">char</span> * <span class="type">const</span> task_state_array[] = &#123;</span><br><span class="line">     <span class="string">&quot;R (running)&quot;</span>,        <span class="comment">/*    0 */</span></span><br><span class="line">     <span class="string">&quot;S (sleeping)&quot;</span>,       <span class="comment">/*    1 */</span></span><br><span class="line">     <span class="string">&quot;D (disk sleep)&quot;</span>,     <span class="comment">/*    2 */</span></span><br><span class="line">     <span class="string">&quot;S (sleeping)&quot;</span>,       <span class="comment">/*    4 */</span></span><br><span class="line">     <span class="string">&quot;S (sleeping)&quot;</span>, <span class="comment">/*     8 */</span></span><br><span class="line">     <span class="string">&quot;Z (zombie)&quot;</span>,         <span class="comment">/*  16 */</span></span><br><span class="line">     <span class="string">&quot;X (dead)&quot;</span>,           <span class="comment">/*  32 */</span></span><br><span class="line">     <span class="string">&quot;x (dead)&quot;</span>,           <span class="comment">/*  64 */</span></span><br><span class="line">     <span class="string">&quot;K (wakekill)&quot;</span>,       <span class="comment">/* 128 */</span></span><br><span class="line">     <span class="string">&quot;W (waking)&quot;</span>,         <span class="comment">/* 256 */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li> 创建编译脚本 在<code>/Android/aosp/kernel/msm</code>目录,即内核源码所在的目录创建一个脚本，内容如下,保存为run.sh. PATH前面的gcc路径为编译工具链,用来编译内核的。</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="string">&#x27;/Android/aosp/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin&#x27;</span>;<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> ARCH=arm</span><br><span class="line"><span class="built_in">export</span> SUBARCH=arm</span><br><span class="line"><span class="built_in">export</span> CROSS_COMPILE=arm-eabi-</span><br><span class="line">make hammerhead defconfig</span><br><span class="line">make -j4</span><br></pre></td></tr></table></figure>
-
-<p>然后运行该脚本开始编译内核</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh run.sh</span><br></pre></td></tr></table></figure>
-
-<p>出现如下提示表示内核已经编译ok</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CALL    scripts/checksyscalls.sh</span><br><span class="line">CHK     include/generated/compile.h</span><br><span class="line">Kernel: arch/arm/boot/Image is ready</span><br><span class="line">LD      arch/arm/boot/compressed/vmlinux</span><br><span class="line">OBJCOPY arch/arm/boot/zImage</span><br><span class="line">Kernel: arch/arm/boot/zImage is ready</span><br><span class="line">CAT     arch/arm/boot/zImage-dtb</span><br><span class="line">Kernel: arch/arm/boot/zImage-dtb is ready</span><br></pre></td></tr></table></figure>
-
-<p>在<code>/Android/aosp/kernel/msm/arch/arm/boot</code>找到zImage-dtb,这个是nexus 5内核文件,拷贝到<code>/Android/aosp/device/lge/hammerhead-kernel</code>覆盖原来的文件</p>
-<ol>
-<li> 下载驱动设备 要刷机到实体机,还需要下载三个驱动设备</li>
-</ol>
-<p>从<a target="_blank" rel="noopener" href="https://developers.google.com/android/drivers%E6%89%BE%E5%88%B0%E5%AF%B9%E5%BA%94%E7%9A%84%E9%A9%B1%E5%8A%A8%E8%AE%BE%E5%A4%87%E3%80%82">https://developers.google.com/android/drivers找到对应的驱动设备。</a></p>
-<p>搜索Nexus 5找到对应的系统版本，我的是Android 4.4.4。找到的结果如下：</p>
-<p>Nexus 5 (GSM/LTE) binaries for Android 4.4.4 (KTU84P)</p>
-<table>
-<thead>
-<tr>
-<th>Hardware Component</th>
-<th>Company</th>
-<th>Download</th>
-<th>SHA-256 Checksum</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>NFC, Bluetooth, Wi-Fi</td>
-<td>Broadcom</td>
-<td>Link</td>
-<td>f258605e24c9c3d4e78c9af934f3516a4f8d3410da697005fad42cad36c5ed5c</td>
-</tr>
-<tr>
-<td>Camera, Sensors, Audio</td>
-<td>LG</td>
-<td>Link</td>
-<td>fc72704e0fba9c51c6505ae009e474570de27ee8565d51483368d8dae6c0f44e</td>
-</tr>
-<tr>
-<td>Graphics, GSM, Camera, GPS, Sensors, Media, DSP, USB</td>
-<td>Qualcomm</td>
-<td>Link</td>
-<td>8603d85ad511346d65c27c3747919da280523b86d55a39dfce657a4ca1b0685b</td>
-</tr>
-</tbody></table>
-<p>Download对应的是下载连接，我们把这三个文件下载后解压到/Android/AOSP目录。得到三个sh脚本文件 <code>extract-broadcom-hammerhead.sh</code>、<code>extract-lge-hammerhead.sh</code>和<code>extract-qcom-hammerhead.sh</code>;</p>
-<p>分别运行它们</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sh extract-broadcom-hammerhead.sh</span><br><span class="line">sh extract-lge-hammerhead.sh</span><br><span class="line">sh extract-qcom-hammerhead.sh</span><br></pre></td></tr></table></figure>
-
-<p>一直按回车，等到如下提示输入 I ACCEPT。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Type &quot;I ACCEPT&quot; if you agree to the terms of the license: </span><br><span class="line">You didn&#x27;t accept the license. Extraction aborted.</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li> 再次编译源码 再次运行编译脚本重新编译,这次会很快</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh ./build-kitkat.sh</span><br></pre></td></tr></table></figure>
-
-<h2 id="刷机"><a href="#刷机" class="headerlink" title="刷机"></a>刷机</h2><p>先确定bootloader有没有解锁,没解锁是刷不进去的。</p>
-<p>Nexus 5 是两个音量键和开机键一起一直按到出现bootloader界面。usb连接手机，输入以下命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fastboot oem unlock</span><br></pre></td></tr></table></figure>
-
-<p>这个是Nexus 5的解锁方式</p>
-<p>Android源码编译成功后,文件保存在<code>/Android/aosp/out/target/product/hammerhead</code>。</p>
-<p>输入如下命令就可以刷入实体机了。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /Android/aosp/out/target/product/hammerhead</span><br><span class="line">Adb reboot bootloader</span><br><span class="line">Fastboot -w flashall</span><br></pre></td></tr></table></figure>
-
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="http://blog.csdn.net/gaisylly/article/details/50113791">http://blog.csdn.net/gaisylly/article/details/50113791</a><br><a target="_blank" rel="noopener" href="https://github.com/tiann/docker-aosp">https://github.com/tiann/docker-aosp</a><br><a target="_blank" rel="noopener" href="http://weishu.me/2016/12/30/simple-way-to-compile-android-source/">http://weishu.me/2016/12/30/simple-way-to-compile-android-source/</a><br><a target="_blank" rel="noopener" href="http://bbs.pediy.com/thread-213481.htm">http://bbs.pediy.com/thread-213481.htm</a><br><a target="_blank" rel="noopener" href="http://blog.csdn.net/sunao2002002/article/details/53057374">http://blog.csdn.net/sunao2002002/article/details/53057374</a><br><a target="_blank" rel="noopener" href="https://developers.google.com/android/drivers">https://developers.google.com/android/drivers</a></p>
-
-				  
-	  
-      
-	  <!-- 添加打赏 -->
-	  
-	
-	  <!-- 添加版权声明 -->
-      
-        <!-- 添加版权声明 -->
-<!--https://blog.csdn.net/weixin_41287260/article/details/103050336-->
-
-<div class="declare">
-	<strong class="author">本文作者：</strong>
-	
-	  KenYang
-	
-	
-	<!-- <br>
-	<strong class="create-time">发布时间：</strong>
-	2018-04-14 -->
-	
-	<br>
-	<strong class="update-time">最后更新：</strong>
-	2023年02月04日 20:06:26
-	
-	<!-- <br>
-	<strong class="article-titles">本文标题：</strong>
-	<a href="http://shxi.tk/post/7b82cd68.html" title="AOSP-docker编译安卓源码绕过反调试" target="_blank">AOSP-docker编译安卓源码绕过反调试</a> -->
-	
-	<br>
-	<strong class="article-url">本文链接：</strong>
-	<a href="http://shxi.tk/post/7b82cd68.html" title="AOSP-docker编译安卓源码绕过反调试" target="_blank">http://shxi.tk/post/7b82cd68.html</a>
-	
-	<br>
-	<strong class="copyright">版权声明：</strong>
-	本作品采用
-	<a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" title="知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议">CC BY-NC-SA 4.0</a>
-	许可协议进行许可，转载请注明出处！
-	
-	
-</div>
-<!-- 添加版权声明 -->
-      
-	  
-	</div>
-	
-	<!-- 添加置顶 -->
-    <div class="article-info article-info-index">
-      
-	  
-	  <!-- 分类页 -->
-      
-      
-
-	  
-	  <!-- 添加展开全文 -->
-      
-	  
-	  <!-- 添加分享 -->
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
+    	 
+  
+    <h2 itemprop="name">
+      <a class="archive-article-title" href="/post/5ca97896.html">Reversing-kr-Windows-kernal</a>
+    </h2>
+  
 
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-	  <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://shxi.tk/post/7b82cd68.html" alt="微信分享二维码">
-    </div>
-</div>
+        <div class="article-info info-on-right">
+          
+          
 
-<div class="mask js-mask"></div>
-      
-	  
-      <div class="clearfix"></div>
-	  
-    </div>
+        </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-
-  
-<nav id="article-nav">
-  
-    <a href="/post/1736976b.html" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          debug IDApython script
-        
-      </div>
-    </a>
   
   
-    <a href="/post/9d7b1fcb.html" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">豆约翰博客备份专家破解</div>
-      <i class="icon-circle-right"></i>
-    </a>
+    </div></section>
   
-</nav>
 
-
-
-<!-- 添加回到顶部和文章目录 -->
-<aside class="wrap-side-operation">
-  <div class="mod-side-operation">
     
-      <div class="jump-container" id="js-jump-container" style="display:none;">
-        <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-          <i class="icon-font icon-back"></i>
-        </a>
-      </div>
-    
-    
-      <div class="toc-container tooltip-left">
-        <i class="icon-font icon-category"></i>
-        <div class="tooltip tooltip-east">
-          <span class="tooltip-item"></span>
-          <span class="tooltip-content">
-			<span style="font-size: 20px;font-weight: bold;">目录</span>
-            <div class="toc-article">
-              <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E9%85%8D%E7%A1%AC%E7%9B%98"><span class="toc-number">1.</span> <span class="toc-text">分配硬盘</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85docker"><span class="toc-number">2.</span> <span class="toc-text">安装docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E7%BC%96%E8%AF%91"><span class="toc-number">3.</span> <span class="toc-text">开始编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E5%86%85%E6%A0%B8"><span class="toc-number">4.</span> <span class="toc-text">编译内核</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%B7%E6%9C%BA"><span class="toc-number">5.</span> <span class="toc-text">刷机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">6.</span> <span class="toc-text">参考</span></a></li></ol>
-            </div>
-          </span>
-        </div>
-      </div>
-	
-  </div>
-</aside>
-
-<!-- 添加评论 -->
 
 
-  
-  <script src='//unpkg.com/@waline/client@v2/dist/waline.js'></script>
-<link href='//unpkg.com/@waline/client@v2/dist/waline.css' rel='stylesheet' />
 
-<div id="waline"></div>
+<!-- 主页添加mathjax公式 -->
+
+  <!-- mathjax http://docs.mathjax.org/en/latest/web/start.html -->
 <script>
-	// 中文默认
-	const locale = {
-	  nick: ' 昵称: ',
-	  nickError: '昵称不能少于3个字符',
-	  mail: '邮箱: ',
-	  mailError: '请填写正确的邮件地址',
-	  link: '网址: ',
-	  placeholder: ' 客官留个言吧(◕ˇ∀ˇ◕)',
-	  sofa: '评论区空空荡荡，客官快来评论吧~',
-	  submit: '提交',
-	  reply: '回复',
-	  cancelReply: '取消回复',
-	  comment: '评论',
-	  more: '加载更多...',
-	  preview: '预览',
-	  emoji: '表情',
-	  uploadImage: '上传图片',
-	  seconds: '秒前',
-	  minutes: '分钟前',
-	  hours: '小时前',
-	  days: '天前',
-	  now: '刚刚',
-	  uploading: '正在上传',
-	  login: '登录',
-	  logout: '退出',
-	  admin: '博主',
-	  word: '字',
-	  wordHint: '评论字数应在 $0 到 $1 字之间！\n当前字数：$2',
-	};
-
-	Waline.init({
-	  el: '#waline',
-	  serverURL: 'your_waline_comments_url',
-	  locale,
-	  login: 'enable',
-	  lang: 'zh-CN ',
-	  dark: '',
-	  // 设置 emoji 为微博与哔哩哔哩
-	  emoji: [
-		'https://unpkg.com/@waline/emojis@1.1.0/weibo',
-		'https://unpkg.com/@waline/emojis@1.1.0/bilibili',
-	  ],
-	  wordLimit: 0,
-	  pageSize: 10,
-	  imageUploader: false,
-	  pageview: true,
-	  meta: ['nick', 'mail', 'link'],  //评论者相关属性，默认['nick', 'mail', 'link'],
-	  requiredMeta: ['nick'], //设置评论者属性必填项，默认[]（即匿名）
-	});
+window.MathJax = {
+  tex: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true
+  },
+  chtml: {
+    scale: 1,                      // global scaling factor for all expressions
+    minScale: .5,                  // smallest scaling factor to use
+    mtextInheritFont: false,       // true to make mtext elements use surrounding font
+    merrorInheritFont: false,      // true to make merror text use surrounding font
+    mtextFont: '',                 // font to use for mtext, if not inheriting (empty means use MathJax fonts)
+    merrorFont: 'serif',           // font to use for merror, if not inheriting (empty means use MathJax fonts)
+    unknownFamily: 'serif',        // font to use for character that aren't in MathJax's fonts
+    mathmlSpacing: false,          // true for MathML spacing rules, false for TeX rules
+    skipAttributes: {},            // RFDa and other attributes NOT to copy to the output
+    exFactor: .5,                  // default size of ex in em units
+    displayAlign: 'center',        // default for indentalign when set to 'auto'
+    displayIndent: '0'             // default for indentshift when set to 'auto'
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
 </script>
-  
-  
-  
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 
-  
-
-  
-
-  
-
-
-<!-- 文章页添加mathjax公式 -->
-
-  
-
-<!-- 文章页添加mathjax公式 -->
+<!-- 主页添加mathjax公式 -->
           </div>
         </div>
       </div>
@@ -854,8 +490,8 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
