@@ -10,14 +10,14 @@
   <title>BlackLotus 首个绕过安全启动的UEFI bootkit(下) | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="1.   概述在上一篇报告中已经详细分析了bootkit的安装过程, 本篇报告主要针对已经部署的bootkit进行进一步的详细分析。">
+  <meta name="description" content="1.   概述在上一篇报告中已经详细分析了bootkit的安装过程, 本篇报告主要针对已经部署的bootkit进行进一步的详细分析。 2.详细分析1. bootmgrfw.efi分析         BlackLotus使用自签名的恶意EFI应用替换了原文件bootmgrfw.efi,将源文件重命名为winload.efi, 替换后的执行流程如下图:">
 <meta property="og:type" content="article">
 <meta property="og:title" content="BlackLotus 首个绕过安全启动的UEFI bootkit(下)">
 <meta property="og:url" content="http://shxi.cc/post/603ce62c.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="1.   概述在上一篇报告中已经详细分析了bootkit的安装过程, 本篇报告主要针对已经部署的bootkit进行进一步的详细分析。">
+<meta property="og:description" content="1.   概述在上一篇报告中已经详细分析了bootkit的安装过程, 本篇报告主要针对已经部署的bootkit进行进一步的详细分析。 2.详细分析1. bootmgrfw.efi分析         BlackLotus使用自签名的恶意EFI应用替换了原文件bootmgrfw.efi,将源文件重命名为winload.efi, 替换后的执行流程如下图:">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://shxi.cc/post/603ce62c/clip_image001.png">
+<meta property="og:image" content="http://shxi.cc/post/post/603ce62c/clip_image001.png">
 <meta property="og:image" content="http://shxi.cc/post/603ce62c/clip_image003.png">
 <meta property="og:image" content="http://shxi.cc/post/603ce62c/clip_image005.png">
 <meta property="og:image" content="http://shxi.cc/post/603ce62c/clip_image007.png">
@@ -36,10 +36,11 @@
 <meta property="og:image" content="http://shxi.cc/post/603ce62c/clip_image033.png">
 <meta property="og:image" content="http://shxi.cc/post/603ce62c/clip_image035.png">
 <meta property="article:published_time" content="2023-03-17T02:56:09.000Z">
-<meta property="article:modified_time" content="2023-10-14T03:01:44.002Z">
+<meta property="article:modified_time" content="2023-10-14T06:13:46.689Z">
 <meta property="article:author" content="KenYang">
+<meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://shxi.cc/post/603ce62c/clip_image001.png">
+<meta name="twitter:image" content="http://shxi.cc/post/post/603ce62c/clip_image001.png">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -424,9 +425,11 @@ var _hmt = _hmt || [];
 	  <!-- 添加分类与标签 -->
 	  
 		  
-		  <h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>在上一篇报告中已经详细分析了bootkit的安装过程, 本篇报告主要针对已经部署的bootkit进行进一步的详细分析。<br> <span id="more"></span></p>
+		  <h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>在上一篇报告中已经详细分析了bootkit的安装过程, 本篇报告主要针对已经部署的bootkit进行进一步的详细分析。</p>
 <h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2.详细分析"></a>2.详细分析</h1><h2 id="1-bootmgrfw-efi分析"><a href="#1-bootmgrfw-efi分析" class="headerlink" title="1. bootmgrfw.efi分析"></a>1. bootmgrfw.efi分析</h2><p>         BlackLotus使用自签名的恶意EFI应用替换了原文件bootmgrfw.efi,将源文件重命名为winload.efi, 替换后的执行流程如下图:</p>
-<p><img src="603ce62c/clip_image001.png"></p>
+<img src="post/603ce62c/clip_image001.png">
+ <span id="more"></span>
+
 <p>BlackLotus针对受害者机器是否开启安全启动执行不同的部署行为, 当目标机器开启了安全启动时, 安装程序释放用于绕过安全启动的多个组件,  在受害者机器上用于系统启动的EFI应用也有可能已经修复了有关漏洞, 攻击者为了确保bootkit能够安装成功, 用包含漏洞的bootmgr等EFI应用进行利用绕过安全启动。</p>
 <p>         在绕过安全启动后, 对bootmgr.efi、bootmgrfw.efi和winload.efi等程序执行HOOK来获得在不同阶段获得执行恶意代码的机会, 最后解密恶意驱动并映射到内存中, 修改disk.sys的入口点为恶意驱动入口点, 当恶意驱动执行完后执行disk.sys的入口点。恶意驱动解密PE文件并注入到系统进程winlogo.exe。</p>
 <h3 id="1-关闭基于虚拟化的安全功能-vbs"><a href="#1-关闭基于虚拟化的安全功能-vbs" class="headerlink" title="1.关闭基于虚拟化的安全功能(vbs)"></a>1.关闭基于虚拟化的安全功能(vbs)</h3><p>         为了绕过基于虚拟化的安全对恶意驱动的检测, 使用设置EFI变量VbsPolicyDisabled的方式关闭该功能。</p>
@@ -599,7 +602,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2023年10月14日 11:01:44
+	2023年10月14日 14:13:46
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>

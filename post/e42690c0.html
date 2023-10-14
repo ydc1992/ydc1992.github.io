@@ -17,7 +17,7 @@
 <meta property="og:site_name" content="ydc&#39;s Blog">
 <meta property="og:description" content="1.   概述Donot“肚脑虫”（APT-Q-38）是疑似具有南亚背景的APT组织，其主要以周边国家的政府机构 为目标进行网络攻击活动，通常以窃取敏感信息为目的。该组织具备针对Windows与Android双平台的攻击能力。 在对该组织追踪朔源的过程中，发现Donot使用了一系列新型的后门框架，该框架名为Jaca，根据组件的功能分别分为下载执行组件、文件上传组件、截图组件、文件收集组件、键盘鼠标">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image001.png">
+<meta property="og:image" content="http://shxi.cc/post/post/e42690c0/clip_image001.png">
 <meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image003.png">
 <meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image005.png">
 <meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image007.png">
@@ -55,10 +55,11 @@
 <meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image071.png">
 <meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image073.png">
 <meta property="article:published_time" content="2022-08-26T03:15:11.000Z">
-<meta property="article:modified_time" content="2023-10-14T03:24:01.005Z">
+<meta property="article:modified_time" content="2023-10-14T06:18:58.953Z">
 <meta property="article:author" content="KenYang">
+<meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://shxi.cc/post/e42690c0/clip_image001.png">
+<meta name="twitter:image" content="http://shxi.cc/post/post/e42690c0/clip_image001.png">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -445,7 +446,6 @@ var _hmt = _hmt || [];
 		  
 		  <h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>Donot“肚脑虫”（APT-Q-38）是疑似具有南亚背景的APT组织，其主要以周边国家的政府机构 为目标进行网络攻击活动，通常以窃取敏感信息为目的。该组织具备针对Windows与Android双平台的攻击能力。</p>
 <p>在对该组织追踪朔源的过程中，发现Donot使用了一系列新型的后门框架，该框架名为Jaca，根据组件的功能分别分为下载执行组件、文件上传组件、截图组件、文件收集组件、键盘鼠标消息记录组件、浏览器敏感信息窃取组件、移动磁盘文件收集组件等等。</p>
-<span id="more"></span>
 <h1 id="2-样本详情"><a href="#2-样本详情" class="headerlink" title="2. 样本详情"></a>2. 样本详情</h1><table>
 <thead>
 <tr>
@@ -506,7 +506,9 @@ var _hmt = _hmt || [];
 <td>dll</td>
 </tr>
 </tbody></table>
-<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.   流程图"></a>3.   流程图</h1><p><img src="e42690c0/clip_image001.png"></p>
+<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.   流程图"></a>3.   流程图</h1><img src="post/e42690c0/clip_image001.png">
+<span id="more"></span>
+
 <h1 id="4-详细分析"><a href="#4-详细分析" class="headerlink" title="4. 详细分析"></a>4. 详细分析</h1><h2 id="1-s003-doc分析"><a href="#1-s003-doc分析" class="headerlink" title="1. s003.doc分析"></a>1. s003.doc分析</h2><p>         该样本使用远程RTF模板注入，在RTF的template数据中插入要加载的模板文件,模板文件地址为:</p>
 <p><a target="_blank" rel="noopener" href="http://necromencertwo.buzz/bfrp31KqURS2yZTE/0BmHwYTEgupY2Qfb.php">http://necromencertwo.buzz/bfrp31KqURS2yZTE/0BmHwYTEgupY2Qfb.php</a></p>
 <p>如下图所示:</p>
@@ -690,10 +692,10 @@ var _hmt = _hmt || [];
 <td>使用bat脚本自删除</td>
 </tr>
 <tr>
+<td></td>
 <td>Scheduled Task/Job</td>
 <td>T1053</td>
 <td>设置计划任务来定时执行程序</td>
-<td></td>
 </tr>
 <tr>
 <td>defense-evasion</td>
@@ -726,7 +728,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2023年10月14日 11:24:01
+	2023年10月14日 14:18:58
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
