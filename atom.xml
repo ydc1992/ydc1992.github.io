@@ -6,7 +6,7 @@
   <link href="http://shxi.tk/atom.xml" rel="self"/>
   
   <link href="http://shxi.tk/"/>
-  <updated>2023-02-05T02:36:33.701Z</updated>
+  <updated>2023-02-05T09:05:12.691Z</updated>
   <id>http://shxi.tk/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>将shellcode编译成可执行程序</title>
+    <link href="http://shxi.tk/post/50098e1b.html"/>
+    <id>http://shxi.tk/post/50098e1b.html</id>
+    <published>2023-02-05T08:55:27.000Z</published>
+    <updated>2023-02-05T09:05:12.691Z</updated>
+    
+    <content type="html"><![CDATA[<p>创建一个asm文件,写入如下内容作为入口点用于进入shellcode并执行代码,区段名”AyyLmao”可以是任意值。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Global Start</span><br><span class="line">SECTION &#x27;AyyLmao&#x27; write, execute,read</span><br><span class="line">Start:</span><br><span class="line">  incbin &quot;shellcode.bin&quot; </span><br></pre></td></tr></table></figure><p>yasm将汇编文件编译成obj文件,-f选择是win32还是win64, -o为输出的obj文件。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yasm.exe -f win32 -o shellcode.obj shellcode.asm</span><br></pre></td></tr></table></figure><p>程序golink生成可执行文件,程序入口点设置为汇编文件中的入口点Start。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">golink /ni /entry Start shellcode.obj</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;创建一个asm文件,写入如下内容作为入口点用于进入shellcode并执行代码,区段名”AyyLmao”可以是任意值。&lt;/p&gt;
+&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;s</summary>
+      
+    
+    
+    
+    <category term="逆向" scheme="http://shxi.tk/categories/%E9%80%86%E5%90%91/"/>
+    
+    
+    <category term="分析技巧" scheme="http://shxi.tk/tags/%E5%88%86%E6%9E%90%E6%8A%80%E5%B7%A7/"/>
+    
+  </entry>
   
   <entry>
     <title>app.any.run网站样本爬虫</title>

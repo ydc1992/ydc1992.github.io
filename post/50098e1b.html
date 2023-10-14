@@ -7,35 +7,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <meta http-equiv="Content-Language" content="zh-cn">
   <link rel="dns-prefetch" href="http://shxi.tk">
-  <title>逆向XX引擎系列-一-构造系统dll文件 | ydc&#39;s Blog</title>
+  <title>将shellcode编译成可执行程序 | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="dump沙箱系统dll文件使用IDA打开libxsse.dll,进程设置如下图,然后开始调试。  通过顺序找到如下函数。 libxsse_31这个函数内解密libxscore.bundle,有几个重要的dll是存放在这个文件内,其中libvxf.dll的导出函数libvxf_alloc是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。">
+  <meta name="description" content="创建一个asm文件,写入如下内容作为入口点用于进入shellcode并执行代码,区段名”AyyLmao”可以是任意值。 1234Global StartSECTION &amp;#x27;AyyLmao&amp;#x27; write, execute,readStart:  incbin &quot;shellcode.bin&quot;    yasm将汇编文件编译成obj文件,-f选择是win32还是win">
 <meta property="og:type" content="article">
-<meta property="og:title" content="逆向XX引擎系列-一-构造系统dll文件">
-<meta property="og:url" content="http://shxi.tk/post/33b57d1f.html">
+<meta property="og:title" content="将shellcode编译成可执行程序">
+<meta property="og:url" content="http://shxi.tk/post/50098e1b.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="dump沙箱系统dll文件使用IDA打开libxsse.dll,进程设置如下图,然后开始调试。  通过顺序找到如下函数。 libxsse_31这个函数内解密libxscore.bundle,有几个重要的dll是存放在这个文件内,其中libvxf.dll的导出函数libvxf_alloc是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。">
+<meta property="og:description" content="创建一个asm文件,写入如下内容作为入口点用于进入shellcode并执行代码,区段名”AyyLmao”可以是任意值。 1234Global StartSECTION &amp;#x27;AyyLmao&amp;#x27; write, execute,readStart:  incbin &quot;shellcode.bin&quot;    yasm将汇编文件编译成obj文件,-f选择是win32还是win">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4843c2a9a83be54430fe.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c48e0c2a9a83be5451045.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4925c2a9a83be545838e.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4acfc2a9a83be54804a9.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4ab7c2a9a83be547dbcc.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a88c2a9a83be5479121.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a61c2a9a83be5475669.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a45c2a9a83be5473046.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a21c2a9a83be54705ed.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a07c2a9a83be546deb7.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c49e3c2a9a83be546a6f9.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c49ccc2a9a83be54681b0.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c49b2c2a9a83be5465a55.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4997c2a9a83be5462fd4.jpg">
-<meta property="article:published_time" content="2020-04-19T13:35:39.000Z">
-<meta property="article:modified_time" content="2023-02-04T13:43:04.542Z">
+<meta property="article:published_time" content="2023-02-05T08:55:27.000Z">
+<meta property="article:modified_time" content="2023-02-05T09:05:12.691Z">
 <meta property="article:author" content="KenYang">
+<meta property="article:tag" content="分析技巧">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://pic.downk.cc/item/5e9c4843c2a9a83be54430fe.jpg">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -328,26 +314,26 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-逆向XX引擎系列-一-构造系统dll文件" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-将shellcode编译成可执行程序" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title_code_ant" itemprop="name">
-	  <a href="/post/33b57d1f.html">逆向XX引擎系列-一-构造系统dll文件</a>
+	  <a href="/post/50098e1b.html">将shellcode编译成可执行程序</a>
 	</h1>
   
 
         
 		
-		  <a href="/post/33b57d1f.html" class="archive-article-date">
-  	<time datetime="2020-04-19T13:35:39.000Z" itemprop="datePublished">
+		  <a href="/post/50098e1b.html" class="archive-article-date">
+  	<time datetime="2023-02-05T08:55:27.000Z" itemprop="datePublished">
 	<!-- <i class="icon-calendar icon"></i> -->
 
 	<i class="fa fa-calendar-check-o" aria-hidden="true"></i>
 	&nbsp;
-	2020-04-19</time>
+	2023-02-05</time>
 	
 	<!-- busuanzi阅读量统计
 	
@@ -366,7 +352,7 @@ var _hmt = _hmt || [];
 		&nbsp; &nbsp; &nbsp;
 		<i class="fa fa-eye" aria-hidden="true"></i>
 		&nbsp;
-		<span class="waline-pageview-count" data-path="/post/33b57d1f.html"><i class="fa fa-spinner fa-spin"></i></span>
+		<span class="waline-pageview-count" data-path="/post/50098e1b.html"><i class="fa fa-spinner fa-spin"></i></span>
 	</span>
 	
 
@@ -396,7 +382,7 @@ var _hmt = _hmt || [];
 	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
         <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
         <span class="post-meta-item-text">字数统计: </span>
-        <span class="post-count">2.9k字</span>
+        <span class="post-count">118字</span>
       </span>
     </span>
 
@@ -405,7 +391,7 @@ var _hmt = _hmt || [];
       <span class="post-meta-item-icon">
 	    <i class="fa fa-pagelines" aria-hidden="true"></i>
         <span class="post-meta-item-text">阅读时长: </span>
-        <span class="post-count">14min</span>
+        <span class="post-count">1min</span>
       </span>
     </span>
 	
@@ -420,389 +406,15 @@ var _hmt = _hmt || [];
 	  <!-- 添加分类与标签 -->
 	  
 		  
-		  <h2 id="dump沙箱系统dll文件"><a href="#dump沙箱系统dll文件" class="headerlink" title="dump沙箱系统dll文件"></a>dump沙箱系统dll文件</h2><p>使用IDA打开<code>libxsse.dll</code>,进程设置如下图,然后开始调试。</p>
-<p><img src="https://pic.downk.cc/item/5e9c4843c2a9a83be54430fe.jpg"></p>
-<p>通过顺序找到如下函数。<br><img src="https://pic.downk.cc/item/5e9c48e0c2a9a83be5451045.jpg"></p>
-<p><code>libxsse_31</code>这个函数内解密<code>libxscore.bundle</code>,有几个重要的dll是存放在这个文件内,其中<code>libvxf.dll</code>的导出函数<code>libvxf_alloc</code><br>是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。</p>
-<span id="more"></span>
-
-<p>包含如下四个文件</p>
-<blockquote>
-<p>libvxf.dll 虚拟机相关<br>  libnat.dll 用来跟nxeng.sys虚拟化执行驱动通讯<br>  libdt.dll  动态翻译执行,使用的是qemu的tcg<br>  libexscan.dll</p>
-</blockquote>
-<p><img src="https://pic.downk.cc/item/5e9c4925c2a9a83be545838e.jpg"></p>
-<p>我在逆向某个api模拟实现的时候发现该api对应的模块是在内存中创建的<br><img src="https://pic.downk.cc/item/5e9c4acfc2a9a83be54804a9.jpg"></p>
-<h2 id="PE结构填充"><a href="#PE结构填充" class="headerlink" title="PE结构填充"></a>PE结构填充</h2><p>将pe文件从内存中dump下来,使用IDA查看,按照函数大小从大到小排序。发现这里所有的函数都只是一个stub.</p>
-<p><img src="https://pic.downk.cc/item/5e9c4ab7c2a9a83be547dbcc.jpg"></p>
-<p>随便找两个函数对比下，发现啥？给eax的赋值不一样，有个int 80中断调用，这里调用这个函数真正的实现函数。eax的值应该是个中断调用号,<br>如何调用dll的导出函数以及中断的实现以后再说。</p>
-<p><img src="https://pic.downk.cc/item/5e9c4a88c2a9a83be5479121.jpg"></p>
-<p>接下来看它是怎样构造PE文件的。</p>
-<p>首先来看dos头。构造的vfs文件dos头如下，</p>
-<p><img src="https://pic.downk.cc/item/5e9c4a61c2a9a83be5475669.jpg"></p>
-<p>因为这部分没有多少需要修改，构造PE文件的时候使用的是固定值</p>
-<p><img src="https://pic.downk.cc/item/5e9c4a45c2a9a83be5473046.jpg"></p>
-<p>使用hiew结构查看pe结构。</p>
-<p><img src="https://pic.downk.cc/item/5e9c4a21c2a9a83be54705ed.jpg"></p>
-<p>这里部分结构是直接在代码里硬编码的，因为不是经常被修改。除了<font color='red'>tsize、dsize、data_start、text_start和imageSize</font>等等需要计算外，其他都是写死的数值。和上面使用hiew查看的一样。</p>
-<p><img src="https://pic.downk.cc/item/5e9c4a07c2a9a83be546deb7.jpg"></p>
-<p>都是根据tdl的数据来计算的，因此我们需要先找到kernel32.dll的tdl数据(在某个函数内存dump出来就ok了)。导出的api的太多了(kernel32的959个导出函数)，省略掉一些。如下可从内存中直接dump出来json文件。</p>
-<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#ff9900;">{</span>
-    <span style="color:#d69d85;">&quot;base&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;0x7c800000&quot;</span><span style="color:#b4b4b4;">,</span>
-        <span style="color:#d69d85;">&quot;ordbase&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:#b4b4b4;">,</span>
-        <span style="color:#d69d85;">&quot;taddr_gap&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;0x3000&quot;</span><span style="color:#b4b4b4;">,</span>
-        <span style="color:#d69d85;">&quot;tsize_adj&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;0x74400&quot;</span><span style="color:#b4b4b4;">,</span>
-        <span style="color:#d69d85;">&quot;fixup&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:deeppink;">[</span>
-    <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;origin&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;ph32&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;offset&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#b5cea8;">140</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;data&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;0008D3DC&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span><span style="color:#b4b4b4;">,</span>
-    <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;origin&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;ph32&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;offset&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#b5cea8;">136</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;data&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;00A00800&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span><span style="color:#b4b4b4;">,</span>
-    <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;origin&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;ph32&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;offset&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#b5cea8;">164</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;data&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;805C0000&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span>
-        <span style="color:deeppink;">]</span><span style="color:#b4b4b4;">,</span>
-        <span style="color:#d69d85;">&quot;data&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:deeppink;">[</span>
-            <span style="color:#d69d85;">&quot;8BFF558BEC568B3500E0FD7F57FF75188D4510FF751450585858585EC9E8110000005669727475616C50726F7465637445780059B872647363CD81&quot;</span>
-        <span style="color:deeppink;">]</span><span style="color:#b4b4b4;">,</span>
-        <span style="color:#d69d85;">&quot;sctab&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:deeppink;">[</span>
-            <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;name&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;ActivateActCtx&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;proto&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;lHl&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span><span style="color:#b4b4b4;">,</span>
-            <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;name&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;AddAtomA&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;proto&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;ls&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span><span style="color:#b4b4b4;">,</span>
-            <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;name&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;AddAtomW&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;proto&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;lS&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span><span style="color:#b4b4b4;">,</span>
-            <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;name&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;AddConsoleAliasA&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;proto&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;&nbsp;lll&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span><span style="color:#b4b4b4;">,</span>
-                <span style="color:#b4b4b4;">......</span>
-            <span style="color:yellowgreen;">{</span>&nbsp;<span style="color:#d69d85;">&quot;name&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;UNIMPLEMENTED_SYSCALL&quot;</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;proto&quot;</span>&nbsp;<span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;&nbsp;&quot;</span>&nbsp;<span style="color:yellowgreen;">}</span>
-        <span style="color:deeppink;">]</span>
-<span style="color:#ff9900;">}</span></pre>
+		  <p>创建一个asm文件,写入如下内容作为入口点用于进入shellcode并执行代码,区段名”AyyLmao”可以是任意值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Global Start</span><br><span class="line">SECTION &#x27;AyyLmao&#x27; write, execute,read</span><br><span class="line">Start:</span><br><span class="line">  incbin &quot;shellcode.bin&quot; </span><br></pre></td></tr></table></figure>
 
 
+<p>yasm将汇编文件编译成obj文件,-f选择是win32还是win64, -o为输出的obj文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yasm.exe -f win32 -o shellcode.obj shellcode.asm</span><br></pre></td></tr></table></figure>
+<p>程序golink生成可执行文件,程序入口点设置为汇编文件中的入口点Start。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">golink /ni /entry Start shellcode.obj</span><br></pre></td></tr></table></figure>
 
-
-<ol>
-<li>imageBase</li>
-</ol>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pe.image.imagebase32 =  tdl-&gt;base;</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>text_start (base of code) </li>
-</ol>
-<p>默认是0x1000，kernel32的taddr_gap是0x3000,因此是0x4000,不过暂时不明白为啥要这样做，扩展text地址?。</p>
-<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;">&nbsp;    <span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">text_start</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0x1000</span><span style="color:#b4b4b4;">;</span>
-&nbsp;    <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">taddr_gap</span><span style="color:deeppink;">)</span>
-&nbsp;    <span style="color:deeppink;">{</span>
-&nbsp;        <span style="color:#c8c8c8;">text_start</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">taddr_gap</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">0x1000</span><span style="color:#b4b4b4;">;</span>
-&nbsp;    <span style="color:deeppink;">}</span></pre>
-
-
-<ol start="3">
-<li>tsize  (text size)</li>
-</ol>
-<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">sctabCount</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">sctabCount</span>&nbsp;<span style="color:#b4b4b4;">-</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">x64_only</span><span style="color:#b4b4b4;">;</span>
-<span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">tSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>
-<span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">text_size</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>
-<span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">stubFunSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">sctabCount</span>&nbsp;<span style="color:#b4b4b4;">&lt;&lt;</span>&nbsp;<span style="color:#b5cea8;">6</span><span style="color:#b4b4b4;">;</span>
-<span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:yellowgreen;">(</span><span style="color:#569cd6;">signed</span>&nbsp;<span style="color:#569cd6;">int</span><span style="color:yellowgreen;">)(</span><span style="color:#569cd6;">unsigned</span>&nbsp;<span style="color:#bd63c5;">__int16</span><span style="color:yellowgreen;">)(</span><span style="color:darkviolet;">(</span><span style="color:#bd63c5;">_WORD</span><span style="color:darkviolet;">)</span><span style="color:#c8c8c8;">stubFunSize</span><span style="color:yellowgreen;">)</span>&nbsp;<span style="color:#b4b4b4;">&lt;=</span>&nbsp;<span style="color:#b5cea8;">0xA000</span><span style="color:deeppink;">)</span>
-    <span style="color:#c8c8c8;">stubFunSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">stubFunSize</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#b5cea8;">0xFFFFEC00</span>&nbsp;<span style="color:#b4b4b4;">|</span>&nbsp;<span style="color:#b5cea8;">0xEC00</span><span style="color:#b4b4b4;">;</span>
-<span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">tsize_adj</span><span style="color:deeppink;">)</span>
-    <span style="color:#c8c8c8;">tSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">tsize_adj</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#c8c8c8;">stubFunSize</span><span style="color:#b4b4b4;">;</span>
-<span style="color:#569cd6;">else</span>
-    <span style="color:#c8c8c8;">tSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">stubFunSize</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">0x40000</span><span style="color:#b4b4b4;">;</span></pre>
-
-<p>为啥sctabCount&lt;&lt;6就可以计算出text的大小呢？前面用ida看代码的时候也看到了，所有的函数都是个stub，大小是0x40,不足的部分用0xcc和0x90补充了。</p>
-<ol start="4">
-<li>Data_start (base of data)</li>
-</ol>
-<p>data段就接着在text段后面。</p>
-<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">data_start</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">aligin_text_vsize</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#c8c8c8;">text_start</span><span style="color:#b4b4b4;">;</span>
-</pre>
-
-<ol start="5">
-<li>Data size  </li>
-</ol>
-<p>数据段的大小计算有点麻烦,tdl的data_size是上图data节点的那串二进制数据长度。0x110为导入表大小，0x28导出表结构大小</p>
-<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">sctabCount</span>&nbsp;<span style="color:#b4b4b4;">&gt;</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:deeppink;">)</span>
-<span style="color:deeppink;">{</span>
-    <span style="color:#569cd6;">int</span>&nbsp;<span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>
-    <span style="color:#4ec9b0;">sctab</span><span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:#c8c8c8;">s</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#bd63c5;">NULL</span><span style="color:#b4b4b4;">;</span>
-    <span style="color:#569cd6;">const</span>&nbsp;<span style="color:#569cd6;">char</span>&nbsp;<span style="color:#b4b4b4;">*</span><span style="color:#c8c8c8;">proto</span><span style="color:#b4b4b4;">;</span>
-    <span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">tmplen</span><span style="color:#b4b4b4;">;</span>
-    <span style="color:#569cd6;">const</span>&nbsp;<span style="color:#569cd6;">char</span><span style="color:#b4b4b4;">*</span>&nbsp;<span style="color:#c8c8c8;">tmp</span><span style="color:#b4b4b4;">;</span>
-    <span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">v75</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">text_start</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">2</span><span style="color:#b4b4b4;">;</span><span style="font-size:11px;font-style:italic;color:#608b4e;">//+2?</span>
-    <span style="color:#569cd6;">do</span>&nbsp;<span style="color:yellowgreen;">{</span>
-        <span style="color:#c8c8c8;">s</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">ssctab</span><span style="color:darkviolet;">[</span><span style="color:#c8c8c8;">i</span><span style="color:darkviolet;">]</span><span style="color:#b4b4b4;">;</span>
-        <span style="color:#569cd6;">if</span>&nbsp;<span style="color:darkviolet;">(</span><span style="color:#b4b4b4;">!</span><span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">s</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">flag</span>&nbsp;<span style="color:#b4b4b4;">&amp;</span>&nbsp;<span style="color:#b5cea8;">0x8</span><span style="color:#ff9900;">)</span><span style="color:darkviolet;">)</span>&nbsp;<span style="font-size:11px;font-style:italic;color:#608b4e;">//x64_only</span>
-        <span style="color:darkviolet;">{</span>
-            <span style="color:#c8c8c8;">proto</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">s</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">proto</span><span style="color:#b4b4b4;">;</span>
-            <span style="font-size:11px;font-style:italic;color:#608b4e;">//主要是看有没有`符号。</span>
-            <span style="color:#569cd6;">if</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">proto</span><span style="color:#ff9900;">)</span>
-            <span style="color:#ff9900;">{</span>
-                <span style="color:#c8c8c8;">tmp</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">strchr</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">proto</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&#39;`&#39;</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
-                <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">tmp</span><span style="color:deeppink;">)</span>
-                    <span style="color:#c8c8c8;">data_size</span>&nbsp;<span style="color:#b4b4b4;">+=</span>&nbsp;<span style="color:#c8c8c8;">strlen</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">tmp</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:#b4b4b4;">;</span>
-            <span style="color:#ff9900;">}</span>
-            <span style="color:#569cd6;">if</span>&nbsp;<span style="color:#ff9900;">(</span><span style="color:#c8c8c8;">s</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">name</span><span style="color:#ff9900;">)</span>
-            <span style="color:#ff9900;">{</span>
-                <span style="color:#c8c8c8;">tmplen</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">strlen</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">s</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">name</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
-                <span style="color:#c8c8c8;">data_size</span>&nbsp;<span style="color:#b4b4b4;">+=</span>&nbsp;<span style="color:#c8c8c8;">tmplen</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:#b4b4b4;">;</span>
-                <span style="color:#c8c8c8;">APIStrtotalLen</span>&nbsp;<span style="color:#b4b4b4;">+=</span>&nbsp;<span style="color:#c8c8c8;">tmplen</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">1</span><span style="color:#b4b4b4;">;</span>
-                <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">is_kernel32</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>&nbsp;<span style="color:#b4b4b4;">!</span><span style="color:#c8c8c8;">exitThewadRva</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>&nbsp;<span style="color:#b4b4b4;">!</span><span style="color:#c8c8c8;">strcmp</span><span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">s</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">name</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#d69d85;">&quot;ExitThread&quot;</span><span style="color:yellowgreen;">)</span><span style="color:deeppink;">)</span>
-                    <span style="color:#c8c8c8;">exitThewadRva</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">v75</span><span style="color:#b4b4b4;">;</span>
-                <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">s</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">flag</span>&nbsp;<span style="color:#b4b4b4;">&lt;</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:deeppink;">)</span>&nbsp;<span style="font-size:11px;font-style:italic;color:#608b4e;">//&nbsp;init_func</span>
-                    <span style="color:#c8c8c8;">initfun_rva</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">v75</span><span style="color:#b4b4b4;">;</span>
-            <span style="color:#ff9900;">}</span>
-        <span style="color:darkviolet;">}</span>
-        <span style="color:#b4b4b4;">++</span><span style="color:#c8c8c8;">i</span><span style="color:#b4b4b4;">;</span>
-        <span style="color:#c8c8c8;">v75</span>&nbsp;<span style="color:#b4b4b4;">+=</span>&nbsp;<span style="color:#b5cea8;">0x40</span><span style="color:#b4b4b4;">;</span>
-    <span style="color:yellowgreen;">}</span>&nbsp;<span style="color:#569cd6;">while</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">&lt;</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">sctabCount</span><span style="color:yellowgreen;">)</span><span style="color:#b4b4b4;">;</span>
-<span style="color:deeppink;">}</span></pre>
-
-<p>为啥要加上10*sctabCount? 4+4+2=10；<br><img src="https://pic.downk.cc/item/5e9c49e3c2a9a83be546a6f9.jpg"></p>
-<p>api字符串 rva地址表4字节<br><img src="https://pic.downk.cc/item/5e9c49ccc2a9a83be54681b0.jpg"></p>
-<p>函数表rva4字节<br><img src="https://pic.downk.cc/item/5e9c49b2c2a9a83be5465a55.jpg"></p>
-<p>导出ID 2字节<br><img src="https://pic.downk.cc/item/5e9c4997c2a9a83be5462fd4.jpg"></p>
-<ol start="6">
-<li><p>ImageSize</p>
-<p> 代码段rva地址+代码段按内存对齐后的大小+对齐后的数据段按内存的大小就是整个文件在内存中的大小。<br> 代码段rva就是前面所有的结构数据的大小，不需要另外计算了。</p>
- <pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">aligin_data_vsize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#bd63c5;">alignup</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">data_size</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1000</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span>
-<span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">imagesize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">data_start</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#c8c8c8;">aligin_data_vsize</span><span style="color:#b4b4b4;">;</span></pre></li>
-<li><p>Entry 入口点<br> 如果没指定入口点，则默认是0xf07f. </p>
- <pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="font-size:11px;font-style:italic;color:#608b4e;">//有初始化标志</span>
-<span style="font-size:11px;font-style:italic;color:#608b4e;">//{&nbsp;&quot;name&quot;:&nbsp;&quot;USER32_DllMain&quot;,&nbsp;&quot;proto&quot;:&nbsp;&quot;lHll&quot;,&nbsp;&quot;init_func&quot;:&nbsp;true&nbsp;},</span>
-<span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">initfun_rva</span><span style="color:deeppink;">)</span>
-<span style="color:deeppink;">{</span>
- <span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">entry</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">initfun_rva</span><span style="color:#b4b4b4;">;</span>
-<span style="color:deeppink;">}</span>
-<span style="color:#569cd6;">else</span>
-<span style="color:deeppink;">{</span>
- <span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">entry</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">entry</span><span style="color:#b4b4b4;">;</span>
- <span style="color:#569cd6;">if</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#b4b4b4;">!</span><span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">entry</span><span style="color:yellowgreen;">)</span>
-     <span style="color:#c8c8c8;">pe</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">entry</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#b5cea8;">0xF07F</span><span style="color:#b4b4b4;">;</span>
-<span style="color:deeppink;">}</span></pre></li>
-<li><p>fileSize<br> 数据段和代码段的大小按文件对齐加起来就是文件大小。</p>
-<pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#4ec9b0;">DWORD</span>&nbsp;&nbsp;&nbsp;<span style="color:#c8c8c8;">aligin_text_psize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#bd63c5;">alignup</span><span style="color:deeppink;">(</span><span style="color:#c8c8c8;">text_size</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x200</span><span style="color:deeppink;">)</span><span style="color:#b4b4b4;">;</span><span style="font-size:11px;font-style:italic;color:#608b4e;">//&nbsp;((text_size&nbsp;+&nbsp;0x1FF)&nbsp;&amp;&nbsp;0xFFFFFE00);</span>
-<span style="color:#4ec9b0;">DWORD</span>&nbsp;<span style="color:#c8c8c8;">fileSize</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:#c8c8c8;">section</span><span style="color:deeppink;">[</span><span style="color:#b5cea8;">1</span><span style="color:deeppink;">]</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">s_scnptr</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#c8c8c8;">section</span><span style="color:deeppink;">[</span><span style="color:#b5cea8;">1</span><span style="color:deeppink;">]</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">s_psize</span><span style="color:#b4b4b4;">;</span>
-</pre></li>
-<li><p>区段数据</p>
-</li>
-</ol>
-<pre style="font-family:Fira Code;font-size:13px;color:white;"><span style="color:#75715e;">//初始化代码段数据</span>
-<span style="color:#66d9ef;">strcpy</span><span style="color:deeppink;">(</span>sec<span style="color:yellowgreen;">[</span><span style="color:#ae81ff;">0</span><span style="color:yellowgreen;">]</span>.s_name,&nbsp;<span style="color:#e8c9bb;">&quot;</span><span style="color:#e6db74;">.text</span><span style="color:#e8c9bb;">&quot;</span><span style="color:deeppink;">)</span>;
-*<span style="color:deeppink;">(</span><span style="color:#ae81ff;">_WORD</span>*<span style="color:deeppink;">)</span>&amp;sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">0</span><span style="color:deeppink;">]</span>.s_name<span style="color:deeppink;">[</span><span style="color:#ae81ff;">6</span><span style="color:deeppink;">]</span>&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
- 
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">0</span><span style="color:deeppink;">]</span>.s_flags&nbsp;=&nbsp;<span style="color:#ae81ff;">PEST_EXEC</span>&nbsp;|&nbsp;<span style="color:#ae81ff;">PEST_READ</span>&nbsp;|&nbsp;<span style="color:#ae81ff;">PEST_TEXT</span>;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">0</span><span style="color:deeppink;">]</span>.s_vaddr&nbsp;=&nbsp;text_start;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">0</span><span style="color:deeppink;">]</span>.s_vsize&nbsp;=&nbsp;algin_tvsize;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">0</span><span style="color:deeppink;">]</span>.s_scnptr&nbsp;=&nbsp;<span style="color:#ae81ff;">0x400</span>;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">0</span><span style="color:deeppink;">]</span>.s_psize&nbsp;=&nbsp;algin_tpsize;
- 
-<span style="color:#75715e;">//初始化数据段数据</span>
-<span style="color:#66d9ef;">strcpy</span><span style="color:deeppink;">(</span>sec<span style="color:yellowgreen;">[</span><span style="color:#ae81ff;">1</span><span style="color:yellowgreen;">]</span>.s_name,&nbsp;<span style="color:#e8c9bb;">&quot;</span><span style="color:#e6db74;">.data</span><span style="color:#e8c9bb;">&quot;</span><span style="color:deeppink;">)</span>;
-*<span style="color:deeppink;">(</span><span style="color:#ae81ff;">_WORD</span>*<span style="color:deeppink;">)</span>&amp;sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">1</span><span style="color:deeppink;">]</span>.s_name<span style="color:deeppink;">[</span><span style="color:#ae81ff;">6</span><span style="color:deeppink;">]</span>&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
- 
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">1</span><span style="color:deeppink;">]</span>.s_vsize&nbsp;=&nbsp;data_vsize;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">1</span><span style="color:deeppink;">]</span>.s_vaddr&nbsp;=&nbsp;sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">0</span><span style="color:deeppink;">]</span>.s_vsize&nbsp;+&nbsp;sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">0</span><span style="color:deeppink;">]</span>.s_vaddr;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">1</span><span style="color:deeppink;">]</span>.s_psize&nbsp;=&nbsp;data_psize;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">1</span><span style="color:deeppink;">]</span>.s_scnptr&nbsp;=&nbsp;sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">0</span><span style="color:deeppink;">]</span>.s_psize&nbsp;+&nbsp;sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">0</span><span style="color:deeppink;">]</span>.s_scnptr;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">1</span><span style="color:deeppink;">]</span>.s_flags&nbsp;=&nbsp;<span style="color:#ae81ff;">PEST_READ</span>&nbsp;|&nbsp;<span style="color:#ae81ff;">PEST_WRITE</span>&nbsp;|&nbsp;<span style="color:#ae81ff;">PEST_DATA</span>;
- 
-<span style="color:#75715e;">////初始化资源段数据</span>
-<span style="color:#66d9ef;">strcpy</span><span style="color:deeppink;">(</span>sec<span style="color:yellowgreen;">[</span><span style="color:#ae81ff;">2</span><span style="color:yellowgreen;">]</span>.s_name,&nbsp;<span style="color:#e8c9bb;">&quot;</span><span style="color:#e6db74;">.rsrc</span><span style="color:#e8c9bb;">&quot;</span><span style="color:deeppink;">)</span>;
-*<span style="color:deeppink;">(</span><span style="color:#ae81ff;">_WORD</span>*<span style="color:deeppink;">)</span>&amp;sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">2</span><span style="color:deeppink;">]</span>.s_name<span style="color:deeppink;">[</span><span style="color:#ae81ff;">6</span><span style="color:deeppink;">]</span>&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
- 
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">2</span><span style="color:deeppink;">]</span>.s_vaddr&nbsp;=&nbsp;data_vstart&nbsp;+&nbsp;sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">1</span><span style="color:deeppink;">]</span>.s_vsize;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">2</span><span style="color:deeppink;">]</span>.s_scnptr&nbsp;=&nbsp;data_pstart&nbsp;+&nbsp;sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">1</span><span style="color:deeppink;">]</span>.s_psize;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">2</span><span style="color:deeppink;">]</span>.s_flags&nbsp;=&nbsp;<span style="color:#ae81ff;">PEST_READ</span>&nbsp;|&nbsp;<span style="color:#ae81ff;">PEST_DATA</span>;
- 
-<span style="color:#75715e;">//初始化资源段数据</span>
-<span style="color:#66d9ef;">strcpy</span><span style="color:deeppink;">(</span>sec<span style="color:yellowgreen;">[</span><span style="color:#ae81ff;">3</span><span style="color:yellowgreen;">]</span>.s_name,&nbsp;<span style="color:#e8c9bb;">&quot;</span><span style="color:#e6db74;">.reloc</span><span style="color:#e8c9bb;">&quot;</span><span style="color:deeppink;">)</span>;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">3</span><span style="color:deeppink;">]</span>.s_name<span style="color:deeppink;">[</span><span style="color:#ae81ff;">7</span><span style="color:deeppink;">]</span>&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
- 
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">3</span><span style="color:deeppink;">]</span>.s_vaddr&nbsp;=&nbsp;sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">2</span><span style="color:deeppink;">]</span>.s_vaddr;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">3</span><span style="color:deeppink;">]</span>.s_scnptr&nbsp;=&nbsp;sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">2</span><span style="color:deeppink;">]</span>.s_scnptr;
-sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">3</span><span style="color:deeppink;">]</span>.s_flags&nbsp;=&nbsp;<span style="color:#ae81ff;">PEST_READ</span>&nbsp;|&nbsp;<span style="color:#ae81ff;">PEST_DISCARD</span>&nbsp;|&nbsp;<span style="color:#ae81ff;">PEST_DATA</span>;
-<span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span>is_kernel<span style="color:deeppink;">)</span>
-    sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">1</span><span style="color:deeppink;">]</span>.s_vsize&nbsp;=&nbsp;sec<span style="color:deeppink;">[</span><span style="color:#ae81ff;">1</span><span style="color:deeppink;">]</span>.s_vsize&nbsp;+&nbsp;<span style="color:#ae81ff;">20000</span>;
-</pre>
-
-<ol start="10">
-<li><p>expdir</p>
-<pre style="font-family:Fira Code;font-size:13px;color:white;"><span style="color:#a6e22d;">peexpdir</span>&nbsp;exp&nbsp;=&nbsp;<span style="color:deeppink;">{}</span>;
-exp.dllname&nbsp;=&nbsp;algin_tvsize&nbsp;+&nbsp;text_start;
-exp.naddrs&nbsp;=&nbsp;x86_api_cnt;
-exp.nnames&nbsp;=&nbsp;x86_api_cnt;
-
-exp.adrtab&nbsp;=&nbsp;pehead.expdir.rva&nbsp;+&nbsp;<span style="color:#f92672;">sizeof</span><span style="color:deeppink;">(</span><span style="color:#a6e22d;">peexpdir</span><span style="color:deeppink;">)</span>;
-
-exp.namtab&nbsp;=&nbsp;<span style="color:#ae81ff;">4</span>&nbsp;*&nbsp;x86_api_cnt&nbsp;+&nbsp;exp.adrtab;
-exp.datetime&nbsp;=&nbsp;<span style="color:#ae81ff;">0x48025BE1</span>;
-exp.ordbase&nbsp;=&nbsp;<span style="color:#fd971f;">tdl</span>-&gt;ordbase;
-exp.ordtab&nbsp;=&nbsp;exp.namtab&nbsp;+&nbsp;<span style="color:#ae81ff;">4</span>&nbsp;*&nbsp;x86_api_cnt;</pre>
-
-<p>头部已经都构造好了,直接拷贝</p>
-<pre style="font-family:Fira Code;font-size:13px;color:white;"><span style="color:#75715e;">//从mz头到区段数据都已经计算好</span>
-<span style="color:#66d9ef;">memset</span><span style="color:deeppink;">(</span>pe_buf,&nbsp;<span style="color:#ae81ff;">0</span>,&nbsp;file_size<span style="color:deeppink;">)</span>;
-<span style="color:#66d9ef;">memcpy</span><span style="color:deeppink;">(</span>pe_buf,&nbsp;mz_head,&nbsp;<span style="color:#ae81ff;">0xE0u</span><span style="color:deeppink;">)</span>;
-<span style="color:#66d9ef;">memcpy</span><span style="color:deeppink;">(</span>pe_buf&nbsp;+&nbsp;<span style="color:#ae81ff;">0xE0</span>,&nbsp;&amp;pehead,&nbsp;<span style="color:#ae81ff;">0xF8u</span><span style="color:deeppink;">)</span>;
-<span style="color:#66d9ef;">memcpy</span><span style="color:deeppink;">(</span>pe_buf&nbsp;+&nbsp;<span style="color:#ae81ff;">0x1D8</span>,&nbsp;sec,&nbsp;<span style="color:#ae81ff;">0xA0u</span><span style="color:deeppink;">)</span>;
-</pre></li>
-<li><p>函数stub<br>开始填充函数代码</p>
-<pre style="font-family:Fira Code;font-size:13px;color:white;"><span style="color:#75715e;">//开始填充pe相关结构</span>
-<span style="color:#f92672;">char</span>*&nbsp;fun_stub_buf&nbsp;=&nbsp;pe_buf&nbsp;+&nbsp;<span style="color:#ae81ff;">0x400</span>;
-sc_index&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
-<span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#fd971f;">tdl</span>-&gt;sctabCount&nbsp;&gt;&nbsp;<span style="color:#ae81ff;">0</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
-<span style="color:#f92672;">char</span>*&nbsp;ep_fun_buf&nbsp;=&nbsp;fun_stub_buf&nbsp;+&nbsp;<span style="color:#ae81ff;">0x2</span>;
-api_index&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
-<span style="color:#d8a0df;">do</span>&nbsp;<span style="color:yellowgreen;">{</span>
-    <span style="color:#f92672;">auto</span>&nbsp;sc_t&nbsp;=&nbsp;&amp;<span style="color:#fd971f;">tdl</span>-&gt;sctabs<span style="color:darkviolet;">[</span>api_index<span style="color:darkviolet;">]</span>;
-    <span style="color:#f92672;">int</span>&nbsp;tdl_flag&nbsp;=&nbsp;sc_t-&gt;tdl_flag;
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>tdl_flag&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">8</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span><span style="color:#75715e;">//x64_only</span>
-        ++api_index;
-        ++sc_index;
-        <span style="color:#d8a0df;">continue</span>;
-    <span style="color:darkviolet;">}</span>
-
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>!sc_t-&gt;proto.<span style="color:#66d9ef;">data</span><span style="color:#ff9900;">()</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
-        <span style="color:#75715e;">//没有函数声明</span>
-        fun_stub_buf&nbsp;+=&nbsp;<span style="color:#ae81ff;">0x40</span>;
-        ep_fun_buf&nbsp;+=&nbsp;<span style="color:#ae81ff;">0x40</span>;
-
-        ++api_index;
-        ++sc_index;
-        <span style="color:#d8a0df;">continue</span>;
-    <span style="color:darkviolet;">}</span>
-
-    proto&nbsp;=&nbsp;*sc_t-&gt;proto.<span style="color:#66d9ef;">data</span><span style="color:darkviolet;">()</span>&nbsp;!=&nbsp;<span style="color:#e8c9bb;">&#39;</span><span style="color:#e6db74;">*</span><span style="color:#e8c9bb;">&#39;</span>&nbsp;?&nbsp;sc_t-&gt;proto.<span style="color:#66d9ef;">data</span><span style="color:darkviolet;">()</span>&nbsp;:&nbsp;sc_t-&gt;proto.<span style="color:#66d9ef;">data</span><span style="color:darkviolet;">()</span>&nbsp;+&nbsp;<span style="color:#ae81ff;">1</span>;
-
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>!proto<span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
-        fun_stub_buf&nbsp;+=&nbsp;<span style="color:#ae81ff;">0x40</span>;
-        ep_fun_buf&nbsp;+=&nbsp;<span style="color:#ae81ff;">0x40</span>;
-
-        ++api_index;
-        ++sc_index;
-        <span style="color:#d8a0df;">continue</span>;
-    <span style="color:darkviolet;">}</span>
-    <span style="color:#75715e;">//QUIT_CALL函数改成跳转到exitThread函数执行</span>
-    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>is_kernel&nbsp;&amp;&amp;&nbsp;sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:#ff9900;">()</span>&nbsp;&amp;&amp;
-        exitThread_rva&nbsp;&amp;&amp;
-        !<span style="color:#66d9ef;">strcmp</span><span style="color:#ff9900;">(</span>sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:deeppink;">()</span>,&nbsp;<span style="color:#e8c9bb;">&quot;</span><span style="color:#e6db74;">QUIT_CALL</span><span style="color:#e8c9bb;">&quot;</span><span style="color:#ff9900;">)</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
-        *ep_fun_buf&nbsp;=&nbsp;<span style="color:#ae81ff;">0x50</span>;
-        ep_fun_buf<span style="color:#ff9900;">[</span><span style="color:#ae81ff;">1</span><span style="color:#ff9900;">]</span>&nbsp;=&nbsp;<span style="color:#ae81ff;">0xE8u</span>;
-        *<span style="color:#ff9900;">(</span><span style="color:#ae81ff;">_DWORD</span>*<span style="color:#ff9900;">)(</span>ep_fun_buf&nbsp;+&nbsp;<span style="color:#ae81ff;">2</span><span style="color:#ff9900;">)</span>&nbsp;=&nbsp;<span style="color:#ff9900;">(</span><span style="color:#ae81ff;">_DWORD</span><span style="color:#ff9900;">)(</span><span style="color:deeppink;">(</span><span style="color:#f92672;">char</span>*<span style="color:deeppink;">)</span>pe_buf&nbsp;+&nbsp;exitThread_rva&nbsp;-&nbsp;<span style="color:deeppink;">(</span><span style="color:#ae81ff;">_DWORD</span><span style="color:deeppink;">)</span>ep_fun_buf&nbsp;-&nbsp;text_start&nbsp;+&nbsp;<span style="color:#ae81ff;">0x400</span>&nbsp;-&nbsp;<span style="color:#ae81ff;">6</span><span style="color:#ff9900;">)</span>;
-    <span style="color:darkviolet;">}</span>
-    <span style="color:#d8a0df;">else</span>&nbsp;<span style="color:darkviolet;">{</span>
-        param_cnt&nbsp;=&nbsp;<span style="color:#66d9ef;">get_param_cnt</span><span style="color:#ff9900;">(</span>sc_t-&gt;proto.<span style="color:#66d9ef;">data</span><span style="color:deeppink;">()</span><span style="color:#ff9900;">)</span>;
-
-        <span style="color:#75715e;">//填充函数stub</span>
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:#ff9900;">(</span>tdl_flag&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">4</span><span style="color:#ff9900;">)</span>&nbsp;<span style="color:#ff9900;">{</span><span style="color:#75715e;">//tiny</span>
-            *<span style="color:deeppink;">(</span><span style="color:#ae81ff;">_DWORD</span>*<span style="color:deeppink;">)</span>&amp;tiny_stub<span style="color:deeppink;">[</span><span style="color:#ae81ff;">3</span><span style="color:deeppink;">]</span>&nbsp;=&nbsp;<span style="color:deeppink;">(</span><span style="color:#a6e22d;">WORD</span><span style="color:deeppink;">)</span>sc_index&nbsp;|&nbsp;<span style="color:deeppink;">(</span><span style="color:#fd971f;">tdl</span>-&gt;tdl_index&nbsp;&lt;&lt;&nbsp;<span style="color:#ae81ff;">16</span><span style="color:deeppink;">)</span>;
-            *<span style="color:deeppink;">(</span><span style="color:#ae81ff;">_WORD</span>*<span style="color:deeppink;">)</span>&amp;tiny_stub<span style="color:deeppink;">[</span><span style="color:#ae81ff;">10</span><span style="color:deeppink;">]</span>&nbsp;=&nbsp;<span style="color:#ae81ff;">4</span>&nbsp;*&nbsp;param_cnt;
-            <span style="color:#66d9ef;">memcpy</span><span style="color:deeppink;">(</span>fun_stub_buf,&nbsp;tiny_stub,&nbsp;<span style="color:#ae81ff;">0x40</span><span style="color:deeppink;">)</span>;
-            sc_t-&gt;chainStub_gap&nbsp;=&nbsp;<span style="color:#ae81ff;">5</span>;
-        <span style="color:#ff9900;">}</span>
-        <span style="color:#d8a0df;">else</span>&nbsp;<span style="color:#ff9900;">{</span>
-            *<span style="color:deeppink;">(</span><span style="color:#ae81ff;">_DWORD</span>*<span style="color:deeppink;">)</span>&amp;stub<span style="color:deeppink;">[</span><span style="color:#ae81ff;">13</span><span style="color:deeppink;">]</span>&nbsp;=&nbsp;<span style="color:deeppink;">(</span><span style="color:#a6e22d;">WORD</span><span style="color:deeppink;">)</span>sc_index&nbsp;|&nbsp;<span style="color:deeppink;">(</span><span style="color:#fd971f;">tdl</span>-&gt;tdl_index&nbsp;&lt;&lt;&nbsp;<span style="color:#ae81ff;">16</span><span style="color:deeppink;">)</span>;<span style="color:#75715e;">//填充中断号</span>
-            *<span style="color:deeppink;">(</span><span style="color:#ae81ff;">_WORD</span>*<span style="color:deeppink;">)</span>&amp;stub<span style="color:deeppink;">[</span><span style="color:#ae81ff;">37</span><span style="color:deeppink;">]</span>&nbsp;=&nbsp;<span style="color:#ae81ff;">4</span>&nbsp;*&nbsp;param_cnt;
-            <span style="color:#66d9ef;">memcpy</span><span style="color:deeppink;">(</span>fun_stub_buf,&nbsp;stub,&nbsp;<span style="color:#ae81ff;">0x40</span><span style="color:deeppink;">)</span>;
-            sc_t-&gt;chainStub_gap&nbsp;=&nbsp;<span style="color:#ae81ff;">0x20</span>;
-        <span style="color:#ff9900;">}</span>
-        <span style="color:#75715e;">//函数stub的入口数据</span>
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:#ff9900;">(</span>!sc_t-&gt;ep32.<span style="color:#66d9ef;">empty</span><span style="color:deeppink;">()</span>&nbsp;&amp;&amp;&nbsp;sc_t-&gt;ep32.<span style="color:#66d9ef;">size</span><span style="color:deeppink;">()</span>&nbsp;&lt;=&nbsp;<span style="color:#ae81ff;">10</span><span style="color:#ff9900;">)</span>&nbsp;<span style="color:#ff9900;">{</span>
-            <span style="color:#66d9ef;">memcpy</span><span style="color:deeppink;">(</span>ep_fun_buf,&nbsp;&amp;sc_t-&gt;ep32<span style="color:yellowgreen;">[</span><span style="color:#ae81ff;">0</span><span style="color:yellowgreen;">]</span>,&nbsp;sc_t-&gt;ep32.<span style="color:#66d9ef;">size</span><span style="color:yellowgreen;">()</span><span style="color:deeppink;">)</span>;
-        <span style="color:#ff9900;">}</span>
-    <span style="color:darkviolet;">}</span>
-
-    fun_stub_buf&nbsp;+=&nbsp;<span style="color:#ae81ff;">0x40</span>;
-    ep_fun_buf&nbsp;+=&nbsp;<span style="color:#ae81ff;">0x40</span>;
-
-    ++api_index;
-    ++sc_index;
-<span style="color:yellowgreen;">}</span>&nbsp;<span style="color:#d8a0df;">while</span>&nbsp;<span style="color:yellowgreen;">(</span>sc_index&nbsp;&lt;&nbsp;<span style="color:#fd971f;">tdl</span>-&gt;sctabCount<span style="color:yellowgreen;">)</span>;
-<span style="color:deeppink;">}</span></pre></li>
-</ol>
-<p>函数代码都是根据下面这个模板来改的</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    nop  </span><br><span class="line">    mov         eax,0  ;中断号</span><br><span class="line">    call        stub_1 </span><br><span class="line">exit_int:</span><br><span class="line">    ret  </span><br><span class="line">    int         3  </span><br><span class="line"> stub_1:</span><br><span class="line">    push        0FFFFFFFFh  </span><br><span class="line">    call        exit_int</span><br><span class="line">    add         esp,8  </span><br><span class="line">    int         80h  </span><br><span class="line">    ret         0 ;改成参数个数</span><br></pre></td></tr></table></figure>
-<p>中断号就是tdl(dll配置)索引和sc(api描述)索引计算出来的,在中断处理程序里就可以通过这个找到要模拟的api</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*(_DWORD*)&amp;stub[<span class="number">13</span>] = (WORD)sc_index | (tdl-&gt;tdl_index &lt;&lt; <span class="number">16</span>);<span class="comment">//填充中断号</span></span><br></pre></td></tr></table></figure>
-<pre style="font-family:Fira Code;font-size:13px;color:white;"><span style="color:#75715e;">//存放的函数地址表</span>
-<span style="color:#ae81ff;">_DWORD</span>*&nbsp;addtab_buf&nbsp;=&nbsp;<span style="color:deeppink;">(</span><span style="color:#ae81ff;">_DWORD</span>*<span style="color:deeppink;">)(</span><span style="color:yellowgreen;">(</span><span style="color:#f92672;">char</span>*<span style="color:yellowgreen;">)</span>expdir_buf&nbsp;+&nbsp;<span style="color:#ae81ff;">0x28</span><span style="color:deeppink;">)</span>;
-<span style="color:#75715e;">//存放导出函数名的rva地址</span>
-<span style="color:#ae81ff;">_DWORD</span>*&nbsp;namerva_buf&nbsp;=&nbsp;<span style="color:deeppink;">(</span><span style="color:#ae81ff;">_DWORD</span>*<span style="color:deeppink;">)(</span><span style="color:yellowgreen;">(</span><span style="color:#f92672;">char</span>*<span style="color:yellowgreen;">)</span>addtab_buf&nbsp;+&nbsp;<span style="color:#ae81ff;">4</span>&nbsp;*&nbsp;exp.naddrs<span style="color:deeppink;">)</span>;
-<span style="color:#75715e;">//存放导出函数索引的buf</span>
-<span style="color:#ae81ff;">_WORD</span>*&nbsp;ordbase_buf&nbsp;=&nbsp;<span style="color:deeppink;">(</span><span style="color:#ae81ff;">_WORD</span>*<span style="color:deeppink;">)(</span><span style="color:yellowgreen;">(</span><span style="color:#f92672;">char</span>*<span style="color:yellowgreen;">)</span>namerva_buf&nbsp;+&nbsp;<span style="color:#ae81ff;">4</span>&nbsp;*&nbsp;x86_api_cnt<span style="color:deeppink;">)</span>;
-<span style="color:#75715e;">//存放函数名</span>
-<span style="color:#f92672;">char</span>*&nbsp;nname_buf&nbsp;=&nbsp;<span style="color:deeppink;">(</span><span style="color:#f92672;">char</span>*<span style="color:deeppink;">)(</span><span style="color:yellowgreen;">(</span><span style="color:#f92672;">char</span>*<span style="color:yellowgreen;">)</span>ordbase_buf&nbsp;+&nbsp;<span style="color:#ae81ff;">2</span>&nbsp;*&nbsp;x86_api_cnt<span style="color:deeppink;">)</span>;
-<span style="color:#75715e;">//存放引用dll函数</span>
-<span style="color:#f92672;">char</span>*&nbsp;ref_dll_buf&nbsp;=&nbsp;<span style="color:deeppink;">(</span><span style="color:#f92672;">char</span>*<span style="color:deeppink;">)(</span>nname_buf&nbsp;+&nbsp;st_name_len<span style="color:deeppink;">)</span>;
- 
-<span style="color:#f92672;">int</span>&nbsp;ord_base&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
-<span style="color:#a6e22d;">uint32_t</span>&nbsp;nnames&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
- 
-ntzw_fun_index&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
-<span style="color:#f92672;">int</span>&nbsp;api_name_len&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
- 
-<span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#fd971f;">tdl</span>-&gt;sctabCount&nbsp;&gt;&nbsp;<span style="color:#ae81ff;">0</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
-    i&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
-    ordbase_buf&nbsp;=&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#ae81ff;">_WORD</span>*<span style="color:yellowgreen;">)</span>ordbase_buf;
-    fun_rva&nbsp;=&nbsp;text_start&nbsp;+&nbsp;<span style="color:#ae81ff;">2</span>;
-    <span style="color:#d8a0df;">do</span>&nbsp;<span style="color:yellowgreen;">{</span>
-        <span style="color:#f92672;">auto</span>&nbsp;sc_t&nbsp;=&nbsp;&amp;<span style="color:#fd971f;">tdl</span>-&gt;sctabs<span style="color:darkviolet;">[</span>i<span style="color:darkviolet;">]</span>;
-        <span style="color:#f92672;">int</span>&nbsp;tdl_flag&nbsp;=&nbsp;sc_t-&gt;tdl_flag;
- 
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>tdl_flag&nbsp;&amp;&nbsp;<span style="color:#ae81ff;">8</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
-            ++i;
-            ++ntzw_fun_index;
-        <span style="color:darkviolet;">}</span>
- 
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>sc_t-&gt;proto.<span style="color:#66d9ef;">data</span><span style="color:#ff9900;">()</span>&nbsp;&amp;&amp;&nbsp;<span style="color:#ff9900;">(</span>sl&nbsp;=&nbsp;<span style="color:deeppink;">(</span><span style="color:#f92672;">char</span>*<span style="color:deeppink;">)</span><span style="color:#66d9ef;">strchr</span><span style="color:deeppink;">(</span>sc_t-&gt;proto.<span style="color:#66d9ef;">data</span><span style="color:yellowgreen;">()</span>,&nbsp;<span style="color:#e8c9bb;">&#39;</span><span style="color:#e6db74;">`</span><span style="color:#e8c9bb;">&#39;</span><span style="color:deeppink;">)</span><span style="color:#ff9900;">)</span>&nbsp;!=&nbsp;<span style="color:#ae81ff;">0</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
-            <span style="color:#75715e;">//填充引用dll字符串</span>
-            addtab_buf<span style="color:#ff9900;">[</span>ord_base<span style="color:#ff9900;">]</span>&nbsp;=&nbsp;ref_dll_buf&nbsp;-&nbsp;data_pbuf&nbsp;+&nbsp;data_vstart;
-            <span style="color:#66d9ef;">strcpy</span><span style="color:#ff9900;">(</span>ref_dll_buf,&nbsp;sl&nbsp;+&nbsp;<span style="color:#ae81ff;">1</span><span style="color:#ff9900;">)</span>;
-            ref_dll_buf&nbsp;+=&nbsp;<span style="color:#66d9ef;">strlen</span><span style="color:#ff9900;">(</span>sl&nbsp;+&nbsp;<span style="color:#ae81ff;">1</span><span style="color:#ff9900;">)</span>&nbsp;+&nbsp;<span style="color:#ae81ff;">1</span>;
-        <span style="color:darkviolet;">}</span>
-        <span style="color:#d8a0df;">else</span>&nbsp;<span style="color:darkviolet;">{</span>
-            <span style="color:#75715e;">//填充函数地址</span>
-            addtab_buf<span style="color:#ff9900;">[</span>ord_base<span style="color:#ff9900;">]</span>&nbsp;=&nbsp;fun_rva;
-        <span style="color:darkviolet;">}</span>
-        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:#ff9900;">()</span><span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
-            <span style="color:#75715e;">/*计算函数名的rva地址&nbsp;*/</span>
-            ++nnames;
-            *namerva_buf&nbsp;=&nbsp;nname_buf&nbsp;-&nbsp;data_pbuf&nbsp;+&nbsp;data_vstart;
-            ++namerva_buf;
-            <span style="color:#75715e;">//填充函数名</span>
-            api_name_len&nbsp;=&nbsp;<span style="color:#66d9ef;">strlen</span><span style="color:#ff9900;">(</span>sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:deeppink;">()</span><span style="color:#ff9900;">)</span>;
-            <span style="color:#66d9ef;">memcpy</span><span style="color:#ff9900;">(</span><span style="color:deeppink;">(</span><span style="color:#f92672;">void</span>*<span style="color:deeppink;">)</span>nname_buf,&nbsp;sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:deeppink;">()</span>,&nbsp;api_name_len<span style="color:#ff9900;">)</span>;
-            nname_buf&nbsp;+=&nbsp;api_name_len&nbsp;+&nbsp;<span style="color:#ae81ff;">1</span>;
-            <span style="color:#75715e;">//填充导出序号</span>
-            *ordbase_buf&nbsp;=&nbsp;ord_base;
- 
-            ++ordbase_buf;
-            <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:#ff9900;">(</span>bNtdll<span style="color:#ff9900;">)</span>&nbsp;<span style="color:#ff9900;">{</span>
-                <span style="color:#75715e;">//设置NT*和ZW*的函数地址</span>
-                <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span>sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:yellowgreen;">()[</span><span style="color:#ae81ff;">0</span><span style="color:yellowgreen;">]</span>&nbsp;!=&nbsp;<span style="color:#e8c9bb;">&#39;</span><span style="color:#e6db74;">N</span><span style="color:#e8c9bb;">&#39;</span>&nbsp;||&nbsp;sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:yellowgreen;">()[</span><span style="color:#ae81ff;">1</span><span style="color:yellowgreen;">]</span>&nbsp;!=&nbsp;<span style="color:#e8c9bb;">&#39;</span><span style="color:#e6db74;">t</span><span style="color:#e8c9bb;">&#39;</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
-                    <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:yellowgreen;">(</span>sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:darkviolet;">()[</span><span style="color:#ae81ff;">0</span><span style="color:darkviolet;">]</span>&nbsp;==&nbsp;<span style="color:#e8c9bb;">&#39;</span><span style="color:#e6db74;">Z</span><span style="color:#e8c9bb;">&#39;</span>&nbsp;&amp;&amp;&nbsp;sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:darkviolet;">()[</span><span style="color:#ae81ff;">1</span><span style="color:darkviolet;">]</span>&nbsp;==&nbsp;<span style="color:#e8c9bb;">&#39;</span><span style="color:#e6db74;">w</span><span style="color:#e8c9bb;">&#39;</span><span style="color:yellowgreen;">)</span>&nbsp;<span style="color:yellowgreen;">{</span>
-                        j&nbsp;=&nbsp;sc_index;
- 
-                        <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:darkviolet;">(</span>j&nbsp;&lt;&nbsp;ntzw_fun_index<span style="color:darkviolet;">)</span>&nbsp;<span style="color:darkviolet;">{</span>
-                            <span style="color:#d8a0df;">for</span>&nbsp;<span style="color:#ff9900;">(</span>j;&nbsp;j&nbsp;&lt;&nbsp;ntzw_fun_index;&nbsp;j++<span style="color:#ff9900;">)</span>&nbsp;<span style="color:#ff9900;">{</span>
-                                <span style="color:#f92672;">auto</span>&nbsp;sc_t2&nbsp;=&nbsp;&amp;<span style="color:#fd971f;">tdl</span>-&gt;sctabs<span style="color:deeppink;">[</span>j<span style="color:deeppink;">]</span>;
-                                <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span>!sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:yellowgreen;">()</span>&nbsp;||&nbsp;*sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:yellowgreen;">()</span>&nbsp;!=&nbsp;<span style="color:#ae81ff;">78</span>&nbsp;||&nbsp;sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:yellowgreen;">()[</span><span style="color:#ae81ff;">1</span><span style="color:yellowgreen;">]</span>&nbsp;!=&nbsp;<span style="color:#ae81ff;">116</span><span style="color:deeppink;">)</span>
-                                    <span style="color:#d8a0df;">break</span>;
-                                <span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span>!<span style="color:#66d9ef;">strcmp</span><span style="color:yellowgreen;">(</span>sc_t-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:darkviolet;">()</span>&nbsp;+&nbsp;<span style="color:#ae81ff;">2</span>,&nbsp;sc_t2-&gt;name.<span style="color:#66d9ef;">data</span><span style="color:darkviolet;">()</span>&nbsp;+&nbsp;<span style="color:#ae81ff;">2</span><span style="color:yellowgreen;">)</span><span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
-                                    addtab_buf<span style="color:yellowgreen;">[</span>ord_base<span style="color:yellowgreen;">]</span>&nbsp;=&nbsp;sc_t-&gt;fun_rva;
-                                    <span style="color:#d8a0df;">break</span>;
-                                <span style="color:deeppink;">}</span>
-                            <span style="color:#ff9900;">}</span>
-                        <span style="color:darkviolet;">}</span>
-                    <span style="color:yellowgreen;">}</span>
-                <span style="color:deeppink;">}</span>
-                <span style="color:#d8a0df;">else</span>&nbsp;<span style="color:#d8a0df;">if</span>&nbsp;<span style="color:deeppink;">(</span>!sc_index<span style="color:deeppink;">)</span>&nbsp;<span style="color:deeppink;">{</span>
-                    <span style="color:#75715e;">//是nt函数,</span>
-                    sc_index&nbsp;=&nbsp;ntzw_fun_index;
-                <span style="color:deeppink;">}</span>
-            <span style="color:#ff9900;">}</span>
-        <span style="color:darkviolet;">}</span>
- 
-        fun_rva&nbsp;+=&nbsp;<span style="color:#ae81ff;">0x40</span>;
-        sc_t-&gt;fun_rva&nbsp;=&nbsp;addtab_buf<span style="color:darkviolet;">[</span>ord_base++<span style="color:darkviolet;">]</span>;
- 
-        ++i;
-        ++ntzw_fun_index;
-    <span style="color:yellowgreen;">}</span>&nbsp;<span style="color:#d8a0df;">while</span>&nbsp;<span style="color:yellowgreen;">(</span>ntzw_fun_index&nbsp;&lt;&nbsp;<span style="color:#fd971f;">tdl</span>-&gt;sctabCount<span style="color:yellowgreen;">)</span>;
-<span style="color:deeppink;">}</span></pre>
 				  
 	  
       
@@ -822,19 +434,19 @@ ntzw_fun_index&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
 	
 	<!-- <br>
 	<strong class="create-time">发布时间：</strong>
-	2020-04-19 -->
+	2023-02-05 -->
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2023年02月04日 21:43:04
+	2023年02月05日 17:05:12
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
-	<a href="http://shxi.tk/post/33b57d1f.html" title="逆向XX引擎系列-一-构造系统dll文件" target="_blank">逆向XX引擎系列-一-构造系统dll文件</a> -->
+	<a href="http://shxi.tk/post/50098e1b.html" title="将shellcode编译成可执行程序" target="_blank">将shellcode编译成可执行程序</a> -->
 	
 	<br>
 	<strong class="article-url">本文链接：</strong>
-	<a href="http://shxi.tk/post/33b57d1f.html" title="逆向XX引擎系列-一-构造系统dll文件" target="_blank">http://shxi.tk/post/33b57d1f.html</a>
+	<a href="http://shxi.tk/post/50098e1b.html" title="将shellcode编译成可执行程序" target="_blank">http://shxi.tk/post/50098e1b.html</a>
 	
 	<br>
 	<strong class="copyright">版权声明：</strong>
@@ -855,6 +467,17 @@ ntzw_fun_index&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
 	  
 	  <!-- 分类页 -->
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">分析技巧</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
 	  
@@ -908,7 +531,7 @@ ntzw_fun_index&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-	  <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://shxi.tk/post/33b57d1f.html" alt="微信分享二维码">
+	  <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://shxi.tk/post/50098e1b.html" alt="微信分享二维码">
     </div>
 </div>
 
@@ -925,18 +548,9 @@ ntzw_fun_index&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
   
 <nav id="article-nav">
   
-    <a href="/post/899d14fd.html" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          逆向XX引擎-通用dump
-        
-      </div>
-    </a>
   
-  
-    <a href="/post/3e55cc86.html" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">逆向XX引擎-库文件解密</div>
+    <a href="/post/5841702b.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">app.any.run网站样本爬虫</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -962,7 +576,7 @@ ntzw_fun_index&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
           <span class="tooltip-content">
 			<span style="font-size: 20px;font-weight: bold;">目录</span>
             <div class="toc-article">
-              <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#dump%E6%B2%99%E7%AE%B1%E7%B3%BB%E7%BB%9Fdll%E6%96%87%E4%BB%B6"><span class="toc-number">1.</span> <span class="toc-text">dump沙箱系统dll文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PE%E7%BB%93%E6%9E%84%E5%A1%AB%E5%85%85"><span class="toc-number">2.</span> <span class="toc-text">PE结构填充</span></a></li></ol>
+              哦，目录不存在
             </div>
           </span>
         </div>
