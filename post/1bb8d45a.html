@@ -17,7 +17,7 @@
 <meta property="og:site_name" content="ydc&#39;s Blog">
 <meta property="og:description" content="1.   概述Lazarus组织，又称为HIDDEN COBRA、APT38、Zinc、Guardians of Peace等，是半岛地区最活跃的APT组织之一。该组织的攻击目标涉及波兰、智利、美国、墨西哥、巴西等数十个国家，针对银行、比特币交易所等金融机构及个人实施定向攻击活动，以获取经济利益，堪称全球金融机构的最大威胁之一。此外，该组织还针对航空航天、COVID-19疫苗技术、政府、媒体等机构">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://shxi.cc/post/post/1bb8d45a/clip_image001.png">
+<meta property="og:image" content="http://shxi.cc/post/1bb8d45a/clip_image001.png">
 <meta property="og:image" content="http://shxi.cc/post/1bb8d45a/clip_image003.png">
 <meta property="og:image" content="http://shxi.cc/post/1bb8d45a/clip_image005.png">
 <meta property="og:image" content="http://shxi.cc/post/1bb8d45a/clip_image007.png">
@@ -55,11 +55,11 @@
 <meta property="og:image" content="http://shxi.cc/post/1bb8d45a/clip_image071.png">
 <meta property="og:image" content="http://shxi.cc/post/1bb8d45a/clip_image073.png">
 <meta property="article:published_time" content="2022-11-18T02:02:14.000Z">
-<meta property="article:modified_time" content="2023-10-14T06:19:02.258Z">
+<meta property="article:modified_time" content="2023-10-14T07:35:50.599Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://shxi.cc/post/post/1bb8d45a/clip_image001.png">
+<meta name="twitter:image" content="http://shxi.cc/post/1bb8d45a/clip_image001.png">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -445,17 +445,17 @@ var _hmt = _hmt || [];
 	  
 		  
 		  <h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>Lazarus组织，又称为HIDDEN COBRA、APT38、Zinc、Guardians of Peace等，是半岛地区最活跃的APT组织之一。该组织的攻击目标涉及波兰、智利、美国、墨西哥、巴西等数十个国家，针对银行、比特币交易所等金融机构及个人实施定向攻击活动，以获取经济利益，堪称全球金融机构的最大威胁之一。此外，该组织还针对航空航天、COVID-19疫苗技术、政府、媒体等机构及企业进行渗透，以窃取重要资料并进行破坏勒索。</p>
-<h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2. 详细分析"></a>2. 详细分析</h1><h2 id="1-诱饵文档"><a href="#1-诱饵文档" class="headerlink" title="1.诱饵文档"></a>1.诱饵文档</h2><p>         SaniTox是韩国Jiransecurity的一款反病毒程序, 诱饵文档伪冒SaniTox骗取受害者信任并诱导其启用宏功能以便执行恶意宏代码。</p>
-<img src="post/1bb8d45a/clip_image001.png">
 <span id="more"></span>
+
+<h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2. 详细分析"></a>2. 详细分析</h1><h2 id="1-诱饵文档"><a href="#1-诱饵文档" class="headerlink" title="1.诱饵文档"></a>1.诱饵文档</h2><p>         SaniTox是韩国Jiransecurity的一款反病毒程序, 诱饵文档伪冒SaniTox骗取受害者信任并诱导其启用宏功能以便执行恶意宏代码。</p>
+<img src="1bb8d45a/clip_image001.png">
+
 
 <p>文档主题为 如何进入网络教室的操作手册,如下图:</p>
 <p><img src="1bb8d45a/clip_image003.png"></p>
 <p>         该诱饵文档包括远程模板注入,当受害者打开文档时加载远程模板, 然后执行模板文件的恶意宏代码并下载IEUpdate.exe分析。</p>
 <p><img src="1bb8d45a/clip_image005.png"></p>
-<h2 id="2-远程模板"><a href="#2-远程模板" class="headerlink" title="2.    远程模板"></a>2.    远程模板</h2><p>远程模板包含恶意宏代码,主要从服务器下载恶意文件并注入到WinWord进程中执行。</p>
-<p>         当远程模板被加载时,  首先执行函数Auto_Open,  首先检测文档是否在沙箱被打开,如果是则关闭文档。否则就从远程服务器中下载恶意文件并注入到WinWord进程内。</p>
-<p>         如果注入进程失败,则弹出错误提示。注入成功则将最开始显示的诱导启动宏功能的页面隐藏，显示主题为 **&lt;&lt;****如何进入网络教室的操作手册&gt;&gt;**的内容。</p>
+<h2 id="2-远程模板"><a href="#2-远程模板" class="headerlink" title="2.    远程模板"></a>2.    远程模板</h2><p>远程模板包含恶意宏代码,主要从服务器下载恶意文件并注入到WinWord进程中执行。<br>         当远程模板被加载时,  首先执行函数Auto_Open,  首先检测文档是否在沙箱被打开,如果是则关闭文档。否则就从远程服务器中下载恶意文件并注入到WinWord进程内。<br>         如果注入进程失败,则弹出错误提示。注入成功则将最开始显示的诱导启动宏功能的页面隐藏，显示主题为 **&lt;&lt;****如何进入网络教室的操作手册&gt;&gt;**的内容。</p>
 <p><img src="1bb8d45a/clip_image007.png"></p>
 <p>         当Auto_Open函数执行失败, 宏代码中还实现一种当WindowsMediaPlyer控件状态改变时被触发。主要代码与Auto_Open函数类似。</p>
 <p><img src="1bb8d45a/clip_image019.png"></p>
@@ -495,17 +495,13 @@ var _hmt = _hmt || [];
 <h3 id="11-文件下载并执行"><a href="#11-文件下载并执行" class="headerlink" title="11.文件下载并执行"></a>11.文件下载并执行</h3><p>         接收到从C&amp;C服务器下发的指令并从中解析出指令ID和文件下载地址。</p>
 <p>使用GET请求下载文件然后将其映射到内存并加载。通过指令ID来判断调用导出函数”SEStart”或”SEEnd”。</p>
 <p><img src="1bb8d45a/clip_image043.png"></p>
-<h2 id="4-hvncengine-dll分析"><a href="#4-hvncengine-dll分析" class="headerlink" title="4.hvncengine.dll分析"></a>4.hvncengine.dll分析</h2><p>         该程序为恶意程序IEUpdate从C&amp;C服务器下载的模块, hvnc全名</p>
-<p>为”Hidden Virtual Network Connection” ，主要用于银行盗号木马中，vnc原本是一种远程桌面管理软件，在远程可以通过VNC对受控电脑进行控制。而对于恶意程序来说，在对受控电脑进行控制时，会不择手段将自身隐藏，但是使用VNC控制受控电脑时, 当执行的操作为图形化界面时,很难不被受害者发现。</p>
-<p>         在国内很多金融相关的业务在用户登录账号时,都需要用户安装数字证书或者其他验证工具，若用户从其他机器登录账号时, 会需要用户进行身份认证，因此攻击者为了盗窃受害者的银行账户的钱款或者其他需要身份认证的资产时，攻击者研发出了hvnc来解决使用VNC共享桌面时会被受害者发现的问题。</p>
-<h3 id="1-样本描述"><a href="#1-样本描述" class="headerlink" title="1.样本描述"></a>1.样本描述</h3><p>由恶意程序IEUpdate下载的恶意模块都包含SEStart和SEEnd两个导出函数,</p>
-<p>SEStart主要通过socket来实现hvnc的功能，SEEnd用于关闭socket链接、结束管道句柄和结束执行主要后门逻辑的线程。其中生成标识符的算法与恶意程序IEUpdate一样。</p>
+<h2 id="4-hvncengine-dll分析"><a href="#4-hvncengine-dll分析" class="headerlink" title="4.hvncengine.dll分析"></a>4.hvncengine.dll分析</h2><p>         该程序为恶意程序IEUpdate从C&amp;C服务器下载的模块, hvnc全名<br>为”Hidden Virtual Network Connection” ，主要用于银行盗号木马中，vnc原本是一种远程桌面管理软件，在远程可以通过VNC对受控电脑进行控制。而对于恶意程序来说，在对受控电脑进行控制时，会不择手段将自身隐藏，但是使用VNC控制受控电脑时, 当执行的操作为图形化界面时,很难不被受害者发现。<br>         在国内很多金融相关的业务在用户登录账号时,都需要用户安装数字证书或者其他验证工具，若用户从其他机器登录账号时, 会需要用户进行身份认证，因此攻击者为了盗窃受害者的银行账户的钱款或者其他需要身份认证的资产时，攻击者研发出了hvnc来解决使用VNC共享桌面时会被受害者发现的问题。</p>
+<h3 id="1-样本描述"><a href="#1-样本描述" class="headerlink" title="1.样本描述"></a>1.样本描述</h3><p>由恶意程序IEUpdate下载的恶意模块都包含SEStart和SEEnd两个导出函数,<br>SEStart主要通过socket来实现hvnc的功能，SEEnd用于关闭socket链接、结束管道句柄和结束执行主要后门逻辑的线程。其中生成标识符的算法与恶意程序IEUpdate一样。</p>
 <h3 id="3-检测主逻辑线程"><a href="#3-检测主逻辑线程" class="headerlink" title="3.检测主逻辑线程"></a>3.检测主逻辑线程</h3><p>         在标识符成功生成后, 恶意程序检测核心功能线程是否已经在启动中避免线程被重复创建, 如果线程仍然在执行中或者则不再创建新的线程。如果线程由于某种原因出现异常但是线程没有被结束则首先结束线程然后再创建新的线程来执行主要逻辑代码。</p>
 <p><img src="1bb8d45a/clip_image045.png"></p>
 <h3 id="4-执行hvnc线程"><a href="#4-执行hvnc线程" class="headerlink" title="4.执行hvnc线程"></a>4.执行hvnc线程</h3><p>         每隔10分钟执行一次恶意代码, 只有在主模块调用SEEnd函数后才会结束循环。在线程函数hvnc_thread内执行一系列与hvnc相关的功能。</p>
 <p><img src="1bb8d45a/clip_image047.png"></p>
-<h3 id="5-执行hvnc功能"><a href="#5-执行hvnc功能" class="headerlink" title="5.执行hvnc功能"></a>5.执行hvnc功能</h3><p>         使用前面生成的标识符为名创建一个新的隐藏桌面，在后续涉及到桌面的操作时使用函数SetThreadDesktop来指定隐藏桌面让相关操作在该桌面下被执行。</p>
-<p>         在创建进程时设置STARTUP_INFO结构体的字段lpDesktopInfo为hDesktop,可使进程在隐藏桌面下执行进程。</p>
+<h3 id="5-执行hvnc功能"><a href="#5-执行hvnc功能" class="headerlink" title="5.执行hvnc功能"></a>5.执行hvnc功能</h3><p>         使用前面生成的标识符为名创建一个新的隐藏桌面，在后续涉及到桌面的操作时使用函数SetThreadDesktop来指定隐藏桌面让相关操作在该桌面下被执行。<br>         在创建进程时设置STARTUP_INFO结构体的字段lpDesktopInfo为hDesktop,可使进程在隐藏桌面下执行进程。</p>
 <p><img src="1bb8d45a/clip_image049.png"></p>
 <h3 id="6-C-amp-C通信"><a href="#6-C-amp-C通信" class="headerlink" title="6. C&amp;C通信"></a>6. C&amp;C通信</h3><p>         读取位于目录”%LOCALAPPDATA%/Microsoft/PlayReady”处的error.log文件的数据并与”dl.dropboxusercontext.com”拼接得到存放于公共托管服务网站dropbox中保存实际C&amp;C地址的文件地址。通过GET请求该地址得到C&amp;C地址,然后尝试通过socket与其进行通信。<br><img src="1bb8d45a/clip_image051.png"></p>
 <p>         如果使用socket能够成功连接上目标地址，则尝试发送上线数据包并等待C&amp;C服务器下发指令。上线数据包构造如下图：</p>
@@ -557,10 +553,7 @@ var _hmt = _hmt || [];
 <td>执行chrome浏览器</td>
 </tr>
 </tbody></table>
-<h3 id="6-屏幕截图"><a href="#6-屏幕截图" class="headerlink" title="6.屏幕截图"></a>6.屏幕截图</h3><p>         恶意程序使用了两个与屏幕截图相关的指令ID: 0x01和0x02, 0x01为持续不断的对屏幕进行截图并发送到C&amp;C服务器中。</p>
-<p>         每隔200ms对屏幕进行一次截图并上传到C&amp;C服务器中, 如果与服务器通信失败或者sceen_shot_flag值为0, 则退出截图。0x02设置sceen_shot_flag值为0表示即将结束截图, 在屏幕截图过程中，会判断该标志的值来决定是否结束屏幕截图。</p>
-<p>         首先遍历所有桌面, 找到受害者使用的桌面，然后针对该桌面创建BitBit对象并将其转换成image流数据, 也就是说对受害者使用的桌面进行截图。</p>
-<p>         为了能够将截图后的数据上传到C&amp;C服务器, 从流中读取数据并保存。</p>
+<h3 id="6-屏幕截图"><a href="#6-屏幕截图" class="headerlink" title="6.屏幕截图"></a>6.屏幕截图</h3><p>         恶意程序使用了两个与屏幕截图相关的指令ID: 0x01和0x02, 0x01为持续不断的对屏幕进行截图并发送到C&amp;C服务器中。<br>         每隔200ms对屏幕进行一次截图并上传到C&amp;C服务器中, 如果与服务器通信失败或者sceen_shot_flag值为0, 则退出截图。0x02设置sceen_shot_flag值为0表示即将结束截图, 在屏幕截图过程中，会判断该标志的值来决定是否结束屏幕截图。<br>         首先遍历所有桌面, 找到受害者使用的桌面，然后针对该桌面创建BitBit对象并将其转换成image流数据, 也就是说对受害者使用的桌面进行截图。<br>         为了能够将截图后的数据上传到C&amp;C服务器, 从流中读取数据并保存。</p>
 <p><img src="1bb8d45a/clip_image057.png"></p>
 <p>    截图完成后,构造发送给C&amp;C的数据包, 数据包使用固定的包格式。</p>
 <p><img src="1bb8d45a/clip_image059.png"></p>
@@ -569,22 +562,17 @@ var _hmt = _hmt || [];
 
 <h3 id="7-执行命令"><a href="#7-执行命令" class="headerlink" title="7.执行命令"></a>7.执行命令</h3><p>         当接收到的C&amp;C指令ID为3时为执行任意命令, 要执行的命令在C&amp;C指令参数中, 通过创建进程将命令行参数设置为由服务器下发的要执行的命令行的方式来执行命令。为了避免被受害者发现, 将STARTUP_INFO结构体的字段lpDesktop设置为隐藏桌面。</p>
 <p><img src="1bb8d45a/clip_image061.png">        </p>
-<h3 id="8-键盘模拟"><a href="#8-键盘模拟" class="headerlink" title="8.键盘模拟"></a>8.键盘模拟</h3><p>         当C&amp;C指令ID为5时模拟键盘操作，主要通过对目标窗口对象发送WM_KEYUP、WM_KEYDOWN和WM_CHAR来模拟所有的按键操作。</p>
-<p>         要操作的窗口对象则是 通过窗口位置来获取, 最后通过PostMessageA将消息发送到目标窗口。</p>
+<h3 id="8-键盘模拟"><a href="#8-键盘模拟" class="headerlink" title="8.键盘模拟"></a>8.键盘模拟</h3><p>         当C&amp;C指令ID为5时模拟键盘操作，主要通过对目标窗口对象发送WM_KEYUP、WM_KEYDOWN和WM_CHAR来模拟所有的按键操作。<br>         要操作的窗口对象则是 通过窗口位置来获取, 最后通过PostMessageA将消息发送到目标窗口。</p>
 <p><img src="1bb8d45a/clip_image063.png"></p>
-<h3 id="9-模拟鼠标操作"><a href="#9-模拟鼠标操作" class="headerlink" title="9.模拟鼠标操作"></a>9.模拟鼠标操作</h3><p>         攻击者在使用hvnc功能操作桌面时，不可避免要对桌面的窗口进行操作, 恶意程序通过向指定的窗口发送窗口消息来对窗口进行操作，其中进行的操作和操作时需要的参数由C&amp;C服务器下发，参数一般是发送窗口消息时需要的wparam值。</p>
-<p>恶意程序利用消息机制模拟了多种鼠标的操作，比如使用鼠标拖曳窗口、鼠标单击双击和滑动鼠标滚轮等等。</p>
+<h3 id="9-模拟鼠标操作"><a href="#9-模拟鼠标操作" class="headerlink" title="9.模拟鼠标操作"></a>9.模拟鼠标操作</h3><p>         攻击者在使用hvnc功能操作桌面时，不可避免要对桌面的窗口进行操作, 恶意程序通过向指定的窗口发送窗口消息来对窗口进行操作，其中进行的操作和操作时需要的参数由C&amp;C服务器下发，参数一般是发送窗口消息时需要的wparam值。<br>恶意程序利用消息机制模拟了多种鼠标的操作，比如使用鼠标拖曳窗口、鼠标单击双击和滑动鼠标滚轮等等。</p>
 <p>l  <strong>模拟拖曳窗口</strong></p>
 <p>通过修改目标窗口对象的left、top、width和height四个值来实现窗口放大、缩小和移动等功能，</p>
 <p><img src="1bb8d45a/clip_image065.png">    </p>
 <p>l  <strong>模拟点击菜单项</strong></p>
-<p>恶意程序判断当前鼠标位置是否属于任务栏的开始菜单范围内，如果在则发送WM_CLICK消息模拟鼠标单击来模拟鼠标点击开始菜单的事件；如果不在则判断鼠标所在位置是否在窗口类名为”#32768”的窗口控件中，该窗口控件实际上就是菜单栏，如果鼠标位置在菜单栏范围内, 则模拟鼠标点击某个菜单项。</p>
-<p>    首先发送消息MN_GETHMENU获取菜单对象句柄，然后通过菜单句柄获取当前鼠标指向的菜单项对应的菜单资源ID, 最后发送两个消息MN_SELECITEM和WM_KEYDOWN模拟鼠标点击菜单项。</p>
+<p>恶意程序判断当前鼠标位置是否属于任务栏的开始菜单范围内，如果在则发送WM_CLICK消息模拟鼠标单击来模拟鼠标点击开始菜单的事件；如果不在则判断鼠标所在位置是否在窗口类名为”#32768”的窗口控件中，该窗口控件实际上就是菜单栏，如果鼠标位置在菜单栏范围内, 则模拟鼠标点击某个菜单项。<br>    首先发送消息MN_GETHMENU获取菜单对象句柄，然后通过菜单句柄获取当前鼠标指向的菜单项对应的菜单资源ID, 最后发送两个消息MN_SELECITEM和WM_KEYDOWN模拟鼠标点击菜单项。</p>
 <p><img src="1bb8d45a/clip_image067.png"></p>
-<h3 id="10-执行Explorer-exe程序"><a href="#10-执行Explorer-exe程序" class="headerlink" title="10.执行Explorer.exe程序"></a>10.执行Explorer.exe程序</h3><p>          有时候使用hvnc进行远程操作时,可能会出现界面不显示或者其他异常，攻击者通过让目标机器执行explorer程序来恢复。</p>
-<p>         设置注册表键TaskbarGlomLevel的值为2使任务栏使用永不分组模式，然后启动进程explorer，进程创建成功后将任务栏设置为AlwayInTop，并恢复TaskbarGlomLevel为修改前的值。<br><img src="1bb8d45a/clip_image069.png"></p>
-<h3 id="11-执行chrome程序"><a href="#11-执行chrome程序" class="headerlink" title="11.执行chrome程序"></a>11.执行chrome程序</h3><p>         调用cmd程序执行chrome程序, 并关闭浏览器中比较消耗CPU性能的特性, 比如sanbox、gpu等等, 避免CPU使用率过高而被受害者发现。</p>
-<p>         启动浏览器时使用受害者默认的配置目录，在访问一些需要账号登录的网站可能因为受害者设置了记住密码或者设置保持登录状态时攻击者不需要账号密码就能够获取受害者的账号信息。</p>
+<h3 id="10-执行Explorer-exe程序"><a href="#10-执行Explorer-exe程序" class="headerlink" title="10.执行Explorer.exe程序"></a>10.执行Explorer.exe程序</h3><p>          有时候使用hvnc进行远程操作时,可能会出现界面不显示或者其他异常，攻击者通过让目标机器执行explorer程序来恢复。<br>         设置注册表键TaskbarGlomLevel的值为2使任务栏使用永不分组模式，然后启动进程explorer，进程创建成功后将任务栏设置为AlwayInTop，并恢复TaskbarGlomLevel为修改前的值。<br><img src="1bb8d45a/clip_image069.png"></p>
+<h3 id="11-执行chrome程序"><a href="#11-执行chrome程序" class="headerlink" title="11.执行chrome程序"></a>11.执行chrome程序</h3><p>         调用cmd程序执行chrome程序, 并关闭浏览器中比较消耗CPU性能的特性, 比如sanbox、gpu等等, 避免CPU使用率过高而被受害者发现。<br>         启动浏览器时使用受害者默认的配置目录，在访问一些需要账号登录的网站可能因为受害者设置了记住密码或者设置保持登录状态时攻击者不需要账号密码就能够获取受害者的账号信息。</p>
 <p><img src="1bb8d45a/clip_image071.png"></p>
 <h3 id="12-消息发送"><a href="#12-消息发送" class="headerlink" title="12.消息发送"></a>12.消息发送</h3><p>         在所有的C&amp;C指令中,只有键盘模拟和鼠标模拟才需要发送消息。恶意程序首先通过窗口位置获取对应的窗口对象，然后将参数转换程序发送消息时对应参数值，最后通过PostMessageA发送给目标窗口。</p>
 <p>         对应WM_CHAR消息，还需要将对应的字符转换成对应VKEY值，同样是使用PostMessageA发送给目标窗口对象。</p>
@@ -725,7 +713,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2023年10月14日 14:19:02
+	2023年10月14日 15:35:50
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>

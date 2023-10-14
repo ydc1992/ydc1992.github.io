@@ -393,29 +393,6 @@ var _hmt = _hmt || [];
 	  
 		  
 			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.    概述"></a>1.    概述</h1><p>BPFDoor是专门为Linux和Solaris系统设计的后门程序，攻击者可以远程连接到linux shell以获得受害者设备的访问权限，背后所属的APT组织主要针对中东和亚洲的电信提供商以及政府、教育和物流部门的实体。<br>该后门滥用伯克利数据包过滤器(BPF)来监听网络和过滤网络数据包，这是BPFDoor名字的由来，也是2022年来被发现的第二个基于BPF进行攻击的恶意程序,第一个是由盘古实验室公布的NAS后门bvp47。<br>PWC研究人员将该恶意程序归因于来自中国的APT组织Red Menshen, 该APT组织为2021年被PWC命名，归因原因是该组织在后利用阶段使用了Gh0st后门变种以及Mimikatz和Metasploit等开源软件、攻击时间与中国地区工作时间吻合等原因。这种归因方式是信誉度比较低的，因为其他国家的APT组织有时也会使用Gh0st后门,比如朝鲜国家支持的APT组织Lazarus。</p>
-<h1 id="2-样本详情"><a href="#2-样本详情" class="headerlink" title="2.    样本详情"></a>2.    样本详情</h1><table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>文件名</td>
-<td>kdumpflush</td>
-</tr>
-<tr>
-<td>Md5</td>
-<td>156226c90974180cc4b5f9738e80f1f8</td>
-</tr>
-<tr>
-<td>文件类型</td>
-<td>ELF64</td>
-</tr>
-</tbody></table>
-<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.    流程图"></a>3.    流程图</h1><!-- ![](b3bbba67/clip_image001.png) -->
-
-<img src="post/b3bbba67/clip_image001.png">
 		  
 				  
 	  
@@ -558,7 +535,6 @@ var _hmt = _hmt || [];
 		  
 			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>在上一篇报告中已经详细分析了bootkit的安装过程, 本篇报告主要针对已经部署的bootkit进行进一步的详细分析。</p>
 <h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2.详细分析"></a>2.详细分析</h1><h2 id="1-bootmgrfw-efi分析"><a href="#1-bootmgrfw-efi分析" class="headerlink" title="1. bootmgrfw.efi分析"></a>1. bootmgrfw.efi分析</h2><p>         BlackLotus使用自签名的恶意EFI应用替换了原文件bootmgrfw.efi,将源文件重命名为winload.efi, 替换后的执行流程如下图:</p>
-<img src="post/603ce62c/clip_image001.png">
 		  
 				  
 	  
@@ -699,10 +675,7 @@ var _hmt = _hmt || [];
 	  <!-- 添加分类与标签 -->
 	  
 		  
-			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>UEFI bootkit部署在系统固件中，能够完全控制操作系统的启动过程，因此可以禁用操作系统级别的安全机制并在启动期间中以最高权限执行程序。</p>
-<p>         BlackLotus利用一个漏洞编号为CVE-2022-21894的安全漏洞来绕过UEFI安全启动保护并设置持久性。</p>
-<p>利用该漏洞可以在操作系统的早期启动阶段执行任意代码从而允许攻击者在开启UEFI安全启动的系统上执行恶意操作而无需物理访问。</p>
-<h1 id="2-流程图"><a href="#2-流程图" class="headerlink" title="2.流程图"></a>2.流程图</h1><img src="post/7927d76d/clip_image001.png">
+			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>UEFI bootkit部署在系统固件中，能够完全控制操作系统的启动过程，因此可以禁用操作系统级别的安全机制并在启动期间中以最高权限执行程序。<br>         BlackLotus利用一个漏洞编号为CVE-2022-21894的安全漏洞来绕过UEFI安全启动保护并设置持久性。<br>利用该漏洞可以在操作系统的早期启动阶段执行任意代码从而允许攻击者在开启UEFI安全启动的系统上执行恶意操作而无需物理访问。</p>
 		  
 				  
 	  
@@ -1146,8 +1119,6 @@ var _hmt = _hmt || [];
 	  
 		  
 			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>Lazarus组织，又称为HIDDEN COBRA、APT38、Zinc、Guardians of Peace等，是半岛地区最活跃的APT组织之一。该组织的攻击目标涉及波兰、智利、美国、墨西哥、巴西等数十个国家，针对银行、比特币交易所等金融机构及个人实施定向攻击活动，以获取经济利益，堪称全球金融机构的最大威胁之一。此外，该组织还针对航空航天、COVID-19疫苗技术、政府、媒体等机构及企业进行渗透，以窃取重要资料并进行破坏勒索。</p>
-<h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2. 详细分析"></a>2. 详细分析</h1><h2 id="1-诱饵文档"><a href="#1-诱饵文档" class="headerlink" title="1.诱饵文档"></a>1.诱饵文档</h2><p>         SaniTox是韩国Jiransecurity的一款反病毒程序, 诱饵文档伪冒SaniTox骗取受害者信任并诱导其启用宏功能以便执行恶意宏代码。</p>
-<img src="post/1bb8d45a/clip_image001.png">
 		  
 				  
 	  
@@ -1289,68 +1260,7 @@ var _hmt = _hmt || [];
 	  
 		  
 			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>Donot“肚脑虫”（APT-Q-38）是疑似具有南亚背景的APT组织，其主要以周边国家的政府机构 为目标进行网络攻击活动，通常以窃取敏感信息为目的。该组织具备针对Windows与Android双平台的攻击能力。</p>
-<p>在对该组织追踪朔源的过程中，发现Donot使用了一系列新型的后门框架，该框架名为Jaca，根据组件的功能分别分为下载执行组件、文件上传组件、截图组件、文件收集组件、键盘鼠标消息记录组件、浏览器敏感信息窃取组件、移动磁盘文件收集组件等等。</p>
-<h1 id="2-样本详情"><a href="#2-样本详情" class="headerlink" title="2. 样本详情"></a>2. 样本详情</h1><table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>文件名</td>
-<td>S03.doc</td>
-</tr>
-<tr>
-<td>MD5</td>
-<td>3fabf3b97362af460abe98855c7caef8</td>
-</tr>
-<tr>
-<td>文件类型</td>
-<td>Office word文档</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>文件名</td>
-<td>HG5HlDPqsnr3HBwO.php</td>
-</tr>
-<tr>
-<td>Md5</td>
-<td>21b82530fa520eecd5aa677fa7ec0879</td>
-</tr>
-<tr>
-<td>文件类型</td>
-<td>Office word模板</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>文件名</td>
-<td>pgixedfxglmjirdc.dll</td>
-</tr>
-<tr>
-<td>Md5</td>
-<td>b38586849d45649db67189c1e7c0397e</td>
-</tr>
-<tr>
-<td>文件类型</td>
-<td>dll</td>
-</tr>
-</tbody></table>
-<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.   流程图"></a>3.   流程图</h1><img src="post/e42690c0/clip_image001.png">
+<p>在对该组织追踪朔源的过程中，发现Donot使用了一系列新型的后门框架，该框架名为Jaca，根据组件的功能分别分为下载执行组件、文件上传组件、截图组件、文件收集组件、键盘鼠标消息记录组件、浏览器敏感信息窃取组件、移动磁盘文件收集组件等等。<br>
 		  
 				  
 	  

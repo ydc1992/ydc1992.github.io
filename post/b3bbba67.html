@@ -17,7 +17,7 @@
 <meta property="og:site_name" content="ydc&#39;s Blog">
 <meta property="og:description" content="1.    概述BPFDoor是专门为Linux和Solaris系统设计的后门程序，攻击者可以远程连接到linux shell以获得受害者设备的访问权限，背后所属的APT组织主要针对中东和亚洲的电信提供商以及政府、教育和物流部门的实体。该后门滥用伯克利数据包过滤器(BPF)来监听网络和过滤网络数据包，这是BPFDoor名字的由来，也是2022年来被发现的第二个基于BPF进行攻击的恶意程序,第一个是">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://shxi.cc/post/post/b3bbba67/clip_image001.png">
+<meta property="og:image" content="http://shxi.cc/post/b3bbba67/clip_image001.png">
 <meta property="og:image" content="http://shxi.cc/post/b3bbba67/clip_image003.png">
 <meta property="og:image" content="http://shxi.cc/post/b3bbba67/clip_image005.png">
 <meta property="og:image" content="http://shxi.cc/post/b3bbba67/clip_image007.png">
@@ -37,11 +37,11 @@
 <meta property="og:image" content="http://shxi.cc/post/b3bbba67/clip_image035.png">
 <meta property="og:image" content="http://shxi.cc/post/b3bbba67/clip_image037.png">
 <meta property="article:published_time" content="2023-10-14T06:53:57.000Z">
-<meta property="article:modified_time" content="2023-10-14T07:28:38.176Z">
+<meta property="article:modified_time" content="2023-10-14T07:36:04.454Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://shxi.cc/post/post/b3bbba67/clip_image001.png">
+<meta name="twitter:image" content="http://shxi.cc/post/b3bbba67/clip_image001.png">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -427,6 +427,8 @@ var _hmt = _hmt || [];
 	  
 		  
 		  <h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.    概述"></a>1.    概述</h1><p>BPFDoor是专门为Linux和Solaris系统设计的后门程序，攻击者可以远程连接到linux shell以获得受害者设备的访问权限，背后所属的APT组织主要针对中东和亚洲的电信提供商以及政府、教育和物流部门的实体。<br>该后门滥用伯克利数据包过滤器(BPF)来监听网络和过滤网络数据包，这是BPFDoor名字的由来，也是2022年来被发现的第二个基于BPF进行攻击的恶意程序,第一个是由盘古实验室公布的NAS后门bvp47。<br>PWC研究人员将该恶意程序归因于来自中国的APT组织Red Menshen, 该APT组织为2021年被PWC命名，归因原因是该组织在后利用阶段使用了Gh0st后门变种以及Mimikatz和Metasploit等开源软件、攻击时间与中国地区工作时间吻合等原因。这种归因方式是信誉度比较低的，因为其他国家的APT组织有时也会使用Gh0st后门,比如朝鲜国家支持的APT组织Lazarus。</p>
+<span id="more"></span>
+
 <h1 id="2-样本详情"><a href="#2-样本详情" class="headerlink" title="2.    样本详情"></a>2.    样本详情</h1><table>
 <thead>
 <tr>
@@ -447,10 +449,8 @@ var _hmt = _hmt || [];
 <td>ELF64</td>
 </tr>
 </tbody></table>
-<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.    流程图"></a>3.    流程图</h1><!-- ![](b3bbba67/clip_image001.png) -->
+<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.    流程图"></a>3.    流程图</h1><img src="b3bbba67/clip_image001.png">
 
-<img src="post/b3bbba67/clip_image001.png">
-<span id="more"></span>
 
 <h1 id="4-详细分析"><a href="#4-详细分析" class="headerlink" title="4.    详细分析"></a>4.    详细分析</h1><p>BPFDoor不受防火墙规则的约束，并持续监听来自ICMP、UDP和TCP端口的数据包。当接收到包含特定数据的TCP或UDP数据包时，密码验证通过后执行后门操作，比如创建远程shell、修改防火墙规则等等。<br>       使用BPF数据包过滤的方式无需开启入站端口、也不使用出站端口，因此无法被防火墙阻止，并且可以响应来自网络上任意IP地址的命令，非常适合隐身操作。<br>并且大部分linux操作系统都内置BPF的功能,因此执行数据包过滤所需的CPU开销较小。<br>BPFDoor使用动态编译时编译后的文件很小,只有几十K;目前发现BPFDoor存在Linux和Solaris SPARC两种系统版本。</p>
 <h2 id="4-1-判断lock文件是否存在"><a href="#4-1-判断lock文件是否存在" class="headerlink" title="4.1 判断lock文件是否存在"></a>4.1 判断lock文件是否存在</h2><p>恶意程序在执行后会创建一个0字节的文件”auditd.lock”，用于标识恶意程序已经在执行中，再次执行时则检测”auditd.lock”是否存在，如果存在则退出程序。<br>恶意程序还会执行getuid来判断当前用户是否时root用户,如果不是的话则退出程序,因为后续需要执行的操作需要足够的权限才能够执行。</p>
@@ -584,7 +584,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2023年10月14日 15:28:38
+	2023年10月14日 15:36:04
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
