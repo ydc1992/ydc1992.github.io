@@ -17,36 +17,19 @@
 <meta property="og:site_name" content="ydc&#39;s Blog">
 <meta property="og:description" content="样本信息     样本名 SHA1    Impact of US and NATO Withdrawal from Afghanistan.doc ccc402845b46285d04d1d45db964f3c1a0df51d5   该样本使用 RTF 远程模板注入.">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://pic.imgdb.cn/item/619096372ab3f51d91aee08e.png">
 <meta property="og:image" content="https://pic.imgdb.cn/item/61909b682ab3f51d91b08ff8.png">
 <meta property="og:image" content="https://pic.imgdb.cn/item/61909ca22ab3f51d91b0fa1a.png">
 <meta property="og:image" content="https://pic.imgdb.cn/item/61909e632ab3f51d91b18570.png">
 <meta property="og:image" content="https://pic.imgdb.cn/item/6190a12b2ab3f51d91b28354.png">
 <meta property="og:image" content="https://pic.imgdb.cn/item/6190a7d72ab3f51d91b50239.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/6190aaa72ab3f51d91b6186b.png">
 <meta property="og:image" content="https://pic.imgdb.cn/item/6190b2ec2ab3f51d91b8d580.png">
-<meta property="og:image" content="http://shxi.cc/post/index_files/1636898550612-voc.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/6191c1152ab3f51d9104db16.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/6191bda42ab3f51d9103c545.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/6191c2312ab3f51d91053c10.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/619200412ab3f51d9119de3d.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/6192006d2ab3f51d9119ed33.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/619200ab2ab3f51d9119ffd7.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/6191d19c2ab3f51d910abd48.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/619206092ab3f51d911c0577.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/619201b12ab3f51d911a6947.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/619201f22ab3f51d911a8027.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/6191f7272ab3f51d911661a6.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/6191febb2ab3f51d91194326.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/6191ff0f2ab3f51d911960bb.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/6191ff522ab3f51d91197cd8.png">
-<meta property="og:image" content="https://pic.imgdb.cn/item/6191ffd72ab3f51d9119b8ee.png">
+<meta property="og:image" content="http://shxi.cc/index_files/1636898550612-voc.png">
 <meta property="article:published_time" content="2021-11-21T12:03:04.000Z">
 <meta property="article:modified_time" content="2023-02-04T13:43:25.073Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://pic.imgdb.cn/item/619096372ab3f51d91aee08e.png">
+<meta name="twitter:image" content="https://pic.imgdb.cn/item/61909b682ab3f51d91b08ff8.png">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -447,24 +430,25 @@ var _hmt = _hmt || [];
 </tr>
 </tbody></table>
 <p>该样本使用 RTF 远程模板注入.</p>
-<p><img src="https://pic.imgdb.cn/item/619096372ab3f51d91aee08e.png"></p>
+
 <span id="more"></span>
 <p>使用如下脚本解密后得到模板地址 <code>hxxp://designerzebra.com/services/check1</code> ，该文件为使用<code>CVE-2017-11882</code> 漏洞的 RTF 文档.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">s=<span class="string">r&quot;\u-65432?\u-65420?\u-65420?\u-65424?\u-65478?\u-65489?\u-65489?\u-65436?\u-65435?\u-65421?\u-65431?\u-65433?\u-65426?\u-65435?\u-65422?\u-65414?\u-65435?\u-65438?\u-65422?\u-65439?\u-65490?\u-65437?\u-65425?\u-65427?\u-65489?\u-65421?\u-65435?\u-65422?\u-65418?\u-65431?\u-65437?\u-65435?\u-65421?\u-65489?\u-65437?\u-65432?\u-65435?\u-65437?\u-65429?\u-65487?&quot;</span></span><br><span class="line">l=<span class="built_in">list</span>(s[<span class="number">3</span>:-<span class="number">1</span>].split(<span class="string">r&quot;?\u-&quot;</span>))</span><br><span class="line">url=<span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> l:</span><br><span class="line">    url+=<span class="built_in">chr</span>(<span class="number">65536</span>-<span class="built_in">int</span>(i))</span><br><span class="line"><span class="built_in">print</span>(url)</span><br></pre></td></tr></table></figure>
 
 <p>为了方便调试shellcode,设置镜像劫持</p>
-<img src="https://pic.imgdb.cn/item/61909b682ab3f51d91b08ff8.png" title="" alt="" width="831">
+<img src="https://pic.imgdb.cn/item/61909b682ab3f51d91b08ff8.png" title alt width="831">
 
-<p>打开该文档后会触发OD调试器,在漏洞触发点的地址<code>0x411658</code>下断然后运行<br><img src="https://pic.imgdb.cn/item/61909ca22ab3f51d91b0fa1a.png" title="" alt="" width="826"></p>
+<p>打开该文档后会触发OD调试器,在漏洞触发点的地址<code>0x411658</code>下断然后运行<br><img src="https://pic.imgdb.cn/item/61909ca22ab3f51d91b0fa1a.png" title alt width="826"></p>
 <p>可以发现返回地址被覆盖成<code>0x402114,</code></p>
-<img src="https://pic.imgdb.cn/item/61909e632ab3f51d91b18570.png" title="" alt="" width="822">
+<img src="https://pic.imgdb.cn/item/61909e632ab3f51d91b18570.png" title alt width="822">
 
 <p><code>0x402114</code>为retn指令,此时栈上返回地址为<code>0x18f354</code>,刚好为shellcode开始地址</p>
-<img title="" src="https://pic.imgdb.cn/item/6190a12b2ab3f51d91b28354.png" alt="" width="830">
+<img title src="https://pic.imgdb.cn/item/6190a12b2ab3f51d91b28354.png" alt width="830">
 
-<p> shellcode会从 <code>hxxp://designerzebra.com/update/sync1</code> 下载另一段shellcode<img src="https://pic.imgdb.cn/item/6190a7d72ab3f51d91b50239.png" title="" alt="" width="999"></p>
+<p> shellcode会从 <code>hxxp://designerzebra.com/update/sync1</code> 下载另一段shellcode<img src="https://pic.imgdb.cn/item/6190a7d72ab3f51d91b50239.png" title alt width="999"></p>
 <p>异或解密sync1，直到匹配到0xEE2B4C5,</p>
-<p><img src="https://pic.imgdb.cn/item/6190aaa72ab3f51d91b6186b.png"></p>
+
+
 <p>检测相关文件判断是否存在杀毒软件.</p>
 <table>
 <thead>
@@ -495,10 +479,10 @@ var _hmt = _hmt || [];
 </tr>
 </tbody></table>
 <p>从<code>hxxp://[designerzebra.com/confirm/file1</code>下载文件保存到%AppData%\wingui.exe.</p>
-<img src="https://pic.imgdb.cn/item/6190b2ec2ab3f51d91b8d580.png" title="" alt="" width="1026">
+<img src="https://pic.imgdb.cn/item/6190b2ec2ab3f51d91b8d580.png" title alt width="1026">
 
 <p>wingui.exe文件PE头被抹去,调用<code>WriteFile</code>往头部写入<code>0x905a4d</code>.</p>
-<img src="index_files/1636898550612-voc.png" title="" alt="" width="741">
+<img src="/index_files/1636898550612-voc.png" title alt width="741">
 
 <p>从<code>http://designerzebra.com/mscheck/hello.doc1</code>下载诱饵文档 </p>
 <p>创建计划任务,每隔3分钟执行一次<code>wingui.exe</code></p>
@@ -506,27 +490,37 @@ var _hmt = _hmt || [];
 
 <p>结束word程序并打开诱饵文档迷惑用户.</p>
 <h3 id="wingui-exe分析"><a href="#wingui-exe分析" class="headerlink" title="wingui.exe分析"></a>wingui.exe分析</h3><p>比较不同时间段前台窗口标题是否相同,如果相同则处于沙箱环境内。</p>
-<p><img src="https://pic.imgdb.cn/item/6191c1152ab3f51d9104db16.png"></p>
+
+
 <p>检测<code>snxhk.dll</code>是否存在,如果存在则设置定时器每120秒执行一次并进入消息循环,当接收到的消息类型是<code>WM_QUIT</code>或者<code>WM_TIMER</code>则退出消息循环</p>
-<p><img src="https://pic.imgdb.cn/item/6191bda42ab3f51d9103c545.png"></p>
+
+
 <p>从<code>hxxp://realworld.sytes.net/free/pics/hi-jump.jpg</code>下载shellcode并创建线程执行.</p>
-<p><img src="https://pic.imgdb.cn/item/6191c2312ab3f51d91053c10.png"></p>
+
+
 <p>该shellcode主要功能是解密<code>core.dll</code>文件 ,并执行dllmain函数.</p>
 <h2 id="core-dll分析"><a href="#core-dll分析" class="headerlink" title="core.dll分析"></a>core.dll分析</h2><p>如果<code>core.dll</code>由<code>rundll32.dll</code>启动,则将区段<code>_code</code>数据保存为<code>%AppData%\\Driver\\opendriver64.dll</code>,并创建快捷方式执行其导出函数IntRun.</p>
-<p><img src="https://pic.imgdb.cn/item/619200412ab3f51d9119de3d.png"></p>
+
+
 <p>如果由<code>rundll32.dll</code>启动,则执行MMCore后门功能</p>
 <p>创建互斥量<code>dacd53bbf745acbefaf254a6dd32aede</code>，防止重复运行.</p>
-<p><img src="https://pic.imgdb.cn/item/6192006d2ab3f51d9119ed33.png"></p>
+
+
 <p>收集信息,保存为临时文件nnp[四位随机].tmp.</p>
-<p><img src="https://pic.imgdb.cn/item/619200ab2ab3f51d9119ffd7.png"></p>
+
+
 <p>文件内容如下:</p>
-<p><img src="https://pic.imgdb.cn/item/6191d19c2ab3f51d910abd48.png"></p>
+
+
 <p>随后读取该文件并删除,在头部加入如下信息作为发送的数据.</p>
-<p><img src="https://pic.imgdb.cn/item/619206092ab3f51d911c0577.png"></p>
+
+
 <p>与C2C服务器采用 multipart/form-data 请求格式</p>
-<p><img src="https://pic.imgdb.cn/item/619201b12ab3f51d911a6947.png"></p>
+
+
 <p>post数据使用base64加密</p>
-<p><img src="https://pic.imgdb.cn/item/619201f22ab3f51d911a8027.png"></p>
+
+
 <p>发送的数据</p>
 <table>
 <thead>
@@ -548,7 +542,8 @@ var _hmt = _hmt || [];
 <td>要上传的数据</td>
 </tr>
 </tbody></table>
-<p><img src="https://pic.imgdb.cn/item/6191f7272ab3f51d911661a6.png"></p>
+
+
 <p>接收不同的指令进行不同的操作</p>
 <table>
 <thead>
@@ -580,16 +575,13 @@ var _hmt = _hmt || [];
 </tbody></table>
 <p>各个功能具体实现</p>
 <ol>
-<li><p>103  <img src="https://pic.imgdb.cn/item/6191febb2ab3f51d91194326.png"></p>
+<li><p>103  </p>
 </li>
 <li><p>105</p>
-<p><img src="https://pic.imgdb.cn/item/6191ff0f2ab3f51d911960bb.png"></p>
 </li>
 <li><p>117和120</p>
-<p><img src="https://pic.imgdb.cn/item/6191ff522ab3f51d91197cd8.png"></p>
 </li>
 <li><p>115</p>
-<p><img src="https://pic.imgdb.cn/item/6191ffd72ab3f51d9119b8ee.png"></p>
 </li>
 </ol>
 
@@ -849,10 +841,10 @@ var _hmt = _hmt || [];
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 20 篇</span>
+		<span> 21 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">30.8k</span></span>
+		<span> <span class="post-count">32.1k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
@@ -1058,6 +1050,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">分析技巧</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Lazarus</a>
               </li>
             
             <div class="clearfix"></div>

@@ -10,33 +10,18 @@
   <title>Reversing-kr-Windows-kernal | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="运行程序看看，要输入数据之前要先点击按钮Enable然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。">
+  <meta name="description" content="运行程序看看，要输入数据之前要先点击按钮Enable  然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Reversing-kr-Windows-kernal">
 <meta property="og:url" content="http://shxi.cc/post/5ca97896.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="运行程序看看，要输入数据之前要先点击按钮Enable然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。">
+<meta property="og:description" content="运行程序看看，要输入数据之前要先点击按钮Enable  然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://t.cn/RGQPldt">
-<meta property="og:image" content="http://t.cn/RGQPYcX">
-<meta property="og:image" content="http://t.cn/RGQPTGH">
-<meta property="og:image" content="http://t.cn/RGQPHAF">
-<meta property="og:image" content="http://t.cn/RGQPQLd">
-<meta property="og:image" content="http://t.cn/RGQhP35">
-<meta property="og:image" content="http://t.cn/RGQGHdX">
-<meta property="og:image" content="http://t.cn/RGQPRcM">
-<meta property="og:image" content="http://t.cn/RGQPEOr">
-<meta property="og:image" content="http://t.cn/RGQh7iL">
-<meta property="og:image" content="http://t.cn/RGQhzqI">
-<meta property="og:image" content="http://t.cn/RGQhnkB">
-<meta property="og:image" content="http://t.cn/RGQ7j3U">
-<meta property="og:image" content="http://t.cn/RGQ7TVT">
 <meta property="article:published_time" content="2016-03-06T13:50:53.000Z">
 <meta property="article:modified_time" content="2023-02-05T02:49:28.870Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://t.cn/RGQPldt">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -397,7 +382,7 @@ var _hmt = _hmt || [];
 	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
         <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
         <span class="post-meta-item-text">字数统计: </span>
-        <span class="post-count">852字</span>
+        <span class="post-count">854字</span>
       </span>
     </span>
 
@@ -421,20 +406,49 @@ var _hmt = _hmt || [];
 	  <!-- 添加分类与标签 -->
 	  
 		  
-		  <p>运行程序看看，要输入数据之前要先点击按钮Enable<br><img src="http://t.cn/RGQPldt"><br>然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。<br><img src="http://t.cn/RGQPYcX"></p>
+		  <p>运行程序看看，要输入数据之前要先点击按钮Enable</p>
+
+<p>然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。</p>
+
 <span id="more"></span>
-<p>用IDA载入程序，在sub_401110函数中就是对输入字符串判断的关键函数。<br><img src="http://t.cn/RGQPTGH"><br>来到关键call，这段代码是用户模式下的程序与驱动进行交互。对字符串验证的逻辑肯定是在驱动文件里了。<br><img src="http://t.cn/RGQPHAF"></p>
-<p>IDA载入驱动文件分析驱动<br><img src="http://t.cn/RGQPQLd"></p>
+<p>用IDA载入程序，在sub_401110函数中就是对输入字符串判断的关键函数。</p>
+
+<p>来到关键call，这段代码是用户模式下的程序与驱动进行交互。对字符串验证的逻辑肯定是在驱动文件里了。</p>
+
+
+<p>IDA载入驱动文件分析驱动</p>
+
+
 <p>注册了两个派遣例程，sub_11288 函数是DeviceIoControl，处理用户模式与该驱动的交互。</p>
 <p>这里我们可以看到这里处理DeviceIoControlCode 为 0x1000 和 0x2000。再看前面sub_401110函数的代码，我们可以知道<br>程序刚开始运行时，编辑框不能输入任何数据，点击Enable,发送0x1000到驱动，按钮变成check,编辑框就能用了，这时就可以输入字符了。<br>再点击check，就发送0x2000到驱动验证结果对不对。</p>
-<p>sub_112F8函数代码<br><img src="http://t.cn/RGQhP35"></p>
-<p>驱动还使用KeInitializeDpc函数注册了一个定时器，每隔一段时间就运行sub_11266函数。<br>在这个函数里，看到一个函数 READ_PORT_UCHAR，这个函数通过端口号来读取输入的字节。然后在下面的这个函数sub_111DC中验证，<br><img src="http://t.cn/RGQGHdX"></p>
-<p>既然验证代码在内核中，那我们就需要用winDBG来调试驱动了。<br>在WinDBG中使用lm命令查找所有加载的模块。WinKer就是我们程序加载的驱动。<br><img src="http://t.cn/RGQPRcM"></p>
-<p>用!drvobj WinKer命令来看 WinKer驱动的信息。<br><img src="http://t.cn/RGQPEOr"><br>下面列出了个设备对象列表，点击87bc0650，你也可以手动输入命令!devobj 87bc0650。<br>这里这个驱动对象的地址是87bc0780，找到了驱动对象的地址，我们就可以使用dt来查看它的数据结构了。<br><img src="http://t.cn/RGQh7iL"></p>
+<p>sub_112F8函数代码</p>
+
+
+<p>驱动还使用KeInitializeDpc函数注册了一个定时器，每隔一段时间就运行sub_11266函数。<br>在这个函数里，看到一个函数 READ_PORT_UCHAR，这个函数通过端口号来读取输入的字节。然后在下面的这个函数sub_111DC中验证，</p>
+
+
+
+
+<p>既然验证代码在内核中，那我们就需要用winDBG来调试驱动了。<br>在WinDBG中使用lm命令查找所有加载的模块。WinKer就是我们程序加载的驱动。</p>
+
+
+<p>用!drvobj WinKer命令来看 WinKer驱动的信息。 </p>
+
+<p>下面列出了个设备对象列表，点击87bc0650，你也可以手动输入命令!devobj 87bc0650。<br>这里这个驱动对象的地址是87bc0780，找到了驱动对象的地址，我们就可以使用dt来查看它的数据结构了。</p>
+
+
 <p>还记得前面说的sub_11288函数的三个派遣函数么，派遣函数的地址存放在MajorFunction数组了，我们可以通过这个地址找到对于的函数，来进行调试。</p>
-<p>sub_11288 为MajorFunction第e个数组，因此可以通过计算87bc0780+0x38+0xe*4得到改内存的值知道这个函数的内存地址为93316288。<br><img src="http://t.cn/RGQhzqI"></p>
+<p>sub_11288 为MajorFunction第e个数组，因此可以通过计算87bc0780+0x38+0xe*4得到改内存的值知道这个函数的内存地址为93316288。</p>
+
+
 <p>前面我们已经知道 验证代码在sub_11266(00011266)函数处，通过计算可以知道该函数在内存中的地址 93316288-11288 + 00011166 = 933161DC66 。这个函数就是验证地方。在这个地方下断就可以调试了。<br>不过有一个问题就是 在程序编辑框输入数据后这里会被断下两次,由此可知没输入一个字符，调用两次这个函数。</p>
-<p>通过 READ_PORT_UCHAR函数读取用户输入的数据。READ_PORT_UCHAR每一次只读取一个字节，而g_var变量也在随着变化，分析流程图我们可以得知g_var全局变量为输入字符在字符串的位置。READ_PORT_UCHAR读取从0到3位 返回的值分别是 0xa5u,0x92u,0x95u,0xbu<br><img src="http://t.cn/RGQhnkB"><br>当等于7是g_var+100= 107，没有这个分支，进入默认分支进入sub_11156函数。<br><img src="http://t.cn/RGQ7j3U"><br>同上类似，READ_PORT_UCHAR读取的是从4到6位,返回的值分别是：0xb2u，0x85u，0xa3u。 g_var值变成200，第三个swith同样。<br><img src="http://t.cn/RGQ7TVT"></p>
+<p>通过 READ_PORT_UCHAR函数读取用户输入的数据。READ_PORT_UCHAR每一次只读取一个字节，而g_var变量也在随着变化，分析流程图我们可以得知g_var全局变量为输入字符在字符串的位置。READ_PORT_UCHAR读取从0到3位 返回的值分别是 0xa5u,0x92u,0x95u,0xbu</p>
+
+<p>当等于7是g_var+100= 107，没有这个分支，进入默认分支进入sub_11156函数。</p>
+
+<p>同上类似，READ_PORT_UCHAR读取的是从4到6位,返回的值分别是：0xb2u，0x85u，0xa3u。 g_var值变成200，第三个swith同样。</p>
+
+
 <p>只要将你输入的字符和READ_PORT_UCHAR返回的字符对应起来，就可以得到正确的key。要知道READ_PORT_UCHAR的返回值,还是得用winDBG来调试。</p>
 
 				  
@@ -693,10 +707,10 @@ var _hmt = _hmt || [];
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 20 篇</span>
+		<span> 21 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">30.8k</span></span>
+		<span> <span class="post-count">32.1k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
@@ -902,6 +916,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">分析技巧</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Lazarus</a>
               </li>
             
             <div class="clearfix"></div>

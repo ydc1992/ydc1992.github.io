@@ -415,24 +415,24 @@ var _hmt = _hmt || [];
 	  
 		  
 		  <p>直接上图，经典第一人称射击游戏，不过这走路也走的太慢了。</p>
-<img src="http://t.cn/R4xinjL" style="display:block;margin:auto"/>
+<img src="http://t.cn/R4xinjL" style="display:block;margin:auto">
 
 <p>有点像玩我的世界的既视感，再附一张妹子图，话说长着这么漂亮一定是一个男孩子。 </p>
 <span id="more"></span>
 
-<img src="http://t.cn/R4xiuKo" style="display:block;margin:auto"/>
+<img src="http://t.cn/R4xiuKo" style="display:block;margin:auto">
 
 <p>国际惯例，用od打开，搜索字符串，</p>
-<img src="http://t.cn/R4xi1bW" style="display:block;margin:auto"/>
+<img src="http://t.cn/R4xi1bW" style="display:block;margin:auto">
 
 <p>这个很明了，Game Over和Game Clear。肯定就是游戏失败和游戏胜利。我们跟随Game Clear。</p>
-<img src="http://t.cn/R4xirxU" style="display:block;margin:auto"/>
+<img src="http://t.cn/R4xirxU" style="display:block;margin:auto">
 
 <p>看到没有，这里弹窗的文本被加密了，跟随到数据窗口，这个加密后的字符总共有52字节大小。解密该段数据时肯定要访问这段内存，在00d47028下个硬件访问断点，大小随意，都可以断下的。</p>
-<img src="http://t.cn/R4xig5L" style="display:block;margin:auto"/>
+<img src="http://t.cn/R4xig5L" style="display:block;margin:auto">
 
 <p>然后运行，开始打怪升级，打死几个怪，然后OD断下停在pop ecx的位置，这里的代码段解密数据的代码了。</p>
-<img src="http://t.cn/R4xiDjs" style="display:block;margin:auto"/>
+<img src="http://t.cn/R4xiDjs" style="display:block;margin:auto">
 
 <p>我们可以看出这是一个简单异或加密，没有用到循环，表示这里只解密一个字节。根据这算法用python写个脚本代码如下</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">52</span>):</span><br><span class="line"> text = <span class="built_in">chr</span>( (byte_47028+i)^(byte_49184+i*<span class="number">0x210</span>))</span><br></pre></td></tr></table></figure>
@@ -440,7 +440,7 @@ var _hmt = _hmt || [];
 <p>运行脚本</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print bytearray( [(Byte( 0xd47028+i )^Byte(0xd49184+(i*0x210))) for i in range(52)] )</span><br></pre></td></tr></table></figure>
 
-<img src="http://t.cn/R4xiFxL" style="display:block;margin:auto"/>
+<img src="http://t.cn/R4xiFxL" style="display:block;margin:auto">
 
 				  
 	  
@@ -693,10 +693,10 @@ var _hmt = _hmt || [];
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 20 篇</span>
+		<span> 21 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">30.8k</span></span>
+		<span> <span class="post-count">32.1k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
@@ -902,6 +902,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">分析技巧</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Lazarus</a>
               </li>
             
             <div class="clearfix"></div>

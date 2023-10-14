@@ -10,33 +10,18 @@
   <title>逆向XX引擎系列-一-构造系统dll文件 | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="dump沙箱系统dll文件使用IDA打开libxsse.dll,进程设置如下图,然后开始调试。  通过顺序找到如下函数。 libxsse_31这个函数内解密libxscore.bundle,有几个重要的dll是存放在这个文件内,其中libvxf.dll的导出函数libvxf_alloc是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。">
+  <meta name="description" content="dump沙箱系统dll文件使用IDA打开libxsse.dll,进程设置如下图,然后开始调试。   通过顺序找到如下函数。   libxsse_31这个函数内解密libxscore.bundle,有几个重要的dll是存放在这个文件内,其中libvxf.dll的导出函数libvxf_alloc是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="逆向XX引擎系列-一-构造系统dll文件">
 <meta property="og:url" content="http://shxi.cc/post/33b57d1f.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="dump沙箱系统dll文件使用IDA打开libxsse.dll,进程设置如下图,然后开始调试。  通过顺序找到如下函数。 libxsse_31这个函数内解密libxscore.bundle,有几个重要的dll是存放在这个文件内,其中libvxf.dll的导出函数libvxf_alloc是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。">
+<meta property="og:description" content="dump沙箱系统dll文件使用IDA打开libxsse.dll,进程设置如下图,然后开始调试。   通过顺序找到如下函数。   libxsse_31这个函数内解密libxscore.bundle,有几个重要的dll是存放在这个文件内,其中libvxf.dll的导出函数libvxf_alloc是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4843c2a9a83be54430fe.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c48e0c2a9a83be5451045.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4925c2a9a83be545838e.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4acfc2a9a83be54804a9.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4ab7c2a9a83be547dbcc.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a88c2a9a83be5479121.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a61c2a9a83be5475669.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a45c2a9a83be5473046.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a21c2a9a83be54705ed.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4a07c2a9a83be546deb7.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c49e3c2a9a83be546a6f9.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c49ccc2a9a83be54681b0.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c49b2c2a9a83be5465a55.jpg">
-<meta property="og:image" content="https://pic.downk.cc/item/5e9c4997c2a9a83be5462fd4.jpg">
 <meta property="article:published_time" content="2020-04-19T13:35:39.000Z">
 <meta property="article:modified_time" content="2023-02-04T13:43:04.542Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://pic.downk.cc/item/5e9c4843c2a9a83be54430fe.jpg">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -422,8 +407,11 @@ var _hmt = _hmt || [];
 	  
 		  
 		  <h2 id="dump沙箱系统dll文件"><a href="#dump沙箱系统dll文件" class="headerlink" title="dump沙箱系统dll文件"></a>dump沙箱系统dll文件</h2><p>使用IDA打开<code>libxsse.dll</code>,进程设置如下图,然后开始调试。</p>
-<p><img src="https://pic.downk.cc/item/5e9c4843c2a9a83be54430fe.jpg"></p>
-<p>通过顺序找到如下函数。<br><img src="https://pic.downk.cc/item/5e9c48e0c2a9a83be5451045.jpg"></p>
+
+
+<p>通过顺序找到如下函数。</p>
+
+
 <p><code>libxsse_31</code>这个函数内解密<code>libxscore.bundle</code>,有几个重要的dll是存放在这个文件内,其中<code>libvxf.dll</code>的导出函数<code>libvxf_alloc</code><br>是用来初始化虚拟机环境的。并且模拟了一些系统API的实现。</p>
 <span id="more"></span>
 
@@ -431,21 +419,32 @@ var _hmt = _hmt || [];
 <blockquote>
 <p>libvxf.dll 虚拟机相关<br>  libnat.dll 用来跟nxeng.sys虚拟化执行驱动通讯<br>  libdt.dll  动态翻译执行,使用的是qemu的tcg<br>  libexscan.dll</p>
 </blockquote>
-<p><img src="https://pic.downk.cc/item/5e9c4925c2a9a83be545838e.jpg"></p>
-<p>我在逆向某个api模拟实现的时候发现该api对应的模块是在内存中创建的<br><img src="https://pic.downk.cc/item/5e9c4acfc2a9a83be54804a9.jpg"></p>
+
+
+<p>我在逆向某个api模拟实现的时候发现该api对应的模块是在内存中创建的</p>
+
+
+
 <h2 id="PE结构填充"><a href="#PE结构填充" class="headerlink" title="PE结构填充"></a>PE结构填充</h2><p>将pe文件从内存中dump下来,使用IDA查看,按照函数大小从大到小排序。发现这里所有的函数都只是一个stub.</p>
-<p><img src="https://pic.downk.cc/item/5e9c4ab7c2a9a83be547dbcc.jpg"></p>
+
+
 <p>随便找两个函数对比下，发现啥？给eax的赋值不一样，有个int 80中断调用，这里调用这个函数真正的实现函数。eax的值应该是个中断调用号,<br>如何调用dll的导出函数以及中断的实现以后再说。</p>
-<p><img src="https://pic.downk.cc/item/5e9c4a88c2a9a83be5479121.jpg"></p>
+
+
 <p>接下来看它是怎样构造PE文件的。</p>
 <p>首先来看dos头。构造的vfs文件dos头如下，</p>
-<p><img src="https://pic.downk.cc/item/5e9c4a61c2a9a83be5475669.jpg"></p>
+
+
 <p>因为这部分没有多少需要修改，构造PE文件的时候使用的是固定值</p>
-<p><img src="https://pic.downk.cc/item/5e9c4a45c2a9a83be5473046.jpg"></p>
+
+
 <p>使用hiew结构查看pe结构。</p>
-<p><img src="https://pic.downk.cc/item/5e9c4a21c2a9a83be54705ed.jpg"></p>
-<p>这里部分结构是直接在代码里硬编码的，因为不是经常被修改。除了<font color='red'>tsize、dsize、data_start、text_start和imageSize</font>等等需要计算外，其他都是写死的数值。和上面使用hiew查看的一样。</p>
-<p><img src="https://pic.downk.cc/item/5e9c4a07c2a9a83be546deb7.jpg"></p>
+
+
+<p>这里部分结构是直接在代码里硬编码的，因为不是经常被修改。除了<font color="red">tsize、dsize、data_start、text_start和imageSize</font>等等需要计算外，其他都是写死的数值。和上面使用hiew查看的一样。</p>
+
+
+
 <p>都是根据tdl的数据来计算的，因此我们需要先找到kernel32.dll的tdl数据(在某个函数内存dump出来就ok了)。导出的api的太多了(kernel32的959个导出函数)，省略掉一些。如下可从内存中直接dump出来json文件。</p>
 <pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#ff9900;">{</span>
     <span style="color:#d69d85;">&quot;base&quot;</span><span style="color:#b4b4b4;">:</span>&nbsp;<span style="color:#d69d85;">&quot;0x7c800000&quot;</span><span style="color:#b4b4b4;">,</span>
@@ -551,10 +550,18 @@ var _hmt = _hmt || [];
     <span style="color:yellowgreen;">}</span>&nbsp;<span style="color:#569cd6;">while</span>&nbsp;<span style="color:yellowgreen;">(</span><span style="color:#c8c8c8;">i</span>&nbsp;<span style="color:#b4b4b4;">&lt;</span>&nbsp;<span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">sctabCount</span><span style="color:yellowgreen;">)</span><span style="color:#b4b4b4;">;</span>
 <span style="color:deeppink;">}</span></pre>
 
-<p>为啥要加上10*sctabCount? 4+4+2=10；<br><img src="https://pic.downk.cc/item/5e9c49e3c2a9a83be546a6f9.jpg"></p>
-<p>api字符串 rva地址表4字节<br><img src="https://pic.downk.cc/item/5e9c49ccc2a9a83be54681b0.jpg"></p>
-<p>函数表rva4字节<br><img src="https://pic.downk.cc/item/5e9c49b2c2a9a83be5465a55.jpg"></p>
-<p>导出ID 2字节<br><img src="https://pic.downk.cc/item/5e9c4997c2a9a83be5462fd4.jpg"></p>
+<p>为啥要加上10*sctabCount? 4+4+2=10；</p>
+
+
+<p>api字符串 rva地址表4字节</p>
+
+
+<p>函数表rva4字节</p>
+
+
+<p>导出ID 2字节</p>
+
+
 <ol start="6">
 <li><p>ImageSize</p>
 <p> 代码段rva地址+代码段按内存对齐后的大小+对齐后的数据段按内存的大小就是整个文件在内存中的大小。<br> 代码段rva就是前面所有的结构数据的大小，不需要另外计算了。</p>
@@ -1060,10 +1067,10 @@ ntzw_fun_index&nbsp;=&nbsp;<span style="color:#ae81ff;">0</span>;
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 20 篇</span>
+		<span> 21 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">30.8k</span></span>
+		<span> <span class="post-count">32.1k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
@@ -1269,6 +1276,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">分析技巧</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Lazarus</a>
               </li>
             
             <div class="clearfix"></div>

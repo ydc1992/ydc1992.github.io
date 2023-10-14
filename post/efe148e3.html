@@ -17,16 +17,11 @@
 <meta property="og:site_name" content="ydc&#39;s Blog">
 <meta property="og:description" content="很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下  bootcode代码以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)， 第一块选区0x000~0x162为MBR的可执行代码 第二块选区0x163~0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符 第三块选区0x1be~0x1fd为分区表。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://pic.downk.cc/item/5e7cbd56504f4bcb04cf9d5f.png">
-<meta property="og:image" content="https://pic.downk.cc/item/5e7cbf79504f4bcb04d0c432.png">
-<meta property="og:image" content="https://pic.downk.cc/item/5e7cc08c504f4bcb04d17c1d.png">
-<meta property="og:image" content="https://pic.downk.cc/item/5e7cca63504f4bcb04d7fc85.png">
 <meta property="article:published_time" content="2020-04-12T12:11:40.000Z">
 <meta property="article:modified_time" content="2023-02-04T12:13:10.828Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://pic.downk.cc/item/5e7cbd56504f4bcb04cf9d5f.png">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -419,7 +414,8 @@ var _hmt = _hmt || [];
 第二块选区0x163~0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符
 第三块选区0x1be~0x1fd为分区表。
 </code></pre>
-<p><img src="https://pic.downk.cc/item/5e7cbd56504f4bcb04cf9d5f.png"></p>
+
+
 <span id="more"></span>
 <p>0x1b5处值为错误信息字符串的偏移，这里值为0x63,再加上0x100就是0x163，即字符串偏移，刚好为第二块选区。<br>不同版本该值不一样，如xp的为0x2c ,Vista为0x62,win 7到win10系统为0x63。</p>
 <p>要检测mbr有没有被修改，我们可以对正常mbr代码区域算个sha256作为白名单，<br>计算代码开始到错误提示字符串的代码部分hash256，在这个例子是win7,错误提示字符串为0x163,也就是计算从0到0x162部分的sha256<br>与白名单sha256比较是否一样；不一样，则mbr被修改了。</p>
@@ -453,7 +449,8 @@ var _hmt = _hmt || [];
 
 
 <p>活动分区的首个扇区为VBR,同样只有一个扇区。开头eb 52 90是直接跳过bpb结构到bootStrapCode执行代码。<br>第一块选区 0xb   -0x53为BIOS Parameter Block，即NTFS_BPB结构。<br>第二块选区 0x54 -0x18b为bootStrapCode代码区域<br>第三块选取 0x18c-0x1f6为错误显示字符串，引导系统失败时显示该字符串</p>
-<p><img src="https://pic.downk.cc/item/5e7cbf79504f4bcb04d0c432.png"></p>
+
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_NTFS_VOLUME_BOOT_RECORD</span></span><br><span class="line">&#123;</span><br><span class="line">    BYTE jumpInstruction [<span class="number">3</span>];  <span class="comment">// eb 52 90</span></span><br><span class="line">    BYTE oemID [<span class="number">4</span>];  <span class="comment">//“NTFS”</span></span><br><span class="line"></span><br><span class="line">    BYTE dummy [<span class="number">4</span>]; <span class="comment">// 20 20 20 20</span></span><br><span class="line">    NTFS_BPB bpb;</span><br><span class="line">    BYTE bootStrapCode [<span class="number">426</span>];</span><br><span class="line">    WORD sectorEndSignature ;<span class="comment">// 55 aa</span></span><br><span class="line">&#125; NTFS_VOLUME_BOOT_RECORD </span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h1 id="BIOS-Parameter-Block"><a href="#BIOS-Parameter-Block" class="headerlink" title="BIOS Parameter Block"></a>BIOS Parameter Block</h1><p>该结构体提供了NTFS文件系统的一些信息</p>
@@ -494,7 +491,8 @@ var _hmt = _hmt || [];
 <p>IPL的位置由VBR 的NTFS_BPB的hiddenSectors字段(相对于扇区起始位置0x1c)指定，即IPL的初始扇区。 </p>
 <p>IPL同样可以使用白名单来验证IPL是否被修改。IPL共15个扇区，但因为最后一个扇区有时会保存于引导启动无关的数据，因此只计算前面14个扇区的IPL。</p>
 <p>左边为win7,右边为win10 ,从win 8以后，IPL区域增加了  引导程序启动失败时显示的字符。该字符串偏移 由0x177-0x178处指定。<br>“An operating system wasn’t found. Try disconnecting any drives that don’t contain an operating system.”</p>
-<p><img src="https://pic.downk.cc/item/5e7cc08c504f4bcb04d17c1d.png"></p>
+
+
 <p>Win7以下则计算14个扇区的sha256，win8 以上则需要排除掉两个地方：错误信息字符串和保存该字符串索引的位置0x117~0x118。</p>
 <p>右图win10的sha256就是计算 0x200~0x299 + 0x319-第十四扇区结束。<br>我们可以根据 0x256处的跳转指来来判断对应的操作系统：<br>如果是e9,则是win8及以上。</p>
 <table>
@@ -585,7 +583,9 @@ var _hmt = _hmt || [];
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MEMORY:7C8D loc_7C8D:                               ; CODE XREF: MEMORY:7C88</span><br><span class="line">MEMORY:7C8D push    ds</span><br><span class="line">MEMORY:7C8E sub     sp, 18h      ；在堆栈开辟buffer，用来保存int 13中断，功能号0x48调用后返回的信息</span><br><span class="line">MEMORY:7C91 push    1Ah</span><br><span class="line">MEMORY:7C94 mov     ah, 48h ; &#x27;H&#x27;</span><br><span class="line">MEMORY:7C96 mov     dl, ds:0Eh;在0x7c66处被赋值，驱动号，通常是0x80</span><br><span class="line">MEMORY:7C9A mov     si, sp ;ds:si为存放返回数据的buffer</span><br><span class="line">MEMORY:7C9C push    ss</span><br><span class="line">MEMORY:7C9D pop     ds   ;</span><br><span class="line">MEMORY:7C9E int     13h                             ; DISK - IBM/MS Extension - GET DRIVE PARAMETERS (DL - drive, DS:SI - buffer)</span><br></pre></td></tr></table></figure>
 
 <p>返回内容存放地址ds:si;  具体结构如下：</p>
-<p><img src="https://pic.downk.cc/item/5e7cca63504f4bcb04d7fc85.png"></p>
+
+
+
 <p>判断返回的数据是不是有效数据。不是就屏幕显示错误提示字符串</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">MEMORY:7CA0 lahf</span><br><span class="line">MEMORY:7CA1 add     sp, 18h；刚好指向扇区大小</span><br><span class="line">MEMORY:7CA4 sahf</span><br><span class="line">MEMORY:7CA5 pop   ax ; </span><br><span class="line">MEMORY:7CA6 pop   ds;恢复为0x7c00</span><br><span class="line">MEMORY:7CA7 jb       short loc_7C8A  ；错误处理，</span><br><span class="line">MEMORY:7CA9 cmp   ax, word_B  ； 和NTFS_BPB 的Bytes per Sector比较是不是相等，</span><br><span class="line">MEMORY:7CAD jnz     short loc_7C8A</span><br><span class="line"></span><br><span class="line">接下来准备调用int 13拷贝IPL的15个扇区。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">MEMORY:7CAF mov     word_F, ax </span><br><span class="line">MEMORY:7CB2 shr     word_F, 4 ;0x200&gt;&gt;4 =0x20</span><br><span class="line">MEMORY:7CB7 push    ds</span><br><span class="line">MEMORY:7CB8 pop     dx ;dx=0x7c0</span><br><span class="line">MEMORY:7CB9 xor     bx, bx</span><br><span class="line">MEMORY:7CBB mov     cx, 2000h</span><br><span class="line">MEMORY:7CBE sub     cx, ax ;0x2000为16个扇区大小，减去一个扇区大小0x200为0x1e00,</span><br><span class="line">                                       ;总共要拷贝的数据大小</span><br><span class="line">MEMORY:7CC0 inc     dword_11 </span><br></pre></td></tr></table></figure>
 
@@ -864,10 +864,10 @@ var _hmt = _hmt || [];
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 20 篇</span>
+		<span> 21 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">30.8k</span></span>
+		<span> <span class="post-count">32.1k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
@@ -1073,6 +1073,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">分析技巧</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Lazarus</a>
               </li>
             
             <div class="clearfix"></div>

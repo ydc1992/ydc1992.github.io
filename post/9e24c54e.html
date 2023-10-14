@@ -10,28 +10,18 @@
   <title>安卓游戏资源解密 | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="安卓游戏资源解密一个同学在群里发了个游戏，要解密游戏的资源。反编译看了下源码，没看出什么，用Android Killer看了下资源，发现在res&#x2F;raw目录下有个文件比较大，t0.zip解压后有t0.pak;文件有点大，3M多，并且是以PAK格式的文 件，通过搜索得知这个格式为PAK格式——是一种文件打包的格式。  在网上搜了下 打开PAK文件的软件，发现都不能打开。  搞不定就不搞了。 这几天看">
+  <meta name="description" content="安卓游戏资源解密一个同学在群里发了个游戏，要解密游戏的资源。反编译看了下源码，没看出什么，用Android Killer看了下资源，发现在res&#x2F;raw目录下有个文件比较大，t0.zip解压后有t0.pak;文件有点大，3M多，并且是以PAK格式的文 件，通过搜索得知这个格式为PAK格式——是一种文件打包的格式。   在网上搜了下 打开PAK文件的软件，发现都不能打开。  搞不定就不搞了。 这几天">
 <meta property="og:type" content="article">
 <meta property="og:title" content="安卓游戏资源解密">
 <meta property="og:url" content="http://shxi.cc/post/9e24c54e.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="安卓游戏资源解密一个同学在群里发了个游戏，要解密游戏的资源。反编译看了下源码，没看出什么，用Android Killer看了下资源，发现在res&#x2F;raw目录下有个文件比较大，t0.zip解压后有t0.pak;文件有点大，3M多，并且是以PAK格式的文 件，通过搜索得知这个格式为PAK格式——是一种文件打包的格式。  在网上搜了下 打开PAK文件的软件，发现都不能打开。  搞不定就不搞了。 这几天看">
+<meta property="og:description" content="安卓游戏资源解密一个同学在群里发了个游戏，要解密游戏的资源。反编译看了下源码，没看出什么，用Android Killer看了下资源，发现在res&#x2F;raw目录下有个文件比较大，t0.zip解压后有t0.pak;文件有点大，3M多，并且是以PAK格式的文 件，通过搜索得知这个格式为PAK格式——是一种文件打包的格式。   在网上搜了下 打开PAK文件的软件，发现都不能打开。  搞不定就不搞了。 这几天">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://t.cn/RGRCrxm">
-<meta property="og:image" content="http://t.cn/RGRCgpS">
-<meta property="og:image" content="http://t.cn/RGRCkDz">
-<meta property="og:image" content="http://t.cn/RGRNhLS">
-<meta property="og:image" content="http://t.cn/RqtewpY">
-<meta property="og:image" content="http://t.cn/RqteUgm">
-<meta property="og:image" content="http://t.cn/RGRNAnc">
-<meta property="og:image" content="http://t.cn/RGRNyz4">
-<meta property="og:image" content="http://t.cn/RGRNboR">
 <meta property="article:published_time" content="2016-01-31T13:40:52.000Z">
 <meta property="article:modified_time" content="2023-02-04T13:43:30.415Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://t.cn/RGRCrxm">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -417,9 +407,12 @@ var _hmt = _hmt || [];
 	  
 		  
 		  <h1 id="安卓游戏资源解密"><a href="#安卓游戏资源解密" class="headerlink" title="安卓游戏资源解密"></a>安卓游戏资源解密</h1><p>一个同学在群里发了个游戏，要解密游戏的资源。反编译看了下源码，没看出什么，用Android Killer看了下资源，发现在res/raw目录下有个文件比较大，t0.zip解压后有t0.pak;文件有点大，3M多，并且是以PAK格式的文 件，通过搜索得知这个格式为PAK格式——是一种文件打包的格式。</p>
-<p><img src="http://t.cn/RGRCrxm"></p>
+
+
 <p>在网上搜了下 打开PAK文件的软件，发现都不能打开。  搞不定就不搞了。</p>
-<p>这几天看了 &lt;&lt;揭秘数据解密的关键技术&gt;&gt;，下面图片框框内的像文件名，我们可以知道这个文件是一种文件打包的格式。具体是什么结构不知道。<br><img src="http://t.cn/RGRCgpS"></p>
+<p>这几天看了 &lt;&lt;揭秘数据解密的关键技术&gt;&gt;，下面图片框框内的像文件名，我们可以知道这个文件是一种文件打包的格式。具体是什么结构不知道。</p>
+
+
 <span id="more"></span>
 
 <p>解析文件推荐使用010 editor，写文件解析模板方便分析。</p>
@@ -429,24 +422,32 @@ var _hmt = _hmt || [];
 
 <p>包含文件名的数据定义成</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">typedef struct</span><br><span class="line">&#123;</span><br><span class="line">     BYTE  FilenameLen;</span><br><span class="line">     char  Filename[nameLen];</span><br><span class="line">     char  unkonw[8];   //未知数据</span><br><span class="line">&#125;FILE_LIST;</span><br></pre></td></tr></table></figure>
-<p><img src="http://t.cn/RGRCkDz"></p>
+
+
 <p>找到最后一个文件名的字符串</p>
-<p><img src="http://t.cn/RGRNhLS"></p>
+
+
 <p>然后不断的改变模板文件中i的值计算总共有多少个文件名，最后算出有总共有292个文件名。发现开头的四字节数据刚好为292，因此可以判断该数据为文件的个数。模板文件改写代码</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">typedef struct</span><br><span class="line">&#123;</span><br><span class="line">int FileNum;</span><br><span class="line">int unk;</span><br><span class="line">&#125;PAK;</span><br><span class="line">typedef struct</span><br><span class="line">&#123;</span><br><span class="line">     BYTE  nameLen;</span><br><span class="line">     char  name[nameLen];</span><br><span class="line">     CHAR  unk[8];</span><br><span class="line">&#125;FILE_LIST;</span><br><span class="line">/////////////////////////////</span><br><span class="line">LittleEndian();</span><br><span class="line">PAK pak;</span><br><span class="line">FSeek(0x8);</span><br><span class="line"><span class="built_in">local</span> int i;</span><br><span class="line"><span class="keyword">for</span>(i=0;i&lt;pak.FileNum;i++)</span><br><span class="line">&#123;</span><br><span class="line">    FILE_LIST fileList;  </span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>继续分析最后一个文件名后面的数据。后面的数据的起止地址0x2D80h.<br><img src="http://t.cn/RqtewpY"></p>
-<p><img src="http://t.cn/RqteUgm"></p>
+<p>继续分析最后一个文件名后面的数据。后面的数据的起止地址0x2D80h.</p>
+
+
+
+
 <p>而第一个FileList结构(模板文件定义的那个结构)的unk字段的第一个4字节为0x2d80;可以判断Unk的前四个字节为偏移地址，比较 多个FileLidy结构，可以发现相邻两个FIleList结构的 unk字段的前4字节刚好就是相邻两个FileList结构unk字段指向的数据之差。</p>
 <p>模板文件现在修改为</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span></span><br><span class="line">&#123;</span><br><span class="line">      <span class="type">int</span> fileNum;</span><br><span class="line">      <span class="type">int</span> unknow2;    </span><br><span class="line">&#125;PAK;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span></span><br><span class="line">&#123;</span><br><span class="line">     BYTE  nameLen;</span><br><span class="line">     <span class="type">char</span>  name[nameLen];</span><br><span class="line">     <span class="type">int</span>   fileoff&lt;format=hex&gt;;</span><br><span class="line">     <span class="type">int</span>   filesize&lt;format=hex&gt;;</span><br><span class="line">&#125;FILE_LIST;</span><br><span class="line"><span class="comment">/////////////////////////////</span></span><br><span class="line"><span class="built_in">LittleEndian</span>();</span><br><span class="line">PAK pak;</span><br><span class="line"><span class="built_in">FSeek</span>(<span class="number">0x8</span>);</span><br><span class="line">local <span class="type">int</span> i;</span><br><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;pak.fileNum;i++)</span><br><span class="line">&#123;</span><br><span class="line">    FILE_LIST fileList;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>随便找一个文件名查看</p>
-<p><img src="http://t.cn/RGRNAnc"></p>
+
+
 <p>后缀spritr文件名的文件头SPRX，可以知道该数据为这个文件的数据，并且没有加密。</p>
 <p>资源中最重要的是图片，这里面最多的就是PNG图片，查看数据时文件头并不是PNG，而是RIFF文件头。用图片浏览器也打不开，通过搜索得知这是一种比较新的文件格式，查阅资料知道XnView支持这个文件格式。</p>
-<p><img src="http://t.cn/RGRNyz4"></p>
+
+
 <p>用XnView打开的图像就是</p>
-<p><img src="http://t.cn/RGRNboR"></p>
+
+
 <p>解密到此就差不多，接下来就是写个小程序把资源都提取出来了。</p>
 
 				  
@@ -705,10 +706,10 @@ var _hmt = _hmt || [];
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 20 篇</span>
+		<span> 21 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">30.8k</span></span>
+		<span> <span class="post-count">32.1k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
@@ -914,6 +915,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">分析技巧</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Lazarus</a>
               </li>
             
             <div class="clearfix"></div>

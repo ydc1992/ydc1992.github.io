@@ -17,14 +17,11 @@
 <meta property="og:site_name" content="ydc&#39;s Blog">
 <meta property="og:description" content="火绒所有的库文件都使用同一种方法解密的，具体解密算法都是在libxsse_30中实现的.数据库头部数据都是通用的，结构如下:  struct&amp;nbsp;&amp;nbsp;&amp;nbsp; database_header {     _DWORD&amp;nbsp;DRAV;     _DWORD&amp;nbsp;SFHY;     _WORD&amp;nbsp;lowVersion;     _WORD&amp;nbsp;hiVersi">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://s1.ax1x.com/2020/05/24/YzpL5R.png">
-<meta property="og:image" content="https://s1.ax1x.com/2020/05/24/Yz9SKO.png">
 <meta property="article:published_time" content="2020-04-19T13:31:04.000Z">
 <meta property="article:modified_time" content="2023-02-04T13:32:13.369Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s1.ax1x.com/2020/05/24/YzpL5R.png">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -431,7 +428,9 @@ var _hmt = _hmt || [];
 </pre>
 
 
-<p>pset.db的如图<br><img src="https://s1.ax1x.com/2020/05/24/YzpL5R.png" alt="YzpL5R.png"></p>
+<p>pset.db的如图</p>
+
+
 <span id="more"></span>
 
 <p>dbName是数据库的类型,找了几个库看了下，发现有如下几种</p>
@@ -444,7 +443,7 @@ var _hmt = _hmt || [];
     <span style="color:#569cd6;">return</span>&nbsp;<span style="color:#b5cea8;">0</span><span style="color:#b4b4b4;">;</span>
 <span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">readytes</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#b5cea8;">0xc0</span><span style="color:deeppink;">)</span>
     <span style="color:#569cd6;">return</span>&nbsp;<span style="color:#b4b4b4;">-</span><span style="color:#b5cea8;">5</span><span style="color:#b4b4b4;">;</span></pre>
-<p> 首先判断是不是火绒的病毒库，通过文件magic<br> <pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="font-style:italic;color:#608b4e;">//判断db文件的magic</span><br><span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">dh</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">DRAV</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#d69d85;">&#39;DRAV&#39;</span>&nbsp;<span style="color:#b4b4b4;">||</span>&nbsp;<span style="color:#c8c8c8;">dh</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">SFHY</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#d69d85;">&#39;SFHY&#39;</span>&nbsp;<span style="color:#b4b4b4;">||</span>&nbsp;<span style="color:#7f7f7f;">a3</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>&nbsp;<span style="color:#b4b4b4;"><em></span><span style="color:yellowgreen;">(</span><span style="color:#bd63c5;">_WORD</span><span style="color:#b4b4b4;"></em></span><span style="color:yellowgreen;">)(</span><span style="color:#7f7f7f;">a3</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">2</span><span style="color:yellowgreen;">)</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#bd63c5;">HIWORD</span><span style="color:yellowgreen;">(</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">db</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">lowVersion</span><span style="color:yellowgreen;">)</span><span style="color:deeppink;">)</span><br>    <span style="color:#569cd6;">return</span>&nbsp;<span style="color:#b4b4b4;">-</span><span style="color:#b5cea8;">9</span><span style="color:#b4b4b4;">;</span><br></pre></p>
+<p> 首先判断是不是火绒的病毒库，通过文件magic<br> <pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="font-style:italic;color:#608b4e;">//判断db文件的magic</span><br><span style="color:#569cd6;">if</span>&nbsp;<span style="color:deeppink;">(</span><span style="color:#c8c8c8;">dh</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">DRAV</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#d69d85;">&#39;DRAV&#39;</span>&nbsp;<span style="color:#b4b4b4;">||</span>&nbsp;<span style="color:#c8c8c8;">dh</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">SFHY</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#d69d85;">&#39;SFHY&#39;</span>&nbsp;<span style="color:#b4b4b4;">||</span>&nbsp;<span style="color:#7f7f7f;">a3</span>&nbsp;<span style="color:#b4b4b4;">&amp;&amp;</span>&nbsp;<span style="color:#b4b4b4;"><em></em></span><span style="color:yellowgreen;">(</span><span style="color:#bd63c5;">_WORD</span><span style="color:#b4b4b4;"></span><span style="color:yellowgreen;">)(</span><span style="color:#7f7f7f;">a3</span>&nbsp;<span style="color:#b4b4b4;">+</span>&nbsp;<span style="color:#b5cea8;">2</span><span style="color:yellowgreen;">)</span>&nbsp;<span style="color:#b4b4b4;">!=</span>&nbsp;<span style="color:#bd63c5;">HIWORD</span><span style="color:yellowgreen;">(</span><span style="color:#7f7f7f;">a1</span><span style="color:#b4b4b4;">-&gt;</span><span style="color:#dadada;">db</span><span style="color:#b4b4b4;">.</span><span style="color:#dadada;">lowVersion</span><span style="color:yellowgreen;">)</span><span style="color:deeppink;">)</span><br>    <span style="color:#569cd6;">return</span>&nbsp;<span style="color:#b4b4b4;">-</span><span style="color:#b5cea8;">9</span><span style="color:#b4b4b4;">;</span><br></pre></p>
 <p>简单的异或生成另一个key。然后生成的key再通过gen_new_xor_key函数算法生成另一个key。这个函数比较复杂就不说了。</p>
 <pre style="font-family:Fira Code;font-size:13px;color:gainsboro;"><span style="color:#569cd6;">unsigned</span>&nbsp;<span style="color:#569cd6;">char</span>&nbsp;<span style="color:#c8c8c8;">g_xor_key</span><span style="color:deeppink;">[</span><span style="color:#b5cea8;">260</span><span style="color:deeppink;">]</span>&nbsp;<span style="color:#b4b4b4;">=</span>&nbsp;<span style="color:deeppink;">{</span>
     <span style="color:#b5cea8;">0x42</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xE6</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x70</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x7B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x08</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x64</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x27</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x04</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xFD</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x7C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0xC2</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x73</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x6C</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x8A</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x1B</span><span style="color:#b4b4b4;">,</span>&nbsp;<span style="color:#b5cea8;">0x8F</span><span style="color:#b4b4b4;">,</span>
@@ -516,7 +515,7 @@ var _hmt = _hmt || [];
 <span style="color:deeppink;">}</span></pre>
 
 <p>uncompress是zlib的解压缩函数，只要hook这个地方就能把解密后的数据dump出来</p>
-<p>下图就是解密后的prop.db和pset.db<br><img src="https://s1.ax1x.com/2020/05/24/Yz9SKO.png" alt="Yz9SKO.png"></p>
+<p>下图就是解密后的prop.db和pset.db</p>
 
 				  
 	  
@@ -774,10 +773,10 @@ var _hmt = _hmt || [];
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 20 篇</span>
+		<span> 21 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">30.8k</span></span>
+		<span> <span class="post-count">32.1k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
@@ -983,6 +982,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">分析技巧</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Lazarus</a>
               </li>
             
             <div class="clearfix"></div>
