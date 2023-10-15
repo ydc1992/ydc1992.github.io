@@ -7,20 +7,20 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <meta http-equiv="Content-Language" content="zh-cn">
   <link rel="dns-prefetch" href="http://shxi.cc">
-  <title>豆约翰博客备份专家破解 | ydc&#39;s Blog</title>
+  <title>标签:  | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="豆约翰博客备份专家破解">
-<meta property="og:url" content="http://shxi.cc/post/9d7b1fcb.html">
+  <meta name="description" content="运行程序看看，要输入数据之前要先点击按钮Enable  然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Reversing-kr-Windows-kernal">
+<meta property="og:url" content="http://shxi.cc/other/2016-03-06-Reversing-kr-Windows-kernal.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。">
+<meta property="og:description" content="运行程序看看，要输入数据之前要先点击按钮Enable  然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2016-10-30T12:14:54.000Z">
-<meta property="article:modified_time" content="2023-02-04T13:42:12.208Z">
+<meta property="article:published_time" content="2016-03-06T13:50:53.000Z">
+<meta property="article:modified_time" content="2023-02-05T02:49:28.870Z">
 <meta property="article:author" content="KenYang">
-<meta property="article:tag" content="逆向">
+<meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
   
   
@@ -314,26 +314,26 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-豆约翰博客备份专家破解" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="page-" class="article article-type-page " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title_code_ant" itemprop="name">
-	  <a href="/post/9d7b1fcb.html">豆约翰博客备份专家破解</a>
+	  <a href="/other/2016-03-06-Reversing-kr-Windows-kernal.html">Reversing-kr-Windows-kernal</a>
 	</h1>
   
 
         
 		
-		  <a href="/post/9d7b1fcb.html" class="archive-article-date">
-  	<time datetime="2016-10-30T12:14:54.000Z" itemprop="datePublished">
+		  <a href="/other/2016-03-06-Reversing-kr-Windows-kernal.html" class="archive-article-date">
+  	<time datetime="2016-03-06T13:50:53.000Z" itemprop="datePublished">
 	<!-- <i class="icon-calendar icon"></i> -->
 
 	<i class="fa fa-calendar-check-o" aria-hidden="true"></i>
 	&nbsp;
-	2016-10-30</time>
+	2016-03-06</time>
 	
 	<!-- busuanzi阅读量统计
 	
@@ -352,7 +352,7 @@ var _hmt = _hmt || [];
 		&nbsp; &nbsp; &nbsp;
 		<i class="fa fa-eye" aria-hidden="true"></i>
 		&nbsp;
-		<span class="waline-pageview-count" data-path="/post/9d7b1fcb.html"><i class="fa fa-spinner fa-spin"></i></span>
+		<span class="waline-pageview-count" data-path="/other/2016-03-06-Reversing-kr-Windows-kernal.html"><i class="fa fa-spinner fa-spin"></i></span>
 	</span>
 	
 
@@ -382,7 +382,7 @@ var _hmt = _hmt || [];
 	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
         <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
         <span class="post-meta-item-text">字数统计: </span>
-        <span class="post-count">400字</span>
+        <span class="post-count">854字</span>
       </span>
     </span>
 
@@ -391,7 +391,7 @@ var _hmt = _hmt || [];
       <span class="post-meta-item-icon">
 	    <i class="fa fa-pagelines" aria-hidden="true"></i>
         <span class="post-meta-item-text">阅读时长: </span>
-        <span class="post-count">1min</span>
+        <span class="post-count">3min</span>
       </span>
     </span>
 	
@@ -406,37 +406,50 @@ var _hmt = _hmt || [];
 	  <!-- 添加分类与标签 -->
 	  
 		  
-		  <p>官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。</p>
+		  <p>运行程序看看，要输入数据之前要先点击按钮Enable</p>
 
+<p>然后按钮变成Check，这时就可以输入字符，输入正确的字符就会弹出正确的提示。</p>
 
 <span id="more"></span>
+<p>用IDA载入程序，在sub_401110函数中就是对输入字符串判断的关键函数。</p>
 
-<p>F5开始调试。</p>
-
-
-<p>点击ok，程序会出现登陆框，要输入账号密码。第一步我们先实现免账号登陆，先随便输个账号密码，利用堆栈回溯来找到下图中高亮部分，这里面就是登陆流程部分。</p>
+<p>来到关键call，这段代码是用户模式下的程序与驱动进行交互。对字符串验证的逻辑肯定是在驱动文件里了。</p>
 
 
+<p>IDA载入驱动文件分析驱动</p>
 
 
-<p>跳转到目标代码，很明显就是对账号密码的判断，我们只要将第一个判断语句的等于改成不等于，空账号登陆。</p>
-
-<p>选中第一行if判断语句，右键编辑IL指令。</p>
-
-<p>再来看看修改后的语句，等于号已经换成不等于了。</p>
+<p>注册了两个派遣例程，sub_11288 函数是DeviceIoControl，处理用户模式与该驱动的交互。</p>
+<p>这里我们可以看到这里处理DeviceIoControlCode 为 0x1000 和 0x2000。再看前面sub_401110函数的代码，我们可以知道<br>程序刚开始运行时，编辑框不能输入任何数据，点击Enable,发送0x1000到驱动，按钮变成check,编辑框就能用了，这时就可以输入字符了。<br>再点击check，就发送0x2000到驱动验证结果对不对。</p>
+<p>sub_112F8函数代码</p>
 
 
-<p>修改完成后，我们需要将我们修改的内容保存到文件。文件菜单中选保存模块或者保存所有来把修改后的文件保存到新文件。用这个文件替换原来的文件就ok了。</p>
-<p>现在不需要账号就能使用了，但是还是有限制，只能下载5篇博客，</p>
-<p>字符串搜索vip，找到如下结果。</p>
+<p>驱动还使用KeInitializeDpc函数注册了一个定时器，每隔一段时间就运行sub_11266函数。<br>在这个函数里，看到一个函数 READ_PORT_UCHAR，这个函数通过端口号来读取输入的字节。然后在下面的这个函数sub_111DC中验证，</p>
 
 
-<p>选中m_bVip 按下Ctrl+R,发现m_bVip在如下图地方被赋值，直接修改false为true,就没有只能下5篇博客的限制。</p>
-
-<p>同样是编辑il指令。</p>
 
 
-<p>修改完成后保存到文件，注意此处属于BlogGather.dll文件的代码部分，用这个文件替换BlogGather.dll就可以去掉只能下载5篇博客的限制。</p>
+<p>既然验证代码在内核中，那我们就需要用winDBG来调试驱动了。<br>在WinDBG中使用lm命令查找所有加载的模块。WinKer就是我们程序加载的驱动。</p>
+
+
+<p>用!drvobj WinKer命令来看 WinKer驱动的信息。 </p>
+
+<p>下面列出了个设备对象列表，点击87bc0650，你也可以手动输入命令!devobj 87bc0650。<br>这里这个驱动对象的地址是87bc0780，找到了驱动对象的地址，我们就可以使用dt来查看它的数据结构了。</p>
+
+
+<p>还记得前面说的sub_11288函数的三个派遣函数么，派遣函数的地址存放在MajorFunction数组了，我们可以通过这个地址找到对于的函数，来进行调试。</p>
+<p>sub_11288 为MajorFunction第e个数组，因此可以通过计算87bc0780+0x38+0xe*4得到改内存的值知道这个函数的内存地址为93316288。</p>
+
+
+<p>前面我们已经知道 验证代码在sub_11266(00011266)函数处，通过计算可以知道该函数在内存中的地址 93316288-11288 + 00011166 = 933161DC66 。这个函数就是验证地方。在这个地方下断就可以调试了。<br>不过有一个问题就是 在程序编辑框输入数据后这里会被断下两次,由此可知没输入一个字符，调用两次这个函数。</p>
+<p>通过 READ_PORT_UCHAR函数读取用户输入的数据。READ_PORT_UCHAR每一次只读取一个字节，而g_var变量也在随着变化，分析流程图我们可以得知g_var全局变量为输入字符在字符串的位置。READ_PORT_UCHAR读取从0到3位 返回的值分别是 0xa5u,0x92u,0x95u,0xbu</p>
+
+<p>当等于7是g_var+100= 107，没有这个分支，进入默认分支进入sub_11156函数。</p>
+
+<p>同上类似，READ_PORT_UCHAR读取的是从4到6位,返回的值分别是：0xb2u，0x85u，0xa3u。 g_var值变成200，第三个swith同样。</p>
+
+
+<p>只要将你输入的字符和READ_PORT_UCHAR返回的字符对应起来，就可以得到正确的key。要知道READ_PORT_UCHAR的返回值,还是得用winDBG来调试。</p>
 
 				  
 	  
@@ -457,19 +470,19 @@ var _hmt = _hmt || [];
 	
 	<!-- <br>
 	<strong class="create-time">发布时间：</strong>
-	2016-10-30 -->
+	2016-03-06 -->
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2023年02月04日 21:42:12
+	2023年02月05日 10:49:28
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
-	<a href="http://shxi.cc/post/9d7b1fcb.html" title="豆约翰博客备份专家破解" target="_blank">豆约翰博客备份专家破解</a> -->
+	<a href="http://shxi.cc/other/2016-03-06-Reversing-kr-Windows-kernal.html" title="Reversing-kr-Windows-kernal" target="_blank">Reversing-kr-Windows-kernal</a> -->
 	
 	<br>
 	<strong class="article-url">本文链接：</strong>
-	<a href="http://shxi.cc/post/9d7b1fcb.html" title="豆约翰博客备份专家破解" target="_blank">http://shxi.cc/post/9d7b1fcb.html</a>
+	<a href="http://shxi.cc/other/2016-03-06-Reversing-kr-Windows-kernal.html" title="Reversing-kr-Windows-kernal" target="_blank">http://shxi.cc/other/2016-03-06-Reversing-kr-Windows-kernal.html</a>
 	
 	<br>
 	<strong class="copyright">版权声明：</strong>
@@ -490,17 +503,6 @@ var _hmt = _hmt || [];
 	  
 	  <!-- 分类页 -->
       
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">逆向</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
       
 
 	  
@@ -554,7 +556,7 @@ var _hmt = _hmt || [];
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-	  <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://shxi.cc/post/9d7b1fcb.html" alt="微信分享二维码">
+	  <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://shxi.cc/other/2016-03-06-Reversing-kr-Windows-kernal.html" alt="微信分享二维码">
     </div>
 </div>
 
@@ -569,25 +571,6 @@ var _hmt = _hmt || [];
 
 
   
-<nav id="article-nav">
-  
-    <a href="/post/7b82cd68.html" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          AOSP-docker编译安卓源码绕过反调试
-        
-      </div>
-    </a>
-  
-  
-    <a href="/post/5ca97896.html" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Reversing-kr-Windows-kernal</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
 
 
 <!-- 添加回到顶部和文章目录 -->
@@ -705,10 +688,10 @@ var _hmt = _hmt || [];
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 22 篇</span>
+		<span> 11 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">36.5k</span></span>
+		<span> <span class="post-count">21.5k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
@@ -779,9 +762,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: false,
@@ -907,10 +890,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">逆向</a>
-              </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">分析技巧</a>
