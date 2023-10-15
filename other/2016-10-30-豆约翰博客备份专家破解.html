@@ -17,11 +17,21 @@
 <meta property="og:site_name" content="ydc&#39;s Blog">
 <meta property="og:description" content="官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://t.cn/RVuofGm">
+<meta property="og:image" content="http://t.cn/RVuoITs">
+<meta property="og:image" content="http://t.cn/RVuoMD5">
+<meta property="og:image" content="http://t.cn/RVuoJ4G">
+<meta property="og:image" content="http://t.cn/RVuoiQB">
+<meta property="og:image" content="http://t.cn/RVuo6BW">
+<meta property="og:image" content="http://t.cn/RVuoSGH">
+<meta property="og:image" content="http://t.cn/RVuoKeA">
+<meta property="og:image" content="http://t.cn/RVuooCA">
 <meta property="article:published_time" content="2016-10-30T12:14:54.000Z">
 <meta property="article:modified_time" content="2023-02-04T13:42:12.208Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://t.cn/RVuofGm">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -406,36 +416,18 @@ var _hmt = _hmt || [];
 	  <!-- 添加分类与标签 -->
 	  
 		  
-		  <p>官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。</p>
-
-
+		  <p>官网下载程序，解压用dnspy来调试主程序BlogDownloader.exe;虽然被混淆，但这样的保护形同虚设，很容易通过动态调试被破解。<br><img src="http://t.cn/RVuofGm"></p>
 <span id="more"></span>
 
-<p>F5开始调试。</p>
-
-
-<p>点击ok，程序会出现登陆框，要输入账号密码。第一步我们先实现免账号登陆，先随便输个账号密码，利用堆栈回溯来找到下图中高亮部分，这里面就是登陆流程部分。</p>
-
-
-
-
+<p>F5开始调试。<br><img src="http://t.cn/RVuoITs"></p>
+<p>点击ok，程序会出现登陆框，要输入账号密码。第一步我们先实现免账号登陆，先随便输个账号密码，利用堆栈回溯来找到下图中高亮部分，这里面就是登陆流程部分。<br><img src="http://t.cn/RVuoMD5"></p>
 <p>跳转到目标代码，很明显就是对账号密码的判断，我们只要将第一个判断语句的等于改成不等于，空账号登陆。</p>
-
-<p>选中第一行if判断语句，右键编辑IL指令。</p>
-
-<p>再来看看修改后的语句，等于号已经换成不等于了。</p>
-
-
+<p><img src="http://t.cn/RVuoJ4G"></p>
+<p>选中第一行if判断语句，右键编辑IL指令。<br><img src="http://t.cn/RVuoiQB"><br>再来看看修改后的语句，等于号已经换成不等于了。<br><img src="http://t.cn/RVuo6BW"></p>
 <p>修改完成后，我们需要将我们修改的内容保存到文件。文件菜单中选保存模块或者保存所有来把修改后的文件保存到新文件。用这个文件替换原来的文件就ok了。</p>
 <p>现在不需要账号就能使用了，但是还是有限制，只能下载5篇博客，</p>
-<p>字符串搜索vip，找到如下结果。</p>
-
-
-<p>选中m_bVip 按下Ctrl+R,发现m_bVip在如下图地方被赋值，直接修改false为true,就没有只能下5篇博客的限制。</p>
-
-<p>同样是编辑il指令。</p>
-
-
+<p>字符串搜索vip，找到如下结果。<br><img src="http://t.cn/RVuoSGH"></p>
+<p>选中m_bVip 按下Ctrl+R,发现m_bVip在如下图地方被赋值，直接修改false为true,就没有只能下5篇博客的限制。<br><img src="http://t.cn/RVuoKeA"><br>同样是编辑il指令。<br><img src="http://t.cn/RVuooCA"></p>
 <p>修改完成后保存到文件，注意此处属于BlogGather.dll文件的代码部分，用这个文件替换BlogGather.dll就可以去掉只能下载5篇博客的限制。</p>
 
 				  
@@ -678,7 +670,7 @@ var _hmt = _hmt || [];
 		<span> 11 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">21.5k</span></span>
+		<span> <span class="post-count">25.3k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->

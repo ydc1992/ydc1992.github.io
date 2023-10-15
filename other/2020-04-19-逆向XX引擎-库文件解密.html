@@ -17,11 +17,14 @@
 <meta property="og:site_name" content="ydc&#39;s Blog">
 <meta property="og:description" content="火绒所有的库文件都使用同一种方法解密的，具体解密算法都是在libxsse_30中实现的.数据库头部数据都是通用的，结构如下:  struct&amp;nbsp;&amp;nbsp;&amp;nbsp; database_header {     _DWORD&amp;nbsp;DRAV;     _DWORD&amp;nbsp;SFHY;     _WORD&amp;nbsp;lowVersion;     _WORD&amp;nbsp;hiVersi">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/24/YzpL5R.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/24/Yz9SKO.png">
 <meta property="article:published_time" content="2020-04-19T13:31:04.000Z">
 <meta property="article:modified_time" content="2023-02-04T13:32:13.369Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/05/24/YzpL5R.png">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -428,9 +431,7 @@ var _hmt = _hmt || [];
 </pre>
 
 
-<p>pset.db的如图</p>
-
-
+<p>pset.db的如图<br><img src="https://s1.ax1x.com/2020/05/24/YzpL5R.png" alt="YzpL5R.png"></p>
 <span id="more"></span>
 
 <p>dbName是数据库的类型,找了几个库看了下，发现有如下几种</p>
@@ -515,7 +516,7 @@ var _hmt = _hmt || [];
 <span style="color:deeppink;">}</span></pre>
 
 <p>uncompress是zlib的解压缩函数，只要hook这个地方就能把解密后的数据dump出来</p>
-<p>下图就是解密后的prop.db和pset.db</p>
+<p>下图就是解密后的prop.db和pset.db<br><img src="https://s1.ax1x.com/2020/05/24/Yz9SKO.png" alt="Yz9SKO.png"></p>
 
 				  
 	  
@@ -757,7 +758,7 @@ var _hmt = _hmt || [];
 		<span> 11 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">21.5k</span></span>
+		<span> <span class="post-count">25.3k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->

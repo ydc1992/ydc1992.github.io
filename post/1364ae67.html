@@ -459,51 +459,30 @@ var _hmt = _hmt || [];
 <img src="/post/1364ae67/clip_image001.png" class="" title="example">
 <span id="more"></span>
 
-<p> &emsp;&emsp;每个XLL插件必须实现和导出函数xlAUtoOpen和xlAutoClose，这两个函数分别在Excel加载XLL插件后激活插件或者卸载插件时被调用。<br> &emsp;&emsp;这些函数可以用来加载恶意代码,类型于VBA恶意代码中利用Auto_Open和Auto_Close方法执行恶意代码。不足的是x86版本的xll插件只能由x86版本的Excel加载被激活，x64版本的也是一样。<br>&emsp;&emsp; 与VBA宏一样, XLL插件加载时也会提示安全警告。</p>
-<img src="/post/1364ae67/clip_image003.gif" class="">
-
-<h3 id="1-Excel-DNA框架"><a href="#1-Excel-DNA框架" class="headerlink" title="1.     Excel-DNA框架"></a>1.     Excel-DNA框架</h3><p>&emsp;&emsp;Excel-DNA为用于插件开发的合法框架，由于该框架能够无需操作磁盘就可以将保存在文件资源中的压缩.Net程序集直接加载的能力，因此被大部分恶意程序开发者所滥用。<br>&emsp;&emsp;由于某种原因, Excel-DNA生成的样本中大部分都包含10000个导出函数，并且这些函数的代码都是毫无意义的。</p>
-<img src="/post/1364ae67/clip_image005.jpg" class="">
-
-<h3 id="2-释放并打开诱饵文档"><a href="#2-释放并打开诱饵文档" class="headerlink" title="2.     释放并打开诱饵文档"></a>2.     释放并打开诱饵文档</h3><p>在执行shellcode之前, 恶意程序将诱饵文档写入到临时目录并打开。</p>
-<img src="/post/1364ae67/clip_image006.gif" class="">
-
-<p>诱饵文档显示如下图:               </p>
-<img src="/post/1364ae67/clip_image007.png" class="">               
-
+<p> &emsp;&emsp;每个XLL插件必须实现和导出函数xlAUtoOpen和xlAutoClose，这两个函数分别在Excel加载XLL插件后激活插件或者卸载插件时被调用。<br> &emsp;&emsp;这些函数可以用来加载恶意代码,类型于VBA恶意代码中利用Auto_Open和Auto_Close方法执行恶意代码。不足的是x86版本的xll插件只能由x86版本的Excel加载被激活，x64版本的也是一样。<br>&emsp;&emsp; 与VBA宏一样, XLL插件加载时也会提示安全警告。<br><img src="1364ae67/clip_image003.gif"></p>
+<h3 id="1-Excel-DNA框架"><a href="#1-Excel-DNA框架" class="headerlink" title="1.     Excel-DNA框架"></a>1.     Excel-DNA框架</h3><p>&emsp;&emsp;Excel-DNA为用于插件开发的合法框架，由于该框架能够无需操作磁盘就可以将保存在文件资源中的压缩.Net程序集直接加载的能力，因此被大部分恶意程序开发者所滥用。<br>&emsp;&emsp;由于某种原因, Excel-DNA生成的样本中大部分都包含10000个导出函数，并且这些函数的代码都是毫无意义的。<br><img src="1364ae67/clip_image005.jpg"></p>
+<h3 id="2-释放并打开诱饵文档"><a href="#2-释放并打开诱饵文档" class="headerlink" title="2.     释放并打开诱饵文档"></a>2.     释放并打开诱饵文档</h3><p>在执行shellcode之前, 恶意程序将诱饵文档写入到临时目录并打开。<br><img src="1364ae67/clip_image006.gif"></p>
+<p>诱饵文档显示如下图:              <br><img src="1364ae67/clip_image007.png">               </p>
 <h3 id="3-state1-shellcode"><a href="#3-state1-shellcode" class="headerlink" title="3.     state1 shellcode"></a>3.     state1 shellcode</h3><p>调用VirtualAlloc分配可执行的内存, 将shellcode拷贝到这段内存并执行。</p>
-<img src="/post/1364ae67/clip_image009.gif" class="">
-
-<h4 id="函数重定位"><a href="#函数重定位" class="headerlink" title="函数重定位"></a>函数重定位</h4><p>调用函数时并不直接使用函数地址而是将函数地址与地址0xF990005的偏移量保存到shellcode, 使用这样的策略就是为了保证不论分配的内存在哪个位置都能够计算出函数地址并调用。           </p>
-<img src="/post/1364ae67/clip_image010.gif" class="">
-<p>通过偏移量来计算函数地址, 然后调用第一个偏移量对应的函数地址执行后续代码。</p>
-<img src="/post/1364ae67/clip_image011.gif" class="">
-
+<p><img src="1364ae67/clip_image009.gif"></p>
+<h4 id="函数重定位"><a href="#函数重定位" class="headerlink" title="函数重定位"></a>函数重定位</h4><p>调用函数时并不直接使用函数地址而是将函数地址与地址0xF990005的偏移量保存到shellcode, 使用这样的策略就是为了保证不论分配的内存在哪个位置都能够计算出函数地址并调用。          <br><img src="1364ae67/clip_image010.gif"><br>通过偏移量来计算函数地址, 然后调用第一个偏移量对应的函数地址执行后续代码。</p>
+<p><img src="1364ae67/clip_image011.gif"></p>
 <h4 id="字符串解密"><a href="#字符串解密" class="headerlink" title="字符串解密"></a>字符串解密</h4><p>&emsp;&emsp;所有与API函数名相关的字符串都是使用恶意程序开发人员设计的自定义加密算法来进行加密的。如图所示, 加密字符串开始地址为0xF99BC3D，每个加密字符都以0结尾。</p>
-<img src="/post/1364ae67/clip_image012.png" class="">
-
+<p><img src="1364ae67/clip_image012.png"></p>
 <p>         解密算法如下图, 解密后将下一个加密字符串的地址保存到字段string_addr, 解密时是按顺序解密的。</p>
-<img src="/post/1364ae67/clip_image014.gif" class="">
-<p>以第一个加密字符串为例, 解密步骤如下:</p>
+<p><img src="1364ae67/clip_image014.gif"><br>以第一个加密字符串为例, 解密步骤如下:</p>
 <p><strong>步骤</strong>：第一个字符串id为0，取反后为0xFF，然后加密字符串的第一位与0xFF相加,<br>第二位与0xFE相加，第三位与0xFD相加,以此类推计算出来的值就是解密后的字符串;<br>第二个字符串id为1,解密方法类似。</p>
 <p><strong>加密字符串</strong>: 48 67 77 54 77 75 6A 49 6D 6E 7D 71 80 81<br><strong>解密字符串</strong>: 47 65 74 50 72 6F 63 41 64 64 72 65 73 73=&gt;GetProcAddress</p>
 <p>&emsp;&emsp; 解密的所有字符串按顺序如下,都是API字符串。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GetProcA</span><br><span class="line">LoadLibraryA</span><br><span class="line">Sleep  </span><br><span class="line">CreateProcessW  </span><br><span class="line">GetNativeSystemInfo</span><br><span class="line">VirtualAlloc</span><br><span class="line">Wow64DisableWow64FsRedirection</span><br><span class="line">Wow64RevertWow64FsRedirection</span><br><span class="line">CreateProcessInternalW</span><br><span class="line">GetSystemDirectoryW</span><br><span class="line">ntdll_RtlWow64EnableFsRedirectionEx</span><br></pre></td></tr></table></figure>
 
 <h4 id="4-判断是否是x64系统"><a href="#4-判断是否是x64系统" class="headerlink" title="4.     判断是否是x64系统"></a>4.     判断是否是x64系统</h4><p>         调用GetNativeSysInfo来判断受害者操作系统是否是x64系统，该函数返回一个结构体,第一位表示操作系统为6或9时表示系统为x64版本。如果不是x64版本的操作系统,则不会执行后续的shellcode, 返回并将控制权交给进程Excel。</p>
-<img src="/post/1364ae67/clip_image015.gif" class="">  
-
+<p><img src="1364ae67/clip_image015.gif">  </p>
 <h4 id="5-创建挂起进程wermgr-exe"><a href="#5-创建挂起进程wermgr-exe" class="headerlink" title="5.     创建挂起进程wermgr.exe"></a>5.     创建挂起进程wermgr.exe</h4><p>         程序wermgr是windows的错误报告管理工具,用于向Microsoft发送操作崩溃和错误报告，恶意程序开发者将恶意代码注入到系统进程用于绕过安全软件的检测。<br>         由于创建的进程属于x64进程, 而当前执行的excel属于x86进程，因此不能直接从x86注入shellcode到x64进程。<br>         为了解决这个问题,恶意程序开发者准备了3个shellcode，在三个阶段中被使用, 分别命名为stage1、stage2和stage3。<br>         Stage1用”天堂之门“技术切换到x64的内存空间并跳转到stage2执行,从stage2开始已经切换到了x64环境, 在stage2中将stage3注入到wermgr进程中。</p>
-<img src="/post/1364ae67/clip_image016.png" class="">
-
-<p>该阶段的shellcode利用Heaven’s Gate(天堂之门)技术将shellcode从x86进程注入到x64进程中。<br>手动构造环境切换代码，并将地址0xF70015地址的跳转修改为x64 shellcode的内存地址，该shellcode将另一段shellcode注入到wermgr.exe内存中。</p>
-<img src="/post/1364ae67/clip_image018.png" class="">
-<p>         初始化在下一阶段的shellcode需要使用的数据,包括线程句柄、进程句柄和要注入的shellcode地址和大小，然后执行下一阶段shellcode代码。进程句柄用于读写远程进程,线程句柄用于恢复远程线程。</p>
-<img src="/post/1364ae67/clip_image020.png" class="">
-
+<p><img src="1364ae67/clip_image016.png"></p>
+<p>该阶段的shellcode利用Heaven’s Gate(天堂之门)技术将shellcode从x86进程注入到x64进程中。<br>手动构造环境切换代码，并将地址0xF70015地址的跳转修改为x64 shellcode的内存地址，该shellcode将另一段shellcode注入到wermgr.exe内存中。<br><img src="1364ae67/clip_image018.png"><br>         初始化在下一阶段的shellcode需要使用的数据,包括线程句柄、进程句柄和要注入的shellcode地址和大小，然后执行下一阶段shellcode代码。进程句柄用于读写远程进程,线程句柄用于恢复远程线程。<br><img src="1364ae67/clip_image020.png"></p>
 <h3 id="4-Stage2天堂之门"><a href="#4-Stage2天堂之门" class="headerlink" title="4.Stage2天堂之门"></a>4.Stage2天堂之门</h3><h4 id="1-解密字符串"><a href="#1-解密字符串" class="headerlink" title="1.解密字符串"></a>1.解密字符串</h4><p>这段shellcode用于从x86环境切换到x64环境,也叫做天堂之门,Shellcode中使用的函数都是以硬编码哈希的形式存放, 在loadfunctions中通过对模块的导出表计算哈希并匹配来找到对应的函数地址。如下图所示:</p>
-<img src="/post/1364ae67/clip_image022.png" class="">
-
+<p><img src="1364ae67/clip_image022.png"></p>
 <p>该阶段的shellcode使用了包含大小写字母、数字的字符映射表和字符”/”,  并且每个字符再映射表中的位置都是随机的。解密时从字符映射表中找到待解密字符所在的索引,然后利用这些索引来解密字符串。字符映射表如下</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tzGeVX6QcPsLA5ManZv48EI9BFr/7pxhSok2OU1JT3CD0qN+uKYHjlWdRfbwgymi</span><br></pre></td></tr></table></figure>
 
@@ -516,79 +495,34 @@ var _hmt = _hmt || [];
 <p>第一个4字符为vjEv,每个字符在映射表中的索引分别为 12 34 15 12,解密后ker<br>第二个4字符为4OEA,每个字符在映射表中的索引分别为 13 24 15 0c,解密后nel<br>第三个4字符为AHcN,每个字符在映射表中的索引分别为 0c 33 08 2e,解密后32.<br>第四个4字符为F6K0,每个字符在映射表中的索引分别为 19 06 31 2c,解密后dll<br>解密成功后对字符串计算哈希值, 哈希计算方法如下:</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Char* str=”...”;<span class="comment">//解密后的字符串,省略</span></span><br><span class="line">Uint32_t x=<span class="number">0</span>;</span><br><span class="line"><span class="built_in">For</span>(<span class="type">uint32_t</span> i=<span class="number">0</span>;i&lt;<span class="built_in">strlen</span>(str);++i)</span><br><span class="line">&#123;</span><br><span class="line">    x = ((str[i]+ x)&lt;&lt; <span class="number">0xA</span>)+( str[i]+ x);</span><br><span class="line">    x = (x &gt;&gt;<span class="number">6</span>)^ x</span><br><span class="line">&#125;</span><br><span class="line">x=<span class="number">3</span>*x</span><br><span class="line"><span class="type">uint32_t</span> hash= ((x&gt;&gt;<span class="number">0xB</span>)^x)&lt;&lt;<span class="number">0xF</span> + (x&gt;&gt;<span class="number">0xB</span>)^x</span><br></pre></td></tr></table></figure>
 
-<h4 id="2-获取函数地址"><a href="#2-获取函数地址" class="headerlink" title="2.获取函数地址"></a>2.获取函数地址</h4><p>通过获取”GS:[0x60]”来直接获取PEB结构的地址,然后遍历其字段Ldr中的链表InMemoryOrderModuleList并获取dll名。</p>
-<img src="/post/1364ae67/clip_image024.png" class="">
-<p>得到dll名后先将其所有字符都转换成小写然后再计算哈希值。</p>
-<img src="/post/1364ae67/clip_image026.png" class="">
-<p>哈希值计算方法与前面计算解密字符串使用的哈希方法一致，如果计算出的哈希值与要查找的哈希值匹配,则返回对应模块的加载基址。再根据加载地址遍历该模块导出的函数并计算哈希值与硬编码的哈希值相比较，如果匹配则计算函数地址然后用该地址覆盖哈希值。计算函数哈希值使用的方法与计算模块模块名一样。</p>
-<img src="/post/1364ae67/clip_image028.png" class="">
-<p>这段shellcode并不是通过jmp或call指令来执行跳转, 原因是使用这两个指令能够跳转的偏移有限, 最大只支持32位偏移, 而在x64的地址空间中要跳转的偏移可能超过32位，因此通过将要跳转的目标地址压入到堆栈中用于保存返回地址的内存中，然后函数返回的时候返回到目标地址执行代码。</p>
-<img src="/post/1364ae67/clip_image030.png" class="">
-
+<h4 id="2-获取函数地址"><a href="#2-获取函数地址" class="headerlink" title="2.获取函数地址"></a>2.获取函数地址</h4><p>通过获取”GS:[0x60]”来直接获取PEB结构的地址,然后遍历其字段Ldr中的链表InMemoryOrderModuleList并获取dll名。<br><img src="1364ae67/clip_image024.png"><br>得到dll名后先将其所有字符都转换成小写然后再计算哈希值。<br><img src="1364ae67/clip_image026.png"><br>哈希值计算方法与前面计算解密字符串使用的哈希方法一致，如果计算出的哈希值与要查找的哈希值匹配,则返回对应模块的加载基址。再根据加载地址遍历该模块导出的函数并计算哈希值与硬编码的哈希值相比较，如果匹配则计算函数地址然后用该地址覆盖哈希值。计算函数哈希值使用的方法与计算模块模块名一样。<br><img src="1364ae67/clip_image028.png"><br>这段shellcode并不是通过jmp或call指令来执行跳转, 原因是使用这两个指令能够跳转的偏移有限, 最大只支持32位偏移, 而在x64的地址空间中要跳转的偏移可能超过32位，因此通过将要跳转的目标地址压入到堆栈中用于保存返回地址的内存中，然后函数返回的时候返回到目标地址执行代码。<br><img src="1364ae67/clip_image030.png"></p>
 <p>注入的代码如下:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">debug1150:00000000004E90B0 mov     rax, 161523A0000h ;要跳转的目标地址</span><br><span class="line">debug1150:00000000004E90BA mov     rcx, rax</span><br><span class="line">debug1150:00000000004E90BD push    rax</span><br><span class="line">debug1150:00000000004E90BE retn</span><br></pre></td></tr></table></figure>
 
 <h3 id="5-Shellcode版本JSSLoader"><a href="#5-Shellcode版本JSSLoader" class="headerlink" title="5.Shellcode版本JSSLoader"></a>5.Shellcode版本JSSLoader</h3><p>该阶段的shellcode为进程Excel注入到进程wermgr,进程wermgr的入口点代码在注入前已经被修改，以便在进程wermgr恢复执行时跳转到shellcode中执行代码。</p>
-<h4 id="1-字符串解密"><a href="#1-字符串解密" class="headerlink" title="1. 字符串解密"></a>1. 字符串解密</h4><p>         字符串解密与上一阶段的shellcode使用的方法一样, 不同的就是使用的字符映射表不一样。</p>
-<img src="/post/1364ae67/clip_image032.png" class="">
-
-<h4 id="2-收集系统信息"><a href="#2-收集系统信息" class="headerlink" title="2.收集系统信息"></a>2.收集系统信息</h4><p>获取受害者机器的主机名, 如果没有获取成功则主机名设置为”N”。</p>
-<img src="/post/1364ae67/clip_image034.png" class="">
-<p>读取受害者机器的DNS domain,如果没有则设置为”WORKGROUP”。</p>
-<img src="/post/1364ae67/clip_image036.png" class="">
-<p>获取受害者的机器名。</p>
-<img src="/post/1364ae67/clip_image038.png" class="">
-<p>使用WMI查询接口来获取系统信息。</p>
-<img src="/post/1364ae67/clip_image040.png" class="">
-<p>遍历所有正在运行的进程并获取其进程名和进程PID值,最后按如下格式保存到buff中。</p>
+<h4 id="1-字符串解密"><a href="#1-字符串解密" class="headerlink" title="1. 字符串解密"></a>1. 字符串解密</h4><p>         字符串解密与上一阶段的shellcode使用的方法一样, 不同的就是使用的字符映射表不一样。<br><img src="1364ae67/clip_image032.png"></p>
+<h4 id="2-收集系统信息"><a href="#2-收集系统信息" class="headerlink" title="2.收集系统信息"></a>2.收集系统信息</h4><p>获取受害者机器的主机名, 如果没有获取成功则主机名设置为”N”。<br><img src="1364ae67/clip_image034.png"><br>读取受害者机器的DNS domain,如果没有则设置为”WORKGROUP”。<br><img src="1364ae67/clip_image036.png"><br>获取受害者的机器名。<br><img src="1364ae67/clip_image038.png"><br>使用WMI查询接口来获取系统信息。<br><img src="1364ae67/clip_image040.png"><br>遍历所有正在运行的进程并获取其进程名和进程PID值,最后按如下格式保存到buff中。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;“name”:进程名,”pid”:进程PID&#125;</span><br></pre></td></tr></table></figure>
-<img src="/post/1364ae67/clip_image042.png" class=""> 
-<p>遍历桌面所有的文件,并读取其文件名和文件大小,按如下格式保存到buff中。</p>
+<p><img src="1364ae67/clip_image042.png"> <br>遍历桌面所有的文件,并读取其文件名和文件大小,按如下格式保存到buff中。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;“file”:文件名,”size”:文件大小&#125;</span><br></pre></td></tr></table></figure>
 
-<img src="/post/1364ae67/clip_image044.png" class="">
-<p>最后将收集到的所有信息组合成JSON格式数据。</p>
-<img src="/post/1364ae67/clip_image046.png" class="">
-<p>Base64编码后上传到C&amp;C服务器。</p>
-<img src="/post/1364ae67/clip_image048.png" class="">
-
-<h4 id="3-发送上线信号"><a href="#3-发送上线信号" class="headerlink" title="3.发送上线信号"></a>3.发送上线信号</h4><p>从环境变量”UserDomain”和”ComputerName”中读取机器域名和用户名。</p>
-<img src="/post/1364ae67/clip_image050.png" class="">
-
+<p><img src="1364ae67/clip_image044.png"><br>最后将收集到的所有信息组合成JSON格式数据。<br><img src="1364ae67/clip_image046.png"><br>Base64编码后上传到C&amp;C服务器。<br><img src="1364ae67/clip_image048.png"></p>
+<h4 id="3-发送上线信号"><a href="#3-发送上线信号" class="headerlink" title="3.发送上线信号"></a>3.发送上线信号</h4><p>从环境变量”UserDomain”和”ComputerName”中读取机器域名和用户名。<br><img src="1364ae67/clip_image050.png"></p>
 <p>         当shellcode第一次被执行时,收集系统信息并上传到C&amp;C服务器。发送的post数据为收集的系统信息，请求链接为</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">essentialsmassageanddayspa.com?id=&#123;机器域名&#125;&#123;用户名&#125;&amp;type=a</span><br></pre></td></tr></table></figure>
 
-<img src="/post/1364ae67/clip_image052.png" class="">
-
+<p><img src="1364ae67/clip_image052.png"></p>
 <h4 id="4-使用随机文件名"><a href="#4-使用随机文件名" class="headerlink" title="4.使用随机文件名"></a>4.使用随机文件名</h4><p>         释放文件时在硬编码的文件名列表中随机选择一个字符串作为文件名。</p>
-<img src="/post/1364ae67/clip_image054.png" class="">
-
+<p><img src="1364ae67/clip_image054.png"></p>
 <p>         使用的文件名列表解密后如下:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1,&quot;rain&quot;      2,&quot;faint&quot;     3,&quot;shark&quot;     4,&quot;hierarchy&quot;</span><br><span class="line">5,&quot;brush&quot;     6,&quot;grimace&quot;      7,&quot;recognize&quot; 8,&quot;mountain&quot;</span><br><span class="line">9,&quot;place&quot;     10,&quot;pressure&quot; 11,&quot;delay&quot;    12,&quot;volunteer&quot;</span><br><span class="line">13,&quot;snarl&quot;    14,&quot;shame&quot;    15,&quot;attitude&quot; 16,&quot;pool&quot;</span><br><span class="line">17,&quot;priority&quot; 18,&quot;snack&quot;    19,&quot;category&quot; 20,&quot;my&quot;</span><br><span class="line">21,&quot;necklace&quot; 22,&quot;decorative&quot;  23,&quot;tower&quot;    24,&quot;fountain&quot;</span><br><span class="line">25,&quot;software&quot; 26,&quot;siege&quot;    27,&quot;trade&quot;    28,&quot;gravel&quot;</span><br><span class="line">29,&quot;beginning&quot;   30,&quot;fragrant&quot; 31,&quot;execute&quot;  32,&quot;orthodox&quot;</span><br><span class="line">33,&quot;harmful&quot;  34,&quot;classroom&quot;   35,&quot;ostracize&quot;   36,&quot;blade&quot;</span><br><span class="line">37,&quot;hypnothize&quot;  38,&quot;general&quot;  39,&quot;achieve&quot;  40,&quot;poetry&quot;</span><br><span class="line">41,&quot;ensure&quot;      42,&quot;prison&quot;      43,&quot;find&quot;     44,&quot;prevent&quot;</span><br><span class="line">45,&quot;extract&quot;  46,&quot;presidential&quot; 47,&quot;graduate&quot; 48,&quot;south&quot;</span><br><span class="line">49,&quot;week&quot;</span><br></pre></td></tr></table></figure>
 
-<h4 id="8-C-amp-C指令"><a href="#8-C-amp-C指令" class="headerlink" title="8.     C&amp;C指令"></a>8.     C&amp;C指令</h4><p>从shellcode中能够执行的指令来看，它不仅仅是作为一个下载器和加载器，还能够执行各种脚本文件和从C&amp;C服务器下发的shellcode，这也是JSSLoader的命名原因。</p>
-<img src="/post/1364ae67/clip_image056.png" class="">   
-
-<h4 id="9-执行脚本文件"><a href="#9-执行脚本文件" class="headerlink" title="9.     执行脚本文件"></a>9.     执行脚本文件</h4><p>a)      使用cscript来执行js文件</p>
-<img src="/post/1364ae67/clip_image058.png" class="">
-<p>b)      使用csript来执行vbs文件</p>
-<img src="/post/1364ae67/clip_image060.png" class="">
-<p>c)      执行任意powershell命令</p>
-<img src="/post/1364ae67/clip_image062.png" class="">
-<p>d)      通过ReadAllText读取文件内容并作为powershell命令传递给poershell。</p>
-<img src="/post/1364ae67/clip_image064.png" class="">
-
-<h4 id="7-直接在内存中执行shellcode"><a href="#7-直接在内存中执行shellcode" class="headerlink" title="7.直接在内存中执行shellcode"></a>7.直接在内存中执行shellcode</h4><p>         从C&amp;C服务器接收的shellcode为十六进制字符串,需要先转成十六进制数据然后拷贝到分配的可执行内存中，创建一个线程将shellcode作为线程函数执行。</p>
-<img src="/post/1364ae67/clip_image066.png" class="">
-<h4 id="8-执行可执行文件"><a href="#8-执行可执行文件" class="headerlink" title="8.执行可执行文件"></a>8.执行可执行文件</h4><p>         从C&amp;C服务器接收要执行的文件数据和执行时需要的参数，将文件保存为随机名然后以隐藏窗口的方式执行。</p>
-<img src="/post/1364ae67/clip_image068.png" class="">        
-
-<h4 id="9-执行DLL文件"><a href="#9-执行DLL文件" class="headerlink" title="9.执行DLL文件"></a>9.执行DLL文件</h4><p>从C&amp;C服务器接收要执行的dll文件和要调用的导出函数以及参数值，调用程序rundll32来执行dll文件。 </p>
-<img src="/post/1364ae67/clip_image070.png" class="">
-
-<h4 id="10-添加自启动项"><a href="#10-添加自启动项" class="headerlink" title="10.添加自启动项"></a>10.添加自启动项</h4><p>当前版本默认情况下没有设置自启动项,当接收到添加启动项的命令时,获取当前执行的文件名和命令行，并为其创建注册表值,键名使用VideoCodes作为伪装，键名为启动时要执行的命令行。  </p>
-<img src="/post/1364ae67/clip_image072.png" class="">
-
+<h4 id="8-C-amp-C指令"><a href="#8-C-amp-C指令" class="headerlink" title="8.     C&amp;C指令"></a>8.     C&amp;C指令</h4><p>从shellcode中能够执行的指令来看，它不仅仅是作为一个下载器和加载器，还能够执行各种脚本文件和从C&amp;C服务器下发的shellcode，这也是JSSLoader的命名原因。<br><img src="1364ae67/clip_image056.png">   </p>
+<h4 id="9-执行脚本文件"><a href="#9-执行脚本文件" class="headerlink" title="9.     执行脚本文件"></a>9.     执行脚本文件</h4><p>a)      使用cscript来执行js文件<br><img src="1364ae67/clip_image058.png"><br>b)      使用csript来执行vbs文件<br><img src="1364ae67/clip_image060.png"><br>c)      执行任意powershell命令<br><img src="1364ae67/clip_image062.png"><br>d)      通过ReadAllText读取文件内容并作为powershell命令传递给poershell。<br><img src="1364ae67/clip_image064.png"></p>
+<h4 id="7-直接在内存中执行shellcode"><a href="#7-直接在内存中执行shellcode" class="headerlink" title="7.直接在内存中执行shellcode"></a>7.直接在内存中执行shellcode</h4><p>         从C&amp;C服务器接收的shellcode为十六进制字符串,需要先转成十六进制数据然后拷贝到分配的可执行内存中，创建一个线程将shellcode作为线程函数执行。<br><img src="1364ae67/clip_image066.png"></p>
+<h4 id="8-执行可执行文件"><a href="#8-执行可执行文件" class="headerlink" title="8.执行可执行文件"></a>8.执行可执行文件</h4><p>         从C&amp;C服务器接收要执行的文件数据和执行时需要的参数，将文件保存为随机名然后以隐藏窗口的方式执行。<br><img src="1364ae67/clip_image068.png">        </p>
+<h4 id="9-执行DLL文件"><a href="#9-执行DLL文件" class="headerlink" title="9.执行DLL文件"></a>9.执行DLL文件</h4><p>从C&amp;C服务器接收要执行的dll文件和要调用的导出函数以及参数值，调用程序rundll32来执行dll文件。<br><img src="1364ae67/clip_image070.png"></p>
+<h4 id="10-添加自启动项"><a href="#10-添加自启动项" class="headerlink" title="10.添加自启动项"></a>10.添加自启动项</h4><p>当前版本默认情况下没有设置自启动项,当接收到添加启动项的命令时,获取当前执行的文件名和命令行，并为其创建注册表值,键名使用VideoCodes作为伪装，键名为启动时要执行的命令行。  <br><img src="1364ae67/clip_image072.png"></p>
 <h4 id="11-创建任务计划"><a href="#11-创建任务计划" class="headerlink" title="11. 创建任务计划"></a>11. 创建任务计划</h4><p>&emsp;&emsp; C&amp;C指令中有3个指令的功能是创建计划任务，主要实现原理一样，不同之处在创建计划任务时使用不同的参数。使用一个结构来描述创建计划任务时设置的参数,</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span>  <span class="title class_">tasksche_ctx</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//前面3个为创建计划任务时需要的com对象</span></span><br><span class="line">  ITaskService *taskService;</span><br><span class="line">  ITaskFolder *taskFolder;</span><br><span class="line">  IRegisteredTask RegisteredTask;</span><br><span class="line">  <span class="comment">//不同C&amp;C指令创建计划任务时改变的是下列参数</span></span><br><span class="line">  <span class="type">char</span>* command;         <span class="comment">//计划任务执行的命令</span></span><br><span class="line">  <span class="type">char</span> *arguments;       <span class="comment">//创建计划任务时使用的参数</span></span><br><span class="line">  <span class="type">char</span>* task;         <span class="comment">//计划任务名</span></span><br><span class="line">  _DWORD interval;       <span class="comment">//创建计划任务时设置启动的事件间隔</span></span><br><span class="line">  _DWORD TriggerType;     <span class="comment">//计划任务的触发类型</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
@@ -596,22 +530,11 @@ var _hmt = _hmt || [];
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-16&quot;?&gt;</span><br><span class="line">  &lt;Task version=&quot;1.2&quot; xmlns=&quot;http://schemas.microsoft.com/windows/2004/02/mit/task&quot;&gt;</span><br><span class="line">  &lt;RegistrationInfo&gt;</span><br><span class="line">&lt;Date&gt;</span><br><span class="line">%04u-%02u-%02uT%02u:%02u:%02u.%u //当前时间</span><br><span class="line">&lt;/Date&gt;</span><br><span class="line">//如果存在accoutName，才会设置Author</span><br><span class="line">&lt;Author&gt;</span><br><span class="line">  &#123;当前用户名&#125;</span><br><span class="line">&lt;/Author&gt;</span><br><span class="line">&lt;Description&gt;CamVideoApp update&lt;/Description&gt;</span><br><span class="line">&lt;URI&gt;\Task CamVideoApp Update&lt;/URI&gt;</span><br><span class="line">&lt;/RegistrationInfo&gt;</span><br><span class="line">&lt;Triggers&gt;</span><br><span class="line">//触发类型为2时设置为如下值</span><br><span class="line">&lt;LogonTrigger&gt;</span><br><span class="line">&lt;Enabled&gt;true&lt;/Enabled&gt;</span><br><span class="line">&lt;UserId&gt;&#123;当前用户SID&#125;&lt;/UserId&gt;</span><br><span class="line">&lt;/LogonTrigger&gt;</span><br><span class="line">&lt;TimeTrigger&gt;</span><br><span class="line">&lt;StartBoundary&gt;</span><br><span class="line">04u-%02u-%02uT%02u:%02u:%02u //当前时间</span><br><span class="line">&lt;/StartBoundary&gt;</span><br><span class="line">&lt;Enabled&gt;true&lt;/Enabled&gt;</span><br><span class="line">&lt;/TimeTrigger&gt;</span><br><span class="line">&lt;/Triggers&gt;</span><br><span class="line">&lt;Principals&gt;</span><br><span class="line">&lt;Principal id=&quot;Author&quot;&gt;</span><br><span class="line">&lt;UserId&gt;&#123;AccountSid&#125;&lt;/UserId&gt;</span><br><span class="line">&lt;LogonType&gt;InteractiveToken&lt;/LogonType&gt;</span><br><span class="line">&lt;RunLevel&gt;LeastPrivilege&lt;/RunLevel&gt;</span><br><span class="line">&lt;/Principal&gt;</span><br><span class="line">&lt;/Principals&gt;</span><br><span class="line">&lt;Settings&gt;</span><br><span class="line">//如果当前计划任务实例已经启动, 不会创建新的 </span><br><span class="line">&lt;MultipleInstancesPolicy&gt;IgnoreNew&lt;/MultipleInstancesPolicy&gt;</span><br><span class="line">//允许计算机在使用电源模式时启动计划任务 </span><br><span class="line">&lt;DisallowStartIfOnBatteries&gt;false&lt;/DisallowStartIfOnBatteries&gt;</span><br><span class="line">//在计算机使用电池模式的时候不终止计划任务 </span><br><span class="line">&lt;StopIfGoingOnBatteries&gt;false&lt;/StopIfGoingOnBatteries&gt;</span><br><span class="line">//允许TerminateProcess 终止计划任务 </span><br><span class="line">&lt;AllowHardTerminate&gt;true&lt;/AllowHardTerminate&gt;</span><br><span class="line">//错过时间时等待下一次启动时间</span><br><span class="line">&lt;StartWhenAvailable&gt;false&lt;/StartWhenAvailable&gt;</span><br><span class="line">//在没有网络时也启动该计划任务</span><br><span class="line">&lt;RunOnlyIfNetworkAvailable&gt;false&lt;/RunOnlyIfNetworkAvailable&gt;</span><br><span class="line">//机器空闲时计划任务设置</span><br><span class="line">&lt;IdleSettings&gt;</span><br><span class="line">&lt;Duration&gt;PT10M&lt;/Duration&gt;      //间隔10分钟执行</span><br><span class="line">&lt;WaitTimeout&gt;PT1H&lt;/WaitTimeout&gt; //超时时间1h</span><br><span class="line">&lt;StopOnIdleEnd&gt;true&lt;/StopOnIdleEnd&gt; //空闲结束时结束计划任务</span><br><span class="line">&lt;RestartOnIdle&gt;false&lt;/RestartOnIdle&gt;//多次进入空闲时不启动计划任务</span><br><span class="line">&lt;/IdleSettings&gt;</span><br><span class="line">&lt;AllowStartOnDemand&gt;true&lt;/AllowStartOnDemand&gt;</span><br><span class="line">&lt;Enabled&gt;true&lt;/Enabled&gt;</span><br><span class="line">&lt;Hidden&gt;false&lt;/Hidden&gt;</span><br><span class="line">&lt;RunOnlyIfIdle&gt;false&lt;/RunOnlyIfIdle&gt;</span><br><span class="line">&lt;WakeToRun&gt;false&lt;/WakeToRun&gt;</span><br><span class="line">//72小时后关闭该计划任务</span><br><span class="line">&lt;ExecutionTimeLimit&gt;PT72H&lt;/ExecutionTimeLimit&gt;</span><br><span class="line">&lt;Priority&gt;7&lt;/Priority&gt;</span><br><span class="line">&lt;/Settings&gt;</span><br><span class="line">&lt;Actions Context=&quot;Author&quot;&gt;</span><br><span class="line">&lt;Exec&gt;</span><br><span class="line">&lt;Command&gt;&#123;使用命令&#125;&lt;/Command&gt;</span><br><span class="line">&lt;Arguments&gt;&#123;命令行参数&#125;&lt;/Arguments&gt;  </span><br><span class="line">&lt;/Exec&gt;</span><br><span class="line">&lt;/Actions&gt;</span><br><span class="line">&lt;/Task&gt;</span><br></pre></td></tr></table></figure>
 
 
-<p>&emsp;&emsp;当接收到的C&amp;C指令ID为4时, 从C&amp;C接收要下载的文件和执行文件时需要的命令行参数，将文件保存为随机名并为其创建计划任务。其中间隔时间为300秒，设置计划任务名为” Task CamVideoApp Update”，但是在注册计划任务的时候并没有用到而是使用”CamVideoApp update”作为默认计划任务名。触发类型为2表示创建LogonTrigger触发器。</p>
-<img src="/post/1364ae67/clip_image074.png" class="">
-<p>C&amp;C指令0x12与0x13的功能相似, 唯一区别就是0x12不会创建LogonTrigger触发器而0x13会创建。从C&amp;C接收要执行的文件和创建计划任务时需要的参数，从C&amp;C接收的各个参数使用分隔符”|”分隔。</p>
-<img src="/post/1364ae67/clip_image076.png" class="">
-
-<h4 id="12-outlook邮件联系人收集"><a href="#12-outlook邮件联系人收集" class="headerlink" title="12.outlook邮件联系人收集"></a>12.outlook邮件联系人收集</h4><p>&emsp;&emsp;当前版本的JSSLoader使用Microsoft的MAPI(邮件应用程序接口)来与Outlook进行交互。首先动态加载mapi32.dll，并获取相关API地址将其保存到自定义的结构中。</p>
-<img src="/post/1364ae67/clip_image078.png" class="">
-<p> 通过MAPI接口从outlook的地址簿中收集所有邮件联系人。</p>
-<img src="/post/1364ae67/clip_image080.png" class="">
-
+<p>&emsp;&emsp;当接收到的C&amp;C指令ID为4时, 从C&amp;C接收要下载的文件和执行文件时需要的命令行参数，将文件保存为随机名并为其创建计划任务。其中间隔时间为300秒，设置计划任务名为” Task CamVideoApp Update”，但是在注册计划任务的时候并没有用到而是使用”CamVideoApp update”作为默认计划任务名。触发类型为2表示创建LogonTrigger触发器。<br><img src="1364ae67/clip_image074.png"><br>C&amp;C指令0x12与0x13的功能相似, 唯一区别就是0x12不会创建LogonTrigger触发器而0x13会创建。从C&amp;C接收要执行的文件和创建计划任务时需要的参数，从C&amp;C接收的各个参数使用分隔符”|”分隔。<br><img src="1364ae67/clip_image076.png"></p>
+<h4 id="12-outlook邮件联系人收集"><a href="#12-outlook邮件联系人收集" class="headerlink" title="12.outlook邮件联系人收集"></a>12.outlook邮件联系人收集</h4><p>&emsp;&emsp;当前版本的JSSLoader使用Microsoft的MAPI(邮件应用程序接口)来与Outlook进行交互。首先动态加载mapi32.dll，并获取相关API地址将其保存到自定义的结构中。<br><img src="1364ae67/clip_image078.png"><br> 通过MAPI接口从outlook的地址簿中收集所有邮件联系人。<br><img src="1364ae67/clip_image080.png"></p>
 <h4 id="13-注入恶意规则到outlook执行持久化"><a href="#13-注入恶意规则到outlook执行持久化" class="headerlink" title="13.注入恶意规则到outlook执行持久化"></a>13.注入恶意规则到outlook执行持久化</h4><p>&emsp;&emsp;Outlook恶意规则可用于通过创建执行恶意程序的规则在实现恶意程序在windows实现持久化。<br>&emsp;&emsp;该规则可以设置为在目标接收到邮件主题中包含特定关键字的电子邮件时执行和安装恶意程序。<br>&emsp;&emsp;首先从contentsTable中获取存储默认接收的消息表。</p>
-<img src="/post/1364ae67/clip_image082.png" class="">
-<p>每一个消息存储都存在一个默认的接收文件夹,一般来说就是收件夹。获取收件夹的EntryID来打开收件夹。</p>
-<img src="/post/1364ae67/clip_image084.png" class="">
-<p>填充需要注入的恶意规则，然后将消息保存到Exchange服务器。</p>
-<img src="/post/1364ae67/clip_image086.png" class="">
+<p><img src="1364ae67/clip_image082.png"><br>每一个消息存储都存在一个默认的接收文件夹,一般来说就是收件夹。获取收件夹的EntryID来打开收件夹。<br><img src="1364ae67/clip_image084.png"><br>填充需要注入的恶意规则，然后将消息保存到Exchange服务器。<br><img src="1364ae67/clip_image086.png"></p>
+
 				  
 	  
       
@@ -871,7 +794,7 @@ var _hmt = _hmt || [];
 		<span> 11 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">21.5k</span></span>
+		<span> <span class="post-count">25.3k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->

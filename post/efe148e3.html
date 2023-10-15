@@ -7,21 +7,26 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <meta http-equiv="Content-Language" content="zh-cn">
   <link rel="dns-prefetch" href="http://shxi.cc">
-  <title>标签:  | ydc&#39;s Blog</title>
+  <title>mbr结构和代码分析 | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下  bootcode代码以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)， 第一块选区0x000~0x162为MBR的可执行代码 第二块选区0x163~0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符 第三块选区0x1be~0x1fd为分区表。">
-<meta property="og:type" content="website">
+  <meta name="description" content="很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下  bootcode代码以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)，  第一块选区0x000-0x162为MBR的可执行代码第二块选区0x163-0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符第三块选区0x1be-0x1fd为分区表。">
+<meta property="og:type" content="article">
 <meta property="og:title" content="mbr结构和代码分析">
-<meta property="og:url" content="http://shxi.cc/other/2020-04-12-mbr%E7%BB%93%E6%9E%84%E5%92%8C%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90.html">
+<meta property="og:url" content="http://shxi.cc/post/efe148e3.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下  bootcode代码以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)， 第一块选区0x000~0x162为MBR的可执行代码 第二块选区0x163~0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符 第三块选区0x1be~0x1fd为分区表。">
+<meta property="og:description" content="很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下  bootcode代码以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)，  第一块选区0x000-0x162为MBR的可执行代码第二块选区0x163-0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符第三块选区0x1be-0x1fd为分区表。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://shxi.cc/post/efe148e3/clip_image001.png">
+<meta property="og:image" content="http://shxi.cc/post/efe148e3/clip_image002.png">
+<meta property="og:image" content="http://shxi.cc/post/efe148e3/clip_image003.png">
+<meta property="og:image" content="http://shxi.cc/post/efe148e3/clip_image004.png">
 <meta property="article:published_time" content="2020-04-12T12:11:40.000Z">
-<meta property="article:modified_time" content="2023-02-04T12:13:10.828Z">
+<meta property="article:modified_time" content="2023-10-15T03:58:37.839Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://shxi.cc/post/efe148e3/clip_image001.png">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -314,20 +319,20 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="page-" class="article article-type-page " itemscope itemprop="blogPost">
+            <article id="post-mbr结构和代码分析" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title_code_ant" itemprop="name">
-	  <a href="/other/2020-04-12-mbr%E7%BB%93%E6%9E%84%E5%92%8C%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90.html">mbr结构和代码分析</a>
+	  <a href="/post/efe148e3.html">mbr结构和代码分析</a>
 	</h1>
   
 
         
 		
-		  <a href="/other/2020-04-12-mbr%E7%BB%93%E6%9E%84%E5%92%8C%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90.html" class="archive-article-date">
+		  <a href="/post/efe148e3.html" class="archive-article-date">
   	<time datetime="2020-04-12T12:11:40.000Z" itemprop="datePublished">
 	<!-- <i class="icon-calendar icon"></i> -->
 
@@ -352,7 +357,7 @@ var _hmt = _hmt || [];
 		&nbsp; &nbsp; &nbsp;
 		<i class="fa fa-eye" aria-hidden="true"></i>
 		&nbsp;
-		<span class="waline-pageview-count" data-path="/other/2020-04-12-mbr结构和代码分析.html"><i class="fa fa-spinner fa-spin"></i></span>
+		<span class="waline-pageview-count" data-path="/post/efe148e3.html"><i class="fa fa-spinner fa-spin"></i></span>
 	</span>
 	
 
@@ -382,7 +387,7 @@ var _hmt = _hmt || [];
 	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
         <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
         <span class="post-meta-item-text">字数统计: </span>
-        <span class="post-count">4k字</span>
+        <span class="post-count">4.1k字</span>
       </span>
     </span>
 
@@ -409,16 +414,13 @@ var _hmt = _hmt || [];
 		  <blockquote>
 <p>很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下</p>
 </blockquote>
-<h1 id="bootcode代码"><a href="#bootcode代码" class="headerlink" title="bootcode代码"></a>bootcode代码</h1><p>以WIN7为例(bootcode代码,win7到win10都一样)，<br>MBR大小为1个扇区，大小为512(0x200)，</p>
-<pre><code>第一块选区0x000~0x162为MBR的可执行代码
-第二块选区0x163~0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符
-第三块选区0x1be~0x1fd为分区表。
-</code></pre>
-
-
+<h1 id="bootcode代码"><a href="#bootcode代码" class="headerlink" title="bootcode代码"></a>bootcode代码</h1><p>以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)，</p>
+<blockquote>
+<p>第一块选区0x000-0x162为MBR的可执行代码<br>第二块选区0x163-0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符<br>第三块选区0x1be-0x1fd为分区表。</p>
+</blockquote>
+ <img src="/post/efe148e3/clip_image001.png" class="">
 <span id="more"></span>
-<p>0x1b5处值为错误信息字符串的偏移，这里值为0x63,再加上0x100就是0x163，即字符串偏移，刚好为第二块选区。<br>不同版本该值不一样，如xp的为0x2c ,Vista为0x62,win 7到win10系统为0x63。</p>
-<p>要检测mbr有没有被修改，我们可以对正常mbr代码区域算个sha256作为白名单，<br>计算代码开始到错误提示字符串的代码部分hash256，在这个例子是win7,错误提示字符串为0x163,也就是计算从0到0x162部分的sha256<br>与白名单sha256比较是否一样；不一样，则mbr被修改了。</p>
+<p>&emsp;&emsp;0x1b5处值为错误信息字符串的偏移，这里值为0x63,再加上0x100就是0x163，即字符串偏移，刚好为第二块选区。<br>不同版本该值不一样，如xp的为0x2c ,Vista为0x62,win 7到win10系统为0x63。<br>&emsp;&emsp;要检测mbr有没有被修改，我们可以对正常mbr代码区域算个sha256作为白名单，<br>计算代码开始到错误提示字符串的代码部分hash256，在这个例子是win7,错误提示字符串为0x163,也就是计算从0到0x162部分的sha256<br>与白名单sha256比较是否一样；不一样，则mbr被修改了。</p>
 <table>
 <thead>
 <tr>
@@ -448,16 +450,17 @@ var _hmt = _hmt || [];
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_PARTITION</span></span><br><span class="line">&#123;</span><br><span class="line">    BYTE bootIndicator ;           <span class="comment">// 自举标志(0x80为活动分区,0x0为非活动分区)</span></span><br><span class="line">    BYTE head;                          <span class="comment">//  起始磁头号</span></span><br><span class="line">    Word sector:<span class="number">10</span> ;                   <span class="comment">// 起始扇区号</span></span><br><span class="line">    Word cylinder:<span class="number">6</span> ;              <span class="comment">// 起始柱面号CYL</span></span><br><span class="line">    BYTE type ;                         <span class="comment">// 分区格式标志 https://en.wikipedia.org/wiki/Partition_type</span></span><br><span class="line">    BYTE lastHead ;                  <span class="comment">// 终止磁头号</span></span><br><span class="line">    Word lastSector:<span class="number">10</span>;             <span class="comment">// 终止扇区号</span></span><br><span class="line">    Word lastCylinder:<span class="number">6</span> ;        <span class="comment">// 终止柱面号CYL</span></span><br><span class="line">    DWORD relativeSector ;     <span class="comment">// 本分区之前已用扇区数，可以理解为起始位置</span></span><br><span class="line">    DWORD numberSectors ;  <span class="comment">// 本分区扇区总数</span></span><br><span class="line">&#125; PARTITION ;</span><br></pre></td></tr></table></figure>
 
 
-<p>活动分区的首个扇区为VBR,同样只有一个扇区。开头eb 52 90是直接跳过bpb结构到bootStrapCode执行代码。<br>第一块选区 0xb   -0x53为BIOS Parameter Block，即NTFS_BPB结构。<br>第二块选区 0x54 -0x18b为bootStrapCode代码区域<br>第三块选取 0x18c-0x1f6为错误显示字符串，引导系统失败时显示该字符串</p>
-
-
+<p>活动分区的首个扇区为VBR,同样只有一个扇区。开头eb 52 90是直接跳过bpb结构到bootStrapCode执行代码。</p>
+<blockquote>
+<p>第一块选区 0xb-0x53为BIOS Parameter Block，即NTFS_BPB结构。<br>第二块选区 0x54 -0x18b为bootStrapCode代码区域<br>第三块选取 0x18c-0x1f6为错误显示字符串，引导系统失败时显示该字符串</p>
+</blockquote>
+<p><img src="efe148e3/clip_image002.png"></p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_NTFS_VOLUME_BOOT_RECORD</span></span><br><span class="line">&#123;</span><br><span class="line">    BYTE jumpInstruction [<span class="number">3</span>];  <span class="comment">// eb 52 90</span></span><br><span class="line">    BYTE oemID [<span class="number">4</span>];  <span class="comment">//“NTFS”</span></span><br><span class="line"></span><br><span class="line">    BYTE dummy [<span class="number">4</span>]; <span class="comment">// 20 20 20 20</span></span><br><span class="line">    NTFS_BPB bpb;</span><br><span class="line">    BYTE bootStrapCode [<span class="number">426</span>];</span><br><span class="line">    WORD sectorEndSignature ;<span class="comment">// 55 aa</span></span><br><span class="line">&#125; NTFS_VOLUME_BOOT_RECORD </span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h1 id="BIOS-Parameter-Block"><a href="#BIOS-Parameter-Block" class="headerlink" title="BIOS Parameter Block"></a>BIOS Parameter Block</h1><p>该结构体提供了NTFS文件系统的一些信息</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">struct NTFS_BPB</span><br><span class="line">&#123;</span><br><span class="line">    WORD bytesPerSector ;//每扇区字节数</span><br><span class="line">    BYTE sectorsPerCluster ; //每簇扇区数，簇是ntfs文件系统的基本单位</span><br><span class="line">    WORD reservedSectors ; </span><br><span class="line">    BYTE fatCopies ;  </span><br><span class="line">    WORD rootDirEntries ;</span><br><span class="line">    WORD smallSectors ;</span><br><span class="line">    BYTE mediaDescriptor ;//介质描述符 硬盘为0xf8</span><br><span class="line">    WORD sectorsPerFAT ;</span><br><span class="line">    WORD sectorsPerTrack ;//每磁道扇区数 ntfs不用</span><br><span class="line">    WORD numberOfHeads ;//磁头数 ntfs不用</span><br><span class="line">    DWORD hiddenSectors ; //隐藏扇区数 ① </span><br><span class="line">    DWORD largeSectors ;</span><br><span class="line">    DWORD reserved ;</span><br><span class="line">    ULONGLONG totalSectors ; //扇区总数</span><br><span class="line">    ULONGLONG MFTLogicalClusterNumber ;//$MFT起始簇号</span><br><span class="line">    ULONGLONG MirrorLogicalClusterNumber ;$MFTMir起始簇号</span><br><span class="line">    DWORD clustersPerMFTRecord ;</span><br><span class="line">    DWORD clustersPerindexRecord ;</span><br><span class="line">    ULONGLONG volumeSerial ;//卷序列号</span><br><span class="line">    DWORD checksum ;//效验和</span><br><span class="line">&#125; bpb ;</span><br></pre></td></tr></table></figure>
 
-<p>VBR和MBR一样，也可以根据错误显示字符串的偏移来推测出操作系统的版本，0x1f8处值为第一个错误信息字符串的偏移，此处值为0x8c,加上0x100即0x18c,该偏移就是错误信息字符串区域。<br>对于vbr也可以通过计算正常vbr代码区域的sha256作为白名单，</p>
-<p>vbr代码sha256计算，<br>应该计算 “eb 50 90”(也是代码)+ vbr代码区域 即0x54到错误信息字符串前。</p>
+<p>&emsp;&emsp;VBR和MBR一样，也可以根据错误显示字符串的偏移来推测出操作系统的版本，0x1f8处值为第一个错误信息字符串的偏移，此处值为0x8c,加上0x100即0x18c,该偏移就是错误信息字符串区域。<br>&emsp;&emsp;对于vbr也可以通过计算正常vbr代码区域的sha256作为白名单，vbr代码sha256计算，应该计算 “eb 50 90”(也是代码)+ vbr代码区域 即0x54到错误信息字符串前。</p>
 <table>
 <thead>
 <tr>
@@ -487,14 +490,9 @@ var _hmt = _hmt || [];
 <td align="center">51643dcce7e93d795b08e1f19e38374ae4deaf3b1217527561a44aa9913ded23</td>
 </tr>
 </tbody></table>
-<p>VBR加载IPL的代码，在IPL中解析NTFS格式定位bootmgr位置</p>
-<p>IPL的位置由VBR 的NTFS_BPB的hiddenSectors字段(相对于扇区起始位置0x1c)指定，即IPL的初始扇区。 </p>
-<p>IPL同样可以使用白名单来验证IPL是否被修改。IPL共15个扇区，但因为最后一个扇区有时会保存于引导启动无关的数据，因此只计算前面14个扇区的IPL。</p>
-<p>左边为win7,右边为win10 ,从win 8以后，IPL区域增加了  引导程序启动失败时显示的字符。该字符串偏移 由0x177-0x178处指定。<br>“An operating system wasn’t found. Try disconnecting any drives that don’t contain an operating system.”</p>
-
-
-<p>Win7以下则计算14个扇区的sha256，win8 以上则需要排除掉两个地方：错误信息字符串和保存该字符串索引的位置0x117~0x118。</p>
-<p>右图win10的sha256就是计算 0x200~0x299 + 0x319-第十四扇区结束。<br>我们可以根据 0x256处的跳转指来来判断对应的操作系统：<br>如果是e9,则是win8及以上。</p>
+<p>&emsp;&emsp;VBR加载IPL的代码，在IPL中解析NTFS格式定位bootmgr位置<br>&emsp;&emsp;IPL的位置由VBR 的NTFS_BPB的hiddenSectors字段(相对于扇区起始位置0x1c)指定，即IPL的初始扇区。<br>&emsp;&emsp;IPL同样可以使用白名单来验证IPL是否被修改。IPL共15个扇区，但因为最后一个扇区有时会保存于引导启动无关的数据，因此只计算前面14个扇区的IPL。<br>&emsp;&emsp;左边为win7,右边为win10 ,从win 8以后，IPL区域增加了  引导程序启动失败时显示的字符。该字符串偏移 由0x177-0x178处指定。<br>“An operating system wasn’t found. Try disconnecting any drives that don’t contain an operating system.”</p>
+<p><img src="efe148e3/clip_image003.png"></p>
+<p>&emsp;&emsp;Win7以下则计算14个扇区的sha256，win8 以上则需要排除掉两个地方：错误信息字符串和保存该字符串索引的位置0x117-0x118。<br>&emsp;&emsp;右图win10的sha256就是计算 0x200~0x299 + 0x319-第十四扇区结束。我们可以根据 0x256处的跳转指来来判断对应的操作系统：<br>如果是e9,则是win8及以上。</p>
 <table>
 <thead>
 <tr>
@@ -520,16 +518,16 @@ var _hmt = _hmt || [];
 </tr>
 </tbody></table>
 <p>上列结构都是针对代码部分做的检测，如果bootkit改动的不是代码，而是改分区表或者BPB的hiddenSectors 字段，则不能检测到是否被感染</p>
-<h1 id="正常系统boot引导代码"><a href="#正常系统boot引导代码" class="headerlink" title="正常系统boot引导代码"></a>正常系统boot引导代码</h1><p>设置好调试环境后，附加到gdb调试，这时会在bios启动后的第一条指令处断下<br>BIOS会 把MBR加载到0x7c00;这时候所有的段都是0x0,<br>MBR运行在实模式下，地址都是16bit。<br>在0x7c00设置断点，调整段为16bit，</p>
+<h1 id="正常系统boot引导代码"><a href="#正常系统boot引导代码" class="headerlink" title="正常系统boot引导代码"></a>正常系统boot引导代码</h1><p>&emsp;&emsp;设置好调试环境后，附加到gdb调试，这时会在bios启动后的第一条指令处断下BIOS会 把MBR加载到0x7c00;这时候所有的段都是0x0,<br>MBR运行在实模式下，地址都是16bit。在0x7c00设置断点，调整段为16bit，</p>
 <h2 id="MBR"><a href="#MBR" class="headerlink" title="MBR"></a>MBR</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">MEMORY:7C00 loc_7C00:                               </span><br><span class="line">MEMORY:7C00 xor     ax, ax</span><br><span class="line">MEMORY:7C02 mov     ss, ax</span><br><span class="line">MEMORY:7C04 mov     sp, 7C00h </span><br><span class="line">MEMORY:7C07 mov     es, ax</span><br><span class="line">MEMORY:7C09 mov     ds, ax</span><br><span class="line">MEMORY:7C0B mov     si, 7C00h</span><br><span class="line">MEMORY:7C0E mov     di, 600h</span><br><span class="line">MEMORY:7C11 mov     cx, 200h</span><br><span class="line">MEMORY:7C14 cld</span><br><span class="line">MEMORY:7C15 rep movsb ；把MBR从0x7c00拷贝到0x600,大小为0x200</span><br><span class="line">MEMORY:7C17 push    ax</span><br><span class="line">MEMORY:7C18 push    61Ch</span><br><span class="line">MEMORY:7C1B retf</span><br></pre></td></tr></table></figure>
 
 <p>找到分区表的活动分区</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">MEMORY:061C FB                sti</span><br><span class="line">MEMORY:061D B9 04 00          mov     cx, 4；最多只有四个主分区</span><br><span class="line">MEMORY:0620 BD BE 07          mov     bp, 7BEh；分区表偏移(0x600+0x1be)</span><br><span class="line">MEMORY:0623                   loc_623:                               </span><br><span class="line">MEMORY:0623 80 7E 00 00       cmp     byte ptr [bp+0], 0；MBR的bootIndicator的最高位为1则为活动分区，因此如果小于0，则最高位为1，找到活动分区，</span><br><span class="line">                                                                                     ；一些旧的mbr只支持0x80和0x00两个有效值</span><br><span class="line">MEMORY:0627 7C 0B             jl      short loc_634                  ;如果小于0，找到活动分区，</span><br><span class="line">MEMORY:0629 0F 85 0E 01       jnz     loc_73B；如果大于0,跳转到错误处理，在屏幕上显示Invalid partition table</span><br><span class="line">                                                                                ;因为0x01~0x7f在bootIndicator为无效值 </span><br><span class="line">MEMORY:062D 83 C5 10         add     bp, 10h ；等于0，则找下一个分区表</span><br><span class="line">MEMORY:0630 E2 F1             loop    loc_623</span><br><span class="line">MEMORY:0632 CD 18             int     18h                              </span><br></pre></td></tr></table></figure>
 
-<p>调用int 13,功能号41. 检测是否支持int 13扩展功能。<br>执行int 13中断功能号42后，会将返回信息存放在ah,bx和cx寄存器。<br>如果支持int 13扩展，则cf为0，bx为0xaa55,cx最低位为1.</p>
+<p>调用int 13,功能号41. 检测是否支持int 13扩展功能。执行int 13中断功能号42后，会将返回信息存放在ah,bx和cx寄存器。如果支持int 13扩展，则cf为0，bx为0xaa55,cx最低位为1.</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">MEMORY:0634 mov     [bp+0], dl</span><br><span class="line">MEMORY:0637 push    bp</span><br><span class="line">MEMORY:0638 mov     byte ptr [bp+11h], 5</span><br><span class="line">MEMORY:063C mov     byte ptr [bp+10h], 0</span><br><span class="line">MEMORY:0640 mov     ah, 41h ; &#x27;A&#x27;</span><br><span class="line">MEMORY:0642 mov     bx, 55AAh</span><br><span class="line">MEMORY:0645 int     13h                             ; DISK - Check for INT 13h Extensions</span><br><span class="line">MEMORY:0645                                         ; BX = 55AAh, DL = 驱动号</span><br><span class="line">MEMORY:0645                                         ; Return: 如果不支持则设置cf为1</span><br><span class="line">MEMORY:0645                                         ; AH = 扩展版本号(不需要关心)</span><br><span class="line">MEMORY:0645                                         ; BX = AA55h</span><br><span class="line">MEMORY:0645                                         ; CX = Interface support bit map</span><br><span class="line">MEMORY:0647 pop     bp                       ;0x7be 分区表偏移</span><br><span class="line">MEMORY:0648 jb      short loc_659        ；cf为1，则跳转，</span><br><span class="line">MEMORY:064A cmp     bx, 0AA55h</span><br><span class="line">MEMORY:064E jnz     short loc_659</span><br><span class="line">MEMORY:0650 test    cx, 1</span><br><span class="line">MEMORY:0654 jz      short loc_659</span><br><span class="line">MEMORY:0656 inc     byte ptr [bp+10h]   ;[bp+10]为是否支持的int 13扩展的标志，</span><br><span class="line">                                                                   ;后面比较这个值来判断是否支持int 13扩展的功能</span><br></pre></td></tr></table></figure>
 
-<p>扩展int 13读硬盘<br>在堆栈上构建调用int 13扩展读所需要的参数块，<br>在这里将活动分区的VBR拷贝到0x7c00偏移处。<br>如果从硬盘读取VBR数据成功，则cf=0，ah=0</p>
+<p>扩展int 13读硬盘,在堆栈上构建调用int 13扩展读所需要的参数块，在这里将活动分区的VBR拷贝到0x7c00偏移处。如果从硬盘读取VBR数据成功，则cf=0，ah=0</p>
 <table>
 <thead>
 <tr>
@@ -574,18 +572,14 @@ var _hmt = _hmt || [];
 <p>设置ss、sp和ds的值</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">MEMORY:7C54 loc_7C54:</span><br><span class="line">MEMORY:7C54 cli</span><br><span class="line">MEMORY:7C55 xor     ax, ax</span><br><span class="line">MEMORY:7C57 mov     ss, ax</span><br><span class="line">MEMORY:7C59 mov     sp, 7C00h</span><br><span class="line">MEMORY:7C5C sti</span><br><span class="line">MEMORY:7C5D push    7C0h           ；设置ds</span><br><span class="line">MEMORY:7C60 pop     ds</span><br><span class="line">MEMORY:7C61 assume ds:nothing</span><br><span class="line">MEMORY:7C61 push    ds</span><br><span class="line">MEMORY:7C62 push    66h</span><br><span class="line">MEMORY:7C65 retf             ;retf弹出cs和ip，因此返回到0x7c0:66执行</span><br></pre></td></tr></table></figure>
 
-<p>根据VBR结构oemID来检测是否是 ntfs文件系统，如果不是，则在屏幕上显示 “Disk read error”<br>接着再检测是否支持int 13扩展读。</p>
-<p>因为后面需要调用Int 13中断的一些功能号42h-44h,47h,48h，而这些需要支持int 13扩展才能使用。而且标准的int13中断只能访问8gb以内大小的硬盘空间。<br>如果不支持就失败，显示错误信息。<br>执行int 13中断功能号42后，会将返回信息存放在ah,bx和cx寄存器。<br>如果支持int 13扩展，则cf为0，bx为0xaa55,cx为1.</p>
+<p>&emsp;&emsp;根据VBR结构oemID来检测是否是 ntfs文件系统，如果不是，则在屏幕上显示 “Disk read error”<br>接着再检测是否支持int 13扩展读。<br>&emsp;&emsp;因为后面需要调用Int 13中断的一些功能号42h-44h,47h,48h，而这些需要支持int 13扩展才能使用。而且标准的int13中断只能访问8gb以内大小的硬盘空间。如果不支持就失败，显示错误信息。<br>&emsp;&emsp;执行int 13中断功能号42后，会将返回信息存放在ah,bx和cx寄存器。如果支持int 13扩展，则cf为0，bx为0xaa55,cx为1.</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">MEMORY:7C66 loc_7C66:                               ; CODE XREF: MEMORY:7C65</span><br><span class="line">MEMORY:7C66 mov     ds:0Eh, dl</span><br><span class="line">MEMORY:7C6A cmp     dword ptr ds:3, &#x27;SFTN&#x27;</span><br><span class="line">MEMORY:7C73 jnz     short loc_7C8A</span><br><span class="line">MEMORY:7C75 mov     ah, 41h ; &#x27;A&#x27;</span><br><span class="line">MEMORY:7C77 mov     bx, 55AAh</span><br><span class="line">MEMORY:7C7A int     13h                         ; DISK - Check for INT 13h Extensions</span><br><span class="line">MEMORY:7C7A                                         ; BX = 55AAh, DL = drive number</span><br><span class="line">MEMORY:7C7A                                         ; Return: CF set if not supported</span><br><span class="line">MEMORY:7C7A                                         ; AH = extensions version</span><br><span class="line">MEMORY:7C7A                                         ; BX = AA55h</span><br><span class="line">MEMORY:7C7A                                         ; CX = Interface support bit map</span><br><span class="line">MEMORY:7C7C jb      short loc_7C8A  ;判断cf标志</span><br><span class="line">MEMORY:7C7E cmp     bx, 0AA55h ;判断返回的bx是不是等于0xaa55,不等于则失败</span><br><span class="line">MEMORY:7C82 jnz     short loc_7C8A</span><br><span class="line">MEMORY:7C84 test    cx, 1</span><br><span class="line">MEMORY:7C88 jnz     short loc_7C8D ;cx等于1，支持Int 13扩展</span><br><span class="line">MEMORY:7C8A</span><br><span class="line">MEMORY:7C8A loc_7C8A:                               </span><br><span class="line">MEMORY:7C8A                                          </span><br><span class="line">MEMORY:7C8A jmp     loc_7D6A</span><br><span class="line">;错误处理,调用int 10中断 在屏幕上打印字符串，并停止执行任何指令</span><br><span class="line">MEMORY:7D6A loc_7D6A:                               ; CODE XREF: MEMORY:loc_7C8A</span><br><span class="line">MEMORY:7D6A mov     al, byte_1F8        ；</span><br><span class="line">MEMORY:7D6D call    loc_7D79                 ; 显示 &quot;A disk read error occurred&quot; </span><br><span class="line">MEMORY:7D70 mov     al, byte_1FB</span><br><span class="line">MEMORY:7D73 call    loc_7D79                 ；显示 &quot;Press Ctrl+Alt+Del to restart&quot;</span><br><span class="line">MEMORY:7D76</span><br><span class="line">MEMORY:7D76 loc_7D76:                               ; CODE XREF: MEMORY:7D77</span><br><span class="line">MEMORY:7D76 hlt                                            ;cpu指令，cpu遇到该指令立即停止执行</span><br><span class="line">MEMORY:7D77 ; ---------------------------------------------------------------------------</span><br><span class="line">MEMORY:7D77 jmp     short loc_7D76</span><br><span class="line">MEMORY:7D79 ; ---------------------------------------------------------------------------</span><br><span class="line">MEMORY:7D79</span><br><span class="line">MEMORY:7D79 loc_7D79:                               ; CODE XREF: MEMORY:7D6D</span><br><span class="line">MEMORY:7D79                                         ; MEMORY:7D73</span><br><span class="line">MEMORY:7D79 mov     ah, 1                </span><br><span class="line">MEMORY:7D7B mov     si, ax                    ；ax为错误提示字符串 偏移，</span><br><span class="line">MEMORY:7D7D</span><br><span class="line">MEMORY:7D7D loc_7D7D:                               ; 调用int 10中断，每次在屏幕上显示一个字符</span><br><span class="line">MEMORY:7D7D lodsb</span><br><span class="line">MEMORY:7D7E cmp     al, 0</span><br><span class="line">MEMORY:7D80 jz      short locret_7D8B</span><br><span class="line">MEMORY:7D82 mov     ah, 0Eh</span><br><span class="line">MEMORY:7D84 mov     bx, 7</span><br><span class="line">MEMORY:7D87 int     10h                             ; - VIDEO - WRITE CHARACTER AND ADVANCE CURSOR (TTY WRITE)</span><br><span class="line">MEMORY:7D87                                         ; AL = character, BH = display page (alpha modes)</span><br><span class="line">MEMORY:7D87                                         ; BL = foreground color (graphics modes)</span><br><span class="line">MEMORY:7D89 jmp     short loc_7D7D</span><br><span class="line">MEMORY:7D8B ; ---------------------------------------------------------------------------</span><br><span class="line">MEMORY:7D8B</span><br><span class="line">MEMORY:7D8B locret_7D8B:                            ; CODE XREF: MEMORY:7D80</span><br><span class="line">MEMORY:7D8B retn</span><br></pre></td></tr></table></figure>
-
 
 <p>如果支持扩展int13中断调用，接下来调用int13中断获取硬盘信息</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MEMORY:7C8D loc_7C8D:                               ; CODE XREF: MEMORY:7C88</span><br><span class="line">MEMORY:7C8D push    ds</span><br><span class="line">MEMORY:7C8E sub     sp, 18h      ；在堆栈开辟buffer，用来保存int 13中断，功能号0x48调用后返回的信息</span><br><span class="line">MEMORY:7C91 push    1Ah</span><br><span class="line">MEMORY:7C94 mov     ah, 48h ; &#x27;H&#x27;</span><br><span class="line">MEMORY:7C96 mov     dl, ds:0Eh;在0x7c66处被赋值，驱动号，通常是0x80</span><br><span class="line">MEMORY:7C9A mov     si, sp ;ds:si为存放返回数据的buffer</span><br><span class="line">MEMORY:7C9C push    ss</span><br><span class="line">MEMORY:7C9D pop     ds   ;</span><br><span class="line">MEMORY:7C9E int     13h                             ; DISK - IBM/MS Extension - GET DRIVE PARAMETERS (DL - drive, DS:SI - buffer)</span><br></pre></td></tr></table></figure>
 
 <p>返回内容存放地址ds:si;  具体结构如下：</p>
-
-
-
+<p><img src="efe148e3/clip_image004.png"></p>
 <p>判断返回的数据是不是有效数据。不是就屏幕显示错误提示字符串</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">MEMORY:7CA0 lahf</span><br><span class="line">MEMORY:7CA1 add     sp, 18h；刚好指向扇区大小</span><br><span class="line">MEMORY:7CA4 sahf</span><br><span class="line">MEMORY:7CA5 pop   ax ; </span><br><span class="line">MEMORY:7CA6 pop   ds;恢复为0x7c00</span><br><span class="line">MEMORY:7CA7 jb       short loc_7C8A  ；错误处理，</span><br><span class="line">MEMORY:7CA9 cmp   ax, word_B  ； 和NTFS_BPB 的Bytes per Sector比较是不是相等，</span><br><span class="line">MEMORY:7CAD jnz     short loc_7C8A</span><br><span class="line"></span><br><span class="line">接下来准备调用int 13拷贝IPL的15个扇区。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">MEMORY:7CAF mov     word_F, ax </span><br><span class="line">MEMORY:7CB2 shr     word_F, 4 ;0x200&gt;&gt;4 =0x20</span><br><span class="line">MEMORY:7CB7 push    ds</span><br><span class="line">MEMORY:7CB8 pop     dx ;dx=0x7c0</span><br><span class="line">MEMORY:7CB9 xor     bx, bx</span><br><span class="line">MEMORY:7CBB mov     cx, 2000h</span><br><span class="line">MEMORY:7CBE sub     cx, ax ;0x2000为16个扇区大小，减去一个扇区大小0x200为0x1e00,</span><br><span class="line">                                       ;总共要拷贝的数据大小</span><br><span class="line">MEMORY:7CC0 inc     dword_11 </span><br></pre></td></tr></table></figure>
 
@@ -602,11 +596,10 @@ var _hmt = _hmt || [];
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MEMORY:7D0D xor     ax, ax</span><br><span class="line">MEMORY:7D0F mov     di, 1028h</span><br><span class="line">MEMORY:7D12 mov     cx, 0FD8h  ；4056空闲大小被清0</span><br><span class="line">MEMORY:7D15 cld</span><br><span class="line">MEMORY:7D16 rep stosb</span><br><span class="line">MEMORY:7D18 jmp     near ptr unk_7E7A；0x7e7a为IPL处代码</span><br></pre></td></tr></table></figure>
 
 
-<h2 id="IPL代码"><a href="#IPL代码" class="headerlink" title="IPL代码"></a>IPL代码</h2><p>IPL的15个扇区复制完毕后，接着便是解析NTFS文件系统 找到bootmgr文件。</p>
-<p>计算每簇所占的字节数</p>
+<h2 id="IPL代码"><a href="#IPL代码" class="headerlink" title="IPL代码"></a>IPL代码</h2><p>IPL的15个扇区复制完毕后，接着便是解析NTFS文件系统 找到bootmgr文件。计算每簇所占的字节数</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MEMORY:7E7A movzx   eax, word_B ;ds为0x7c00,隐藏word_b为0x7c0b,即</span><br><span class="line">                                                   ;BPB结构的bytesPerSector (每扇区字节数)字段</span><br><span class="line">MEMORY:7E80 movzx   ebx, byte_D  ;sectorsPerCluster 每簇扇区数，</span><br><span class="line">MEMORY:7E86 mul     ebx                    ;eax*ebx 计算每簇的字节数，簇是NTFS系统文件最小计量单位，</span><br><span class="line">MEMORY:7E89 mov     dword_252, eax</span><br></pre></td></tr></table></figure>
 
-<p>计算文件记录(File Record)的大小(文件记录 NTFS文件系统的名词)<br>当簇的大小大于文件记录的大小时，clustersPerMFTRecord的值为负数，但是大小是不可能为负的。举个栗子，这里值是0xf6,实际上是计算2^|-10|=1024</p>
+<p>计算文件记录(File Record)的大小(文件记录 NTFS文件系统的名词),当簇的大小大于文件记录的大小时，clustersPerMFTRecord的值为负数，但是大小是不可能为负的。举个栗子，这里值是0xf6,实际上是计算2^|-10|=1024</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">MEMORY:7E8D mov     ecx, dword_40; clustersPerMFTRecord每个文件记录所占的簇数 ，这里值为0xf6(-10)</span><br><span class="line">MEMORY:7E92 cmp     cl, 0  ;</span><br><span class="line">MEMORY:7E95 jg      loc_7EA7   ;大于0跳转，但是大部分是小于0的</span><br><span class="line">MEMORY:7E99 neg     cl         ;-(-10)</span><br><span class="line">MEMORY:7E9B mov     eax, 1</span><br><span class="line">MEMORY:7EA1 shl     eax, cl ;2^10</span><br><span class="line">MEMORY:7EA4 jmp     short loc_7EAE</span><br><span class="line">MEMORY:7EA6 nop</span><br><span class="line">MEMORY:7EA7</span><br><span class="line">MEMORY:7EA7 loc_7EA7:                               ; clustersPerMFTRecord值不是负数，直接相乘得到文件记录所占用的字节数</span><br><span class="line">MEMORY:7EA7 mov     eax, dword_252       ;0x7e52 每簇所占用字节数</span><br><span class="line">MEMORY:7EAB mul     ecx</span><br><span class="line">MEMORY:7EAE loc_7EAE:                               ; CODE XREF: MEMORY:7EA4</span><br><span class="line">MEMORY:7EAE mov     _byte_file_record, eax; _byte_file_record 0x7e66</span><br></pre></td></tr></table></figure>
 				  
 	  
@@ -631,15 +624,15 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2023年02月04日 20:13:10
+	2023年10月15日 11:58:37
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
-	<a href="http://shxi.cc/other/2020-04-12-mbr结构和代码分析.html" title="mbr结构和代码分析" target="_blank">mbr结构和代码分析</a> -->
+	<a href="http://shxi.cc/post/efe148e3.html" title="mbr结构和代码分析" target="_blank">mbr结构和代码分析</a> -->
 	
 	<br>
 	<strong class="article-url">本文链接：</strong>
-	<a href="http://shxi.cc/other/2020-04-12-mbr结构和代码分析.html" title="mbr结构和代码分析" target="_blank">http://shxi.cc/other/2020-04-12-mbr结构和代码分析.html</a>
+	<a href="http://shxi.cc/post/efe148e3.html" title="mbr结构和代码分析" target="_blank">http://shxi.cc/post/efe148e3.html</a>
 	
 	<br>
 	<strong class="copyright">版权声明：</strong>
@@ -713,7 +706,7 @@ var _hmt = _hmt || [];
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-	  <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://shxi.cc/other/2020-04-12-mbr%E7%BB%93%E6%9E%84%E5%92%8C%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90.html" alt="微信分享二维码">
+	  <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://shxi.cc/post/efe148e3.html" alt="微信分享二维码">
     </div>
 </div>
 
@@ -728,6 +721,25 @@ var _hmt = _hmt || [];
 
 
   
+<nav id="article-nav">
+  
+    <a href="/post/e42690c0.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          DoNot组织在其框架中引入浏览器窃取模块
+        
+      </div>
+    </a>
+  
+  
+    <a href="/post/a35e2cf4.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">VB Crypt Payload分析</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 
 <!-- 添加回到顶部和文章目录 -->
@@ -848,7 +860,7 @@ var _hmt = _hmt || [];
 		<span> 11 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">21.5k</span></span>
+		<span> <span class="post-count">25.3k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
@@ -919,9 +931,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: false,
