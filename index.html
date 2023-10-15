@@ -413,7 +413,7 @@ var _hmt = _hmt || [];
 <td>ELF64</td>
 </tr>
 </tbody></table>
-<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.    流程图"></a>3.    流程图</h1><img src="/post/b3bbba67/clip_image001.png" class title="example">
+<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.    流程图"></a>3.    流程图</h1><img src="/post/b3bbba67/clip_image001.png" class="" title="example">
 		  
 				  
 	  
@@ -556,7 +556,7 @@ var _hmt = _hmt || [];
 		  
 			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>在上一篇报告中已经详细分析了bootkit的安装过程, 本篇报告主要针对已经部署的bootkit进行进一步的详细分析。</p>
 <h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2.详细分析"></a>2.详细分析</h1><h2 id="1-bootmgrfw-efi分析"><a href="#1-bootmgrfw-efi分析" class="headerlink" title="1. bootmgrfw.efi分析"></a>1. bootmgrfw.efi分析</h2><p>         BlackLotus使用自签名的恶意EFI应用替换了原文件bootmgrfw.efi,将源文件重命名为winload.efi, 替换后的执行流程如下图:</p>
- <img src="/post/603ce62c/clip_image001.png" class title="example">
+ <img src="/post/603ce62c/clip_image001.png" class="" title="example">
 		  
 				  
 	  
@@ -698,7 +698,7 @@ var _hmt = _hmt || [];
 	  
 		  
 			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>UEFI bootkit部署在系统固件中，能够完全控制操作系统的启动过程，因此可以禁用操作系统级别的安全机制并在启动期间中以最高权限执行程序。<br>         BlackLotus利用一个漏洞编号为CVE-2022-21894的安全漏洞来绕过UEFI安全启动保护并设置持久性。<br>利用该漏洞可以在操作系统的早期启动阶段执行任意代码从而允许攻击者在开启UEFI安全启动的系统上执行恶意操作而无需物理访问。</p>
-<h1 id="2-流程图"><a href="#2-流程图" class="headerlink" title="2.流程图"></a>2.流程图</h1> <img src="/post/7927d76d/clip_image001.png" class title="example">
+<h1 id="2-流程图"><a href="#2-流程图" class="headerlink" title="2.流程图"></a>2.流程图</h1> <img src="/post/7927d76d/clip_image001.png" class="" title="example">
 		  
 				  
 	  
@@ -1000,7 +1000,7 @@ var _hmt = _hmt || [];
 		  
 			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>Lazarus组织，又称为HIDDEN COBRA、APT38、Zinc、Guardians of Peace等，是半岛地区最活跃的APT组织之一。该组织的攻击目标涉及波兰、智利、美国、墨西哥、巴西等数十个国家，针对银行、比特币交易所等金融机构及个人实施定向攻击活动，以获取经济利益，堪称全球金融机构的最大威胁之一。此外，该组织还针对航空航天、COVID-19疫苗技术、政府、媒体等机构及企业进行渗透，以窃取重要资料并进行破坏勒索。</p>
 <h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2. 详细分析"></a>2. 详细分析</h1><h2 id="1-诱饵文档"><a href="#1-诱饵文档" class="headerlink" title="1.诱饵文档"></a>1.诱饵文档</h2><p>         SaniTox是韩国Jiransecurity的一款反病毒程序, 诱饵文档伪冒SaniTox骗取受害者信任并诱导其启用宏功能以便执行恶意宏代码。</p>
- <img src="/post/46cb6af1/clip_image001.png" class title="example">
+ <img src="/post/46cb6af1/clip_image001.png" class="" title="example">
 		  
 				  
 	  
@@ -1334,7 +1334,7 @@ var _hmt = _hmt || [];
 		  
 			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>&emsp;&emsp;该组织属于民间APT组织，自2015年以来，FIN7成员参与了针对100多家美国公司的高度复杂的恶意软件活动，主要集中在餐馆，游戏和酒店行业。<br>该组织通常使用针对受害者的恶意软件网络钓鱼攻击，希望能够通过他们渗透系统窃取银行卡数据并将其出售。<br>&emsp;&emsp;JSSLoader为该APT在进行攻击时使用的一个组件，虽然JSSLoader以最小化的.Net RAT而闻名，但是麻雀虽小，五脏俱全, 比如持久化、自动更新、恶意软件下载、数据泄露等等功能都包含。</p>
 <h1 id="3-详细分析"><a href="#3-详细分析" class="headerlink" title="3. 详细分析"></a>3. 详细分析</h1><h2 id="1-ExcelDna-xll分析"><a href="#1-ExcelDna-xll分析" class="headerlink" title="1. ExcelDna.xll分析"></a>1. ExcelDna.xll分析</h2><p> &emsp;&emsp;XLL插件是Excel文件的扩展，实际上只是一个普通的dll文件。Excel对其xll插件创建了关联，使其能够双击运行。<br> &emsp;&emsp;XLL插件显示的图标与其他Excel文件显示的图标非常相似, 普通用户不会注意到XLL与其他Excel文件之间的任何区别，并且可以被诱导打开。</p>
-<img src="/post/1364ae67/clip_image001.png" class title="example">
+<img src="/post/1364ae67/clip_image001.png" class="" title="example">
 		  
 				  
 	  
@@ -1537,7 +1537,7 @@ var _hmt = _hmt || [];
 <td>dll</td>
 </tr>
 </tbody></table>
-<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.   流程图"></a>3.   流程图</h1> <img src="/post/e42690c0/clip_image001.png" class title="example">
+<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.   流程图"></a>3.   流程图</h1> <img src="/post/e42690c0/clip_image001.png" class="" title="example">
 		  
 				  
 	  

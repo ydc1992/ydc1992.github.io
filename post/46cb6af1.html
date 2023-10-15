@@ -446,95 +446,95 @@ var _hmt = _hmt || [];
 		  
 		  <h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>Lazarus组织，又称为HIDDEN COBRA、APT38、Zinc、Guardians of Peace等，是半岛地区最活跃的APT组织之一。该组织的攻击目标涉及波兰、智利、美国、墨西哥、巴西等数十个国家，针对银行、比特币交易所等金融机构及个人实施定向攻击活动，以获取经济利益，堪称全球金融机构的最大威胁之一。此外，该组织还针对航空航天、COVID-19疫苗技术、政府、媒体等机构及企业进行渗透，以窃取重要资料并进行破坏勒索。</p>
 <h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2. 详细分析"></a>2. 详细分析</h1><h2 id="1-诱饵文档"><a href="#1-诱饵文档" class="headerlink" title="1.诱饵文档"></a>1.诱饵文档</h2><p>         SaniTox是韩国Jiransecurity的一款反病毒程序, 诱饵文档伪冒SaniTox骗取受害者信任并诱导其启用宏功能以便执行恶意宏代码。</p>
- <img src="/post/46cb6af1/clip_image001.png" class title="example">
+ <img src="/post/46cb6af1/clip_image001.png" class="" title="example">
 <span id="more"></span>
 
 <p>文档主题为 如何进入网络教室的操作手册,如下图:</p>
-<img src="/post/46cb6af1/clip_image003.png" class>
+<img src="/post/46cb6af1/clip_image003.png" class="">
 
 <p>         该诱饵文档包括远程模板注入,当受害者打开文档时加载远程模板, 然后执行模板文件的恶意宏代码并下载IEUpdate.exe分析。</p>
-<img src="/post/46cb6af1/clip_image005.png" class>
+<img src="/post/46cb6af1/clip_image005.png" class="">
 
 <h2 id="2-远程模板"><a href="#2-远程模板" class="headerlink" title="2.    远程模板"></a>2.    远程模板</h2><p>远程模板包含恶意宏代码,主要从服务器下载恶意文件并注入到WinWord进程中执行。<br>         当远程模板被加载时,  首先执行函数Auto_Open,  首先检测文档是否在沙箱被打开,如果是则关闭文档。否则就从远程服务器中下载恶意文件并注入到WinWord进程内。<br>         如果注入进程失败,则弹出错误提示。注入成功则将最开始显示的诱导启动宏功能的页面隐藏，显示主题为 **&lt;&lt;****如何进入网络教室的操作手册&gt;&gt;**的内容。</p>
-<img src="/post/46cb6af1/clip_image007.png" class>
+<img src="/post/46cb6af1/clip_image007.png" class="">
 
 <p>         当Auto_Open函数执行失败, 宏代码中还实现一种当WindowsMediaPlyer控件状态改变时被触发。主要代码与Auto_Open函数类似。</p>
-<img src="/post/46cb6af1/clip_image019.png" class>
+<img src="/post/46cb6af1/clip_image019.png" class="">
 
 <h3 id="1-沙箱检测"><a href="#1-沙箱检测" class="headerlink" title="1.沙箱检测"></a>1.沙箱检测</h3><p>       检测沙箱环境通过比较短时间内的Tick值来判断, 如果值小于50则处于沙箱环境中。</p>
-<img src="/post/46cb6af1/clip_image011.png" class>
+<img src="/post/46cb6af1/clip_image011.png" class="">
 
 <h3 id="2-下载文件"><a href="#2-下载文件" class="headerlink" title="2.下载文件"></a>2.下载文件</h3><p>         从远程下载服务器, 对于Win32和Win64系统使用不同的文件, 下载的文件数据使用Base64编码,解码后将文件注入到WinWord进程中。</p>
-<img src="/post/46cb6af1/clip_image013.png" class>
+<img src="/post/46cb6af1/clip_image013.png" class="">
 
 <h3 id="2-注入进程"><a href="#2-注入进程" class="headerlink" title="2.注入进程"></a>2.注入进程</h3><p>         宏代码中实现了对x86/x64进程的注入, 与其他恶意软件一样，使用创建远程线程将文件写入目标进程中，然后修改远程线程上下文将EIP地址设置为注入到目标进程的文件的入口点。如下是在注入过程中使用的函数。</p>
-<img src="/post/46cb6af1/clip_image015.png" class>         
+<img src="/post/46cb6af1/clip_image015.png" class="">         
 <p>获取当前打开文档的WinWord进程路径, 然后以该路径创建一个处于挂起状态的进程用于创建傀儡进程。</p>
-<img src="/post/46cb6af1/clip_image017.png" class>
+<img src="/post/46cb6af1/clip_image017.png" class="">
 
 <p>         在将文件注入到进程成功后, 修改线程上下文的EIP为文件的入口点地址, 当恢复线程时从入口点开始执行代码。</p>
-<img src="/post/46cb6af1/clip_image019.png" class>
+<img src="/post/46cb6af1/clip_image019.png" class="">
 
 <p>         注入的文件主要用于释放恶意程序IEUpdate.exe并执行，添加到注册表RUN中实现持久化。由于文件下载连接已经失效, 不能获取到有效样本并分析。</p>
 <h2 id="3-IEUpdate分析"><a href="#3-IEUpdate分析" class="headerlink" title="3.IEUpdate分析"></a>3.IEUpdate分析</h2><p>         该文件由注入到进程WinWord的文件释放并执行, 主要作为下载器从C&amp;C服务器中下载不同的恶意程序。</p>
 <h3 id="1-沙箱检测-1"><a href="#1-沙箱检测-1" class="headerlink" title="1.沙箱检测"></a>1.沙箱检测</h3><p>         判断自身模块名是否是”myapp.exe”，如果是则退出进程。该文件名为_Windows_ Defender的虚拟机引擎在模拟执行恶意程序锁使用的默认文件名。</p>
-<img src="/post/46cb6af1/clip_image021.png" class>
+<img src="/post/46cb6af1/clip_image021.png" class="">
 
 <p>         检测不同时间内的Tick值差值是否小于50,如果小于则退出程序。</p>
-<img src="/post/46cb6af1/clip_image023.png" class>
+<img src="/post/46cb6af1/clip_image023.png" class="">
 
 <h3 id="2-生成标识符"><a href="#2-生成标识符" class="headerlink" title="2.生成标识符"></a>2.生成标识符</h3><p>恶意程序 通过向系统硬盘设备发送0x2D1400的IOCTL来获取设备序列号并与字符串”VDEVICE”, 然后使用自定义的CRC哈希算法计算哈希值，并将该值与用户名一起作为标识符。</p>
-<img src="/post/46cb6af1/clip_image025.png" class>
+<img src="/post/46cb6af1/clip_image025.png" class="">
 
 <p>恶意程序使用的自定义哈希算法如下:</p>
-<img src="/post/46cb6af1/clip_image027.png" class>
+<img src="/post/46cb6af1/clip_image027.png" class="">
 
 <h3 id="3-判断管理员权限"><a href="#3-判断管理员权限" class="headerlink" title="3.判断管理员权限"></a>3.判断管理员权限</h3><p>         通过进程是否能在系统目录下创建目录来判断是否由管理员权限。</p>
-<img src="/post/46cb6af1/clip_image029.png" class>
+<img src="/post/46cb6af1/clip_image029.png" class="">
 
 <h3 id="4-检测反病毒产品"><a href="#4-检测反病毒产品" class="headerlink" title="4.检测反病毒产品"></a>4.检测反病毒产品</h3><p>         获取进程快照, 并判断当前所有运行的进程中是否包含”v3l4sp.exe”、”AYAgent.aye”、”IEUpdate.exe”。其中“v3l4sp.exe”为韩国AhnLab公司免费杀毒软件V3 Lite的组件，“AYAgent.aye”为韩国公司ESTsoft的互联网安全套件ALYac的组件。</p>
-<img src="/post/46cb6af1/clip_image031.png" class>
+<img src="/post/46cb6af1/clip_image031.png" class="">
 
 <h3 id="5-检测自身是否已经运行"><a href="#5-检测自身是否已经运行" class="headerlink" title="5.检测自身是否已经运行"></a>5.检测自身是否已经运行</h3><p>         检测路径为”%LocalAppData%\Microsoft\PlayReady\IEUpdate.exe”的进程是否已经运行, 如果已经运行并且与当前进程的PID不一样则结束前者进程。</p>
-<p>         <img src="/post/46cb6af1/clip_image033.png" class></p>
+<p>         <img src="/post/46cb6af1/clip_image033.png" class=""></p>
 <h3 id="6-检测命令行参数"><a href="#6-检测命令行参数" class="headerlink" title="6.检测命令行参数"></a>6.检测命令行参数</h3><h3 id="7-添加Windows-Defender白名单"><a href="#7-添加Windows-Defender白名单" class="headerlink" title="7.添加Windows Defender白名单"></a>7.添加Windows Defender白名单</h3><p>         如果该恶意进程是以管理员的权限启动, 则调用powershell命令将自身加入Windows Defender的白名单中。</p>
-<img src="/post/46cb6af1/clip_image035.png" class>
+<img src="/post/46cb6af1/clip_image035.png" class="">
 
 <h3 id="8-获取C-amp-C地址"><a href="#8-获取C-amp-C地址" class="headerlink" title="8.获取C&amp;C地址"></a>8.获取C&amp;C地址</h3><p>从error.log文件中获取数据并与dl.dropboxusercontent.com进行拼接得到包含C&amp;C地址的文件下载地址, 然后通过GET请求获取该地址拿到最终的C&amp;C地址。</p>
-<img src="/post/46cb6af1/clip_image037.png" class>
+<img src="/post/46cb6af1/clip_image037.png" class="">
 
 <h3 id="9-发送上线包"><a href="#9-发送上线包" class="headerlink" title="9.发送上线包"></a>9.发送上线包</h3><p>         将受害者的操作系统版本信息、是否存在安全软件和生成的标识符作为上线包上传到C&amp;C服务器, 路径为post2.php。</p>
-<img src="/post/46cb6af1/clip_image039.png" class>
+<img src="/post/46cb6af1/clip_image039.png" class="">
 
 <h3 id="10-获取指令"><a href="#10-获取指令" class="headerlink" title="10.获取指令"></a>10.获取指令</h3><p>         通过Get请求从拼接后的连接获取数据, 读取数据中第三个’%’后的内容,并以”\r”、”\n”作为结束符。读取数据中的阿拉伯数字作为指令ID。</p>
-<img src="/post/46cb6af1/clip_image041.png" class>
+<img src="/post/46cb6af1/clip_image041.png" class="">
 
 <h3 id="11-文件下载并执行"><a href="#11-文件下载并执行" class="headerlink" title="11.文件下载并执行"></a>11.文件下载并执行</h3><p>         接收到从C&amp;C服务器下发的指令并从中解析出指令ID和文件下载地址。</p>
 <p>使用GET请求下载文件然后将其映射到内存并加载。通过指令ID来判断调用导出函数”SEStart”或”SEEnd”。</p>
-<img src="/post/46cb6af1/clip_image043.png" class>
+<img src="/post/46cb6af1/clip_image043.png" class="">
 
 <h2 id="4-hvncengine-dll分析"><a href="#4-hvncengine-dll分析" class="headerlink" title="4.hvncengine.dll分析"></a>4.hvncengine.dll分析</h2><p>         该程序为恶意程序IEUpdate从C&amp;C服务器下载的模块, hvnc全名<br>为”Hidden Virtual Network Connection” ，主要用于银行盗号木马中，vnc原本是一种远程桌面管理软件，在远程可以通过VNC对受控电脑进行控制。而对于恶意程序来说，在对受控电脑进行控制时，会不择手段将自身隐藏，但是使用VNC控制受控电脑时, 当执行的操作为图形化界面时,很难不被受害者发现。<br>         在国内很多金融相关的业务在用户登录账号时,都需要用户安装数字证书或者其他验证工具，若用户从其他机器登录账号时, 会需要用户进行身份认证，因此攻击者为了盗窃受害者的银行账户的钱款或者其他需要身份认证的资产时，攻击者研发出了hvnc来解决使用VNC共享桌面时会被受害者发现的问题。</p>
 <h3 id="1-样本描述"><a href="#1-样本描述" class="headerlink" title="1.样本描述"></a>1.样本描述</h3><p>由恶意程序IEUpdate下载的恶意模块都包含SEStart和SEEnd两个导出函数,<br>SEStart主要通过socket来实现hvnc的功能，SEEnd用于关闭socket链接、结束管道句柄和结束执行主要后门逻辑的线程。其中生成标识符的算法与恶意程序IEUpdate一样。</p>
 <h3 id="3-检测主逻辑线程"><a href="#3-检测主逻辑线程" class="headerlink" title="3.检测主逻辑线程"></a>3.检测主逻辑线程</h3><p>         在标识符成功生成后, 恶意程序检测核心功能线程是否已经在启动中避免线程被重复创建, 如果线程仍然在执行中或者则不再创建新的线程。如果线程由于某种原因出现异常但是线程没有被结束则首先结束线程然后再创建新的线程来执行主要逻辑代码。</p>
-<img src="/post/46cb6af1/clip_image045.png" class>
+<img src="/post/46cb6af1/clip_image045.png" class="">
 
 <h3 id="4-执行hvnc线程"><a href="#4-执行hvnc线程" class="headerlink" title="4.执行hvnc线程"></a>4.执行hvnc线程</h3><p>         每隔10分钟执行一次恶意代码, 只有在主模块调用SEEnd函数后才会结束循环。在线程函数hvnc_thread内执行一系列与hvnc相关的功能。</p>
-<img src="/post/46cb6af1/clip_image047.png" class>
+<img src="/post/46cb6af1/clip_image047.png" class="">
 
 <h3 id="5-执行hvnc功能"><a href="#5-执行hvnc功能" class="headerlink" title="5.执行hvnc功能"></a>5.执行hvnc功能</h3><p>         使用前面生成的标识符为名创建一个新的隐藏桌面，在后续涉及到桌面的操作时使用函数SetThreadDesktop来指定隐藏桌面让相关操作在该桌面下被执行。<br>         在创建进程时设置STARTUP_INFO结构体的字段lpDesktopInfo为hDesktop,可使进程在隐藏桌面下执行进程。</p>
-<img src="/post/46cb6af1/clip_image049.png" class>
+<img src="/post/46cb6af1/clip_image049.png" class="">
 
 <h3 id="6-C-amp-C通信"><a href="#6-C-amp-C通信" class="headerlink" title="6. C&amp;C通信"></a>6. C&amp;C通信</h3><p>         读取位于目录”%LOCALAPPDATA%/Microsoft/PlayReady”处的error.log文件的数据并与”dl.dropboxusercontext.com”拼接得到存放于公共托管服务网站dropbox中保存实际C&amp;C地址的文件地址。通过GET请求该地址得到C&amp;C地址,然后尝试通过socket与其进行通信。</p>
-<img src="/post/46cb6af1/clip_image051.png" class>
+<img src="/post/46cb6af1/clip_image051.png" class="">
 
 <p>         如果使用socket能够成功连接上目标地址，则尝试发送上线数据包并等待C&amp;C服务器下发指令。上线数据包构造如下图：</p>
-<p> <img src="/post/46cb6af1/clip_image053.png" class></p>
+<p> <img src="/post/46cb6af1/clip_image053.png" class=""></p>
 <p>   用伪代码表示如下:</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">packet_format</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//默认为”)(*&amp;POIU:LKJ”</span></span><br><span class="line">  <span class="type">uint8_t</span> magic_start[<span class="number">0xc</span>];</span><br><span class="line">  <span class="comment">//存放加密的数据”D9 C8 CC CB EB C9 D9 C8”</span></span><br><span class="line">  <span class="comment">//解密后的值为”00000000”</span></span><br><span class="line">  <span class="type">uint8_t</span> unkown[<span class="number">0x8</span>];</span><br><span class="line">  <span class="type">uint32_t</span> type;<span class="comment">//数据包类型,0为上线包</span></span><br><span class="line">  <span class="type">uint32_t</span> id_size;<span class="comment">//标识符的大小</span></span><br><span class="line">  <span class="type">uint8_t</span> id_str[id_size];<span class="comment">//标识符</span></span><br><span class="line">  <span class="comment">//固定为^%$#YTREHGFD</span></span><br><span class="line">  <span class="type">uint8_t</span> magic_end[<span class="number">0xc</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
 <p>C&amp;C服务器下发指令时, 恶意程序首先读取12字节判断是否是magic_start字符串，如果是则继续读取C&amp;C指令剩余部分，否则继续从C&amp;C服务器接收指令。</p>
-<img src="/post/46cb6af1/clip_image055.png" class>
+<img src="/post/46cb6af1/clip_image055.png" class="">
 
 <p>与C&amp;C通信中使用的指令ID如下表,</p>
 <table>
@@ -578,37 +578,37 @@ var _hmt = _hmt || [];
 </tr>
 </tbody></table>
 <h3 id="6-屏幕截图"><a href="#6-屏幕截图" class="headerlink" title="6.屏幕截图"></a>6.屏幕截图</h3><p>         恶意程序使用了两个与屏幕截图相关的指令ID: 0x01和0x02, 0x01为持续不断的对屏幕进行截图并发送到C&amp;C服务器中。<br>         每隔200ms对屏幕进行一次截图并上传到C&amp;C服务器中, 如果与服务器通信失败或者sceen_shot_flag值为0, 则退出截图。0x02设置sceen_shot_flag值为0表示即将结束截图, 在屏幕截图过程中，会判断该标志的值来决定是否结束屏幕截图。<br>         首先遍历所有桌面, 找到受害者使用的桌面，然后针对该桌面创建BitBit对象并将其转换成image流数据, 也就是说对受害者使用的桌面进行截图。<br>         为了能够将截图后的数据上传到C&amp;C服务器, 从流中读取数据并保存。</p>
-<img src="/post/46cb6af1/clip_image057.png" class>
+<img src="/post/46cb6af1/clip_image057.png" class="">
 
 <p>    截图完成后,构造发送给C&amp;C的数据包, 数据包使用固定的包格式。</p>
-<img src="/post/46cb6af1/clip_image059.png" class>
+<img src="/post/46cb6af1/clip_image059.png" class="">
 
 <p>    使用的数据包格式如下:</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Struct packet_format&#123;</span><br><span class="line">    Uint8_t magic[<span class="number">0xc</span>];<span class="comment">//固定值)(*&amp;POIU:LKJ</span></span><br><span class="line">    Uin8_t unkown;<span class="comment">//固定值00000000</span></span><br><span class="line">    Uint8_t type;<span class="comment">//应该是包类型,4是截图数据</span></span><br><span class="line">    Uint8_t img_info_size;<span class="comment">//截图相关数据大小</span></span><br><span class="line">    <span class="keyword">struct</span> &#123; <span class="comment">//结构体大小为img_info_size</span></span><br><span class="line">       <span class="type">uint32_t</span> weight;<span class="comment">//屏幕宽度</span></span><br><span class="line">       <span class="type">uint32_t</span> height;<span class="comment">//屏幕高度</span></span><br><span class="line">       <span class="type">uint32_t</span> img_data_size;<span class="comment">//屏幕截图数据的大小</span></span><br><span class="line">       <span class="type">uint8_t</span> img_data[img_data_size];<span class="comment">//屏幕截图数据</span></span><br><span class="line">    &#125;</span><br><span class="line">    Uint8_t magic_end[<span class="number">0xc</span>];<span class="comment">//固定值^%$#YTREHGFD</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h3 id="7-执行命令"><a href="#7-执行命令" class="headerlink" title="7.执行命令"></a>7.执行命令</h3><p>         当接收到的C&amp;C指令ID为3时为执行任意命令, 要执行的命令在C&amp;C指令参数中, 通过创建进程将命令行参数设置为由服务器下发的要执行的命令行的方式来执行命令。为了避免被受害者发现, 将STARTUP_INFO结构体的字段lpDesktop设置为隐藏桌面。</p>
-<img src="/post/46cb6af1/clip_image061.png" class>        
+<img src="/post/46cb6af1/clip_image061.png" class="">        
 
 <h3 id="8-键盘模拟"><a href="#8-键盘模拟" class="headerlink" title="8.键盘模拟"></a>8.键盘模拟</h3><p>         当C&amp;C指令ID为5时模拟键盘操作，主要通过对目标窗口对象发送WM_KEYUP、WM_KEYDOWN和WM_CHAR来模拟所有的按键操作。<br>         要操作的窗口对象则是 通过窗口位置来获取, 最后通过PostMessageA将消息发送到目标窗口。</p>
-<img src="/post/46cb6af1/clip_image063.png" class>
+<img src="/post/46cb6af1/clip_image063.png" class="">
 
 <h3 id="9-模拟鼠标操作"><a href="#9-模拟鼠标操作" class="headerlink" title="9.模拟鼠标操作"></a>9.模拟鼠标操作</h3><p>         攻击者在使用hvnc功能操作桌面时，不可避免要对桌面的窗口进行操作, 恶意程序通过向指定的窗口发送窗口消息来对窗口进行操作，其中进行的操作和操作时需要的参数由C&amp;C服务器下发，参数一般是发送窗口消息时需要的wparam值。<br>恶意程序利用消息机制模拟了多种鼠标的操作，比如使用鼠标拖曳窗口、鼠标单击双击和滑动鼠标滚轮等等。</p>
 <p>l  <strong>模拟拖曳窗口</strong></p>
 <p>通过修改目标窗口对象的left、top、width和height四个值来实现窗口放大、缩小和移动等功能，</p>
-<img src="/post/46cb6af1/clip_image065.png" class>    
+<img src="/post/46cb6af1/clip_image065.png" class="">    
 
 <p>l  <strong>模拟点击菜单项</strong></p>
 <p>恶意程序判断当前鼠标位置是否属于任务栏的开始菜单范围内，如果在则发送WM_CLICK消息模拟鼠标单击来模拟鼠标点击开始菜单的事件；如果不在则判断鼠标所在位置是否在窗口类名为”#32768”的窗口控件中，该窗口控件实际上就是菜单栏，如果鼠标位置在菜单栏范围内, 则模拟鼠标点击某个菜单项。<br>    首先发送消息MN_GETHMENU获取菜单对象句柄，然后通过菜单句柄获取当前鼠标指向的菜单项对应的菜单资源ID, 最后发送两个消息MN_SELECITEM和WM_KEYDOWN模拟鼠标点击菜单项。</p>
-<img src="/post/46cb6af1/clip_image067.png" class>
+<img src="/post/46cb6af1/clip_image067.png" class="">
 
 <h3 id="10-执行Explorer-exe程序"><a href="#10-执行Explorer-exe程序" class="headerlink" title="10.执行Explorer.exe程序"></a>10.执行Explorer.exe程序</h3><p>          有时候使用hvnc进行远程操作时,可能会出现界面不显示或者其他异常，攻击者通过让目标机器执行explorer程序来恢复。<br>         设置注册表键TaskbarGlomLevel的值为2使任务栏使用永不分组模式，然后启动进程explorer，进程创建成功后将任务栏设置为AlwayInTop，并恢复TaskbarGlomLevel为修改前的值。</p>
-<img src="/post/46cb6af1/clip_image069.png" class>
+<img src="/post/46cb6af1/clip_image069.png" class="">
 
 <h3 id="11-执行chrome程序"><a href="#11-执行chrome程序" class="headerlink" title="11.执行chrome程序"></a>11.执行chrome程序</h3><p>         调用cmd程序执行chrome程序, 并关闭浏览器中比较消耗CPU性能的特性, 比如sanbox、gpu等等, 避免CPU使用率过高而被受害者发现。<br>         启动浏览器时使用受害者默认的配置目录，在访问一些需要账号登录的网站可能因为受害者设置了记住密码或者设置保持登录状态时攻击者不需要账号密码就能够获取受害者的账号信息。</p>
-<img src="/post/46cb6af1/clip_image071.png" class>
+<img src="/post/46cb6af1/clip_image071.png" class="">
 
 <h3 id="12-消息发送"><a href="#12-消息发送" class="headerlink" title="12.消息发送"></a>12.消息发送</h3><p>         在所有的C&amp;C指令中,只有键盘模拟和鼠标模拟才需要发送消息。恶意程序首先通过窗口位置获取对应的窗口对象，然后将参数转换程序发送消息时对应参数值，最后通过PostMessageA发送给目标窗口。<br>         对应WM_CHAR消息，还需要将对应的字符转换成对应VKEY值，同样是使用PostMessageA发送给目标窗口对象。</p>
-<img src="/post/46cb6af1/clip_image073.png" class>
+<img src="/post/46cb6af1/clip_image073.png" class="">
 
 <h1 id="3-ATT-amp-CK矩阵"><a href="#3-ATT-amp-CK矩阵" class="headerlink" title="3.   ATT&amp;CK矩阵"></a>3.   ATT&amp;CK矩阵</h1><table>
 <thead>

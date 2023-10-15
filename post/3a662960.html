@@ -454,25 +454,25 @@ var _hmt = _hmt || [];
 <span id="more"></span>
 
 <h1 id="3-详细分析"><a href="#3-详细分析" class="headerlink" title="3. 详细分析"></a>3. 详细分析</h1><h2 id="1-FirstStage"><a href="#1-FirstStage" class="headerlink" title="1.FirstStage"></a>1.FirstStage</h2><h3 id="1-任意shell命令执行"><a href="#1-任意shell命令执行" class="headerlink" title="1.任意shell命令执行"></a>1.任意shell命令执行</h3><p>&emsp;&emsp; 恶意程序能够通过popen来指向任意指令。</p>
-<img src="/post/3a662960/clip_image001.png" class>
+<img src="/post/3a662960/clip_image001.png" class="">
 <h3 id="2-释放和打开诱饵文档"><a href="#2-释放和打开诱饵文档" class="headerlink" title="2.释放和打开诱饵文档"></a>2.释放和打开诱饵文档</h3><p>&emsp;&emsp;恶意程序使用两种方法来从MacOS系统中获取用户名: 从环境变量中获取值和使用shell命令”whoami”来获取用户名。</p>
-<img src="/post/3a662960/clip_image003.png" class>
+<img src="/post/3a662960/clip_image003.png" class="">
 <p>&emsp;&emsp;得到受害者计算机的用户名后，在对应的用户目录中创建文件夹用于存放诱饵文档。</p>
-<img src="/post/3a662960/clip_image005.png" class>
+<img src="/post/3a662960/clip_image005.png" class="">
 <p>&emsp;&emsp; 拼接将要执行的shell命令，可以看到恶意程序使用open打开诱饵文档和使用rm来删除com.apple.Terminal.savedState文件,该文件主要用来记录用户执行的所有shell命令，删除该文件来清除攻击者的操作痕迹。</p>
-<img src="/post/3a662960/clip_image007.png" class>
+<img src="/post/3a662960/clip_image007.png" class="">
 <p>&emsp;&emsp;将嵌入在文件内部的pdf诱饵写入到文件中,从文件名中可以看出主题为Crypto.com的招聘信息，主要针对区块链行业人士。</p>
-<img src="/post/3a662960/clip_image009.png" class>
+<img src="/post/3a662960/clip_image009.png" class="">
 <p>&emsp;&emsp;诱饵PDF文件打开如下图:</p>
-<img src="/post/3a662960/clip_image011.png" class>
+<img src="/post/3a662960/clip_image011.png" class="">
 <h3 id="3-释放文件"><a href="#3-释放文件" class="headerlink" title="3.释放文件"></a>3.释放文件</h3><p>&emsp;&emsp;恶意程序在文件内嵌入两个压缩后的可执行文件，文件名分别是WifiAnalytics_和wifianalyticsagent_。<br>&emsp;&emsp;两个文件的释放方式一样，都是先将文件数据写入文件中，然后调用shell命令tar来解压文件到指定目录，解压完成后将写入的压缩数据文件删除。</p>
-<img src="/post/3a662960/clip_image013.png" class>
+<img src="/post/3a662960/clip_image013.png" class="">
 <h3 id="4-检测是否已经执行"><a href="#4-检测是否已经执行" class="headerlink" title="4.检测是否已经执行"></a>4.检测是否已经执行</h3><p>&emsp;&emsp;执行shell命令pgrep并获取输出结果来判断恶意程序wifianalyticsagent是否已经执行。</p>
-<img src="/post/3a662960/clip_image015.png" class>
+<img src="/post/3a662960/clip_image015.png" class="">
 <h3 id="5-持久化"><a href="#5-持久化" class="headerlink" title="5.持久化"></a>5.持久化</h3><p>&emsp;&emsp;该恶意程序与其他的MacOS恶意程序一样，采用plist的方式来实现持久化，在LaunchAgents目录下创建文件” com.wifianalyticsagent.plist”,写入的数据如下, 将RunAtLoad的值设置为True, 在系统开机启动时执行该程序。设置启动名为诱导性的名字”iTunes_trush”用于诱导分析人员或者受害者，使他们认为该程序为合法应用。</p>
-<img src="/post/3a662960/clip_image017.png" class>
+<img src="/post/3a662960/clip_image017.png" class="">
 <h3 id="6-状态标志"><a href="#6-状态标志" class="headerlink" title="6.状态标志"></a>6.状态标志</h3><p>&emsp;&emsp;有意思的是程序内部定义了一些全局变量用于标记程序执行的阶段和某些状态，但是并没有被引用，定义的全局变量如下:</p>
-<img src="/post/3a662960/clip_image019.png" class>
+<img src="/post/3a662960/clip_image019.png" class="">
 
 <p>         每个全局变量表示的内容如下：</p>
 <table>
@@ -508,12 +508,12 @@ var _hmt = _hmt || [];
 </tr>
 </tbody></table>
 <h3 id="7-守护进程"><a href="#7-守护进程" class="headerlink" title="7.守护进程"></a>7.守护进程</h3><p>&emsp;&emsp;恶意程序为了避免进程被结束,创建一个无限循环不断的在检测程序wifianalyticsagent是否处于运行状态，如果没有运行则使用shell命令启动该进程并写入plist文件来设置macOS系统的启动项。</p>
-<img src="/post/3a662960/clip_image021.png" class>
+<img src="/post/3a662960/clip_image021.png" class="">
 
 <h2 id="2-SecondStage"><a href="#2-SecondStage" class="headerlink" title="2.SecondStage"></a>2.SecondStage</h2><p>&emsp;&emsp;该阶段的恶意程序的主要功能为下载恶意程序并执行，文件下载链接为:<br>“hxxps://market.contradecapital.com/{用户名}.png”,       下载完成后保存为文件” WifiCloudWidget”。</p>
-<img src="/post/3a662960/clip_image023.png" class>
+<img src="/post/3a662960/clip_image023.png" class="">
 <p>&emsp;&emsp; 在linux系统下,uname用于显示系统信息，macOS提供了uname函数来获取系统信息，获取到的系统信息保存为结构体utsname, 这里使用了其中的字段nodename和machine作为Get请求的一部分。<br>&emsp;&emsp;调用shell命令”sw -productversion”获取MacOS操作系统版本号，同样将其作为Get请求的一部分。</p>
-<img src="/post/3a662960/clip_image025.png" class>
+<img src="/post/3a662960/clip_image025.png" class="">
 <p>&emsp;&emsp;恶意程序通过将受害者的用户名和操作系统等信息作为GET请求时的参数发送到C&amp;C服务器和等待C&amp;C服务器下发恶意程序。<br>&emsp;&emsp;最终的文件下载链接如下:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hxxps://market.contradecapital.com/&#123;user&#125;.png?response=&#123;nodeName&#125;/&#123;dst&#125;/&#123;os_version&#125;/&#123;machine&#125;</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;恶意程序使用Libcurl库来下载文件,使用的请求头如下:<br><strong>UserAgent:</strong></p>
@@ -522,9 +522,9 @@ var _hmt = _hmt || [];
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Encoding: application/x-www-form-urlencoded; charset=UTF-8</span><br></pre></td></tr></table></figure>
 
 <p>&emsp;&emsp;文件下载代码如下: </p>
-<img src="/post/3a662960/clip_image027.png" class>
+<img src="/post/3a662960/clip_image027.png" class="">
 <p>&emsp;&emsp;下载的文件使用tar压缩格式，还需要将其解压，恶意程序调用shell命令来解压文件。由于C&amp;C服务器已经失效,现在已经无法获取到有效的文件，因此无法对后续文件进行分析。 </p>
-<img src="/post/3a662960/clip_image029.png" class>
+<img src="/post/3a662960/clip_image029.png" class="">
 <h1 id="4-IOC"><a href="#4-IOC" class="headerlink" title="4. IOC"></a>4. IOC</h1><p>market.contradecapital[.]com<br>~/Library/LaunchAgents/com.wifianalyticsagent.plist<br>~/Library/WifiPreference/WifiAnalyticsServ.app<br>~/Library/WifiPreference/WifiCloudWidget<br>~/Library/WifiPreference/wifianalyticsagent<br>~/Library/WifiPreference/Crypto.com_Job_Opportunities_2022_<br>confidential.pdf</p>
 <h1 id="7-参考"><a href="#7-参考" class="headerlink" title="7. 参考"></a>7. 参考</h1><p>hxxps://<a target="_blank" rel="noopener" href="http://www.sentinelone.com/blog/lazarus-operation-interception-targets-macos-users-dreaming-of-jobs-in-crypto/">www.sentinelone.com/blog/lazarus-operation-interception-targets-macos-users-dreaming-of-jobs-in-crypto/</a></p>
 
