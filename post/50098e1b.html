@@ -10,15 +10,15 @@
   <title>将shellcode编译成可执行程序 | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="创建一个asm文件,写入如下内容作为入口点用于进入shellcode并执行代码,区段名”AyyLmao”可以是任意值。shellco.bin保存实际使用的shellcode代码 1234Global StartSECTION &amp;#x27;AyyLmao&amp;#x27; write, execute,readStart:  incbin &quot;shellcode.bin&quot;    ya">
+  <meta name="description" content="&amp;emsp;&amp;emsp;创建一个asm文件,写入如下内容作为入口点用于进入shellcode并执行代码,区段名”AyyLmao”可以是任意值。shellco.bin保存实际使用的shellcode代码 1234Global StartSECTION &amp;#x27;AyyLmao&amp;#x27; write, execute,readStart:  incbin &quot;shellcode.bin&amp;q">
 <meta property="og:type" content="article">
 <meta property="og:title" content="将shellcode编译成可执行程序">
 <meta property="og:url" content="http://shxi.cc/post/50098e1b.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="创建一个asm文件,写入如下内容作为入口点用于进入shellcode并执行代码,区段名”AyyLmao”可以是任意值。shellco.bin保存实际使用的shellcode代码 1234Global StartSECTION &amp;#x27;AyyLmao&amp;#x27; write, execute,readStart:  incbin &quot;shellcode.bin&quot;    ya">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;创建一个asm文件,写入如下内容作为入口点用于进入shellcode并执行代码,区段名”AyyLmao”可以是任意值。shellco.bin保存实际使用的shellcode代码 1234Global StartSECTION &amp;#x27;AyyLmao&amp;#x27; write, execute,readStart:  incbin &quot;shellcode.bin&amp;q">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-02-05T08:55:27.000Z">
-<meta property="article:modified_time" content="2023-10-14T01:32:33.907Z">
+<meta property="article:modified_time" content="2023-10-17T07:00:23.069Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="分析技巧">
 <meta name="twitter:card" content="summary">
@@ -173,7 +173,7 @@ var _hmt = _hmt || [];
 		
 			<br><br>
 			<div style="position:absolute; bottom:120px left:auto; width:100%">
-				<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="240" height="52" src="//music.163.com/outchain/player?type=2&id=1476239407&auto=1&height=32"></iframe>
+				<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="240" height="52" src="//music.163.com/outchain/player?type=2&id=1476239407&auto=0&height=32"></iframe>
 			</div>
 		
 			
@@ -382,7 +382,7 @@ var _hmt = _hmt || [];
 	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
         <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
         <span class="post-meta-item-text">字数统计: </span>
-        <span class="post-count">129字</span>
+        <span class="post-count">135字</span>
       </span>
     </span>
 
@@ -406,13 +406,13 @@ var _hmt = _hmt || [];
 	  <!-- 添加分类与标签 -->
 	  
 		  
-		  <p>  创建一个asm文件,写入如下内容作为入口点用于进入shellcode并执行代码,区段名”AyyLmao”可以是任意值。shellco.bin保存实际使用的shellcode代码</p>
+		  <p>&emsp;&emsp;创建一个asm文件,写入如下内容作为入口点用于进入shellcode并执行代码,区段名”AyyLmao”可以是任意值。shellco.bin保存实际使用的shellcode代码</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Global Start</span><br><span class="line">SECTION &#x27;AyyLmao&#x27; write, execute,read</span><br><span class="line">Start:</span><br><span class="line">  incbin &quot;shellcode.bin&quot; </span><br></pre></td></tr></table></figure>
 
 
-<p>yasm将汇编文件编译成obj文件,-f选择是win32还是win64, -o为输出的obj文件。</p>
+<p>&emsp;&emsp;yasm将汇编文件编译成obj文件,-f选择是win32还是win64, -o为输出的obj文件。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yasm.exe -f win32 -o shellcode.obj shellcode.asm</span><br></pre></td></tr></table></figure>
-<p>程序golink生成可执行文件,程序入口点设置为汇编文件中的入口点Start。</p>
+<p>&emsp;&emsp;程序golink生成可执行文件,程序入口点设置为汇编文件中的入口点Start。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">golink /ni /entry Start shellcode.obj</span><br></pre></td></tr></table></figure>
 
 				  
@@ -438,7 +438,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2023年10月14日 09:32:33
+	2023年10月17日 15:00:23
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
@@ -682,10 +682,10 @@ var _hmt = _hmt || [];
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 11 篇</span>
+		<span> 12 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">25.3k</span></span>
+		<span> <span class="post-count">26.6k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
@@ -886,11 +886,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">分析技巧</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Lazarus</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">分析技巧</a>
+                <a href="javascript:void(0)" class="js-tag color1">BlackLotus</a>
               </li>
             
             <div class="clearfix"></div>
@@ -947,22 +951,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           
             <li class="search-li">
               <a href="https://findn.cn/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>三水的笔记</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
             </li>
           
         </ul>
