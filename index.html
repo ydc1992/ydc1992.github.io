@@ -482,9 +482,7 @@ var _hmt = _hmt || [];
 <figure class="highlight dust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml">pam |</span><span class="template-variable">&#123;服务名&#125;</span><span class="language-xml">|</span><span class="template-variable">&#123;主机名&#125;</span><span class="language-xml">|</span><span class="template-variable">&#123;用户名&#125;</span><span class="language-xml">|</span><span class="template-variable">&#123;pam身份验证密码&#125;</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="9c0caec3/f2738193bb3108b76cb8d108a2244a6e.png"></p>
-<p>&emsp;&emsp;函数pam_acct_mgmt用于确定用户是否有效,恶意程序为了能够使用任意用户名通过PAM服务验证，修改该函数的验证逻辑。</p>
-<p>当使用该函数来验证密码为suporte42caixa32的用户时总是返回验证成功。</p>
-<p><img src="9c0caec3/9e6a74712e2ec0177dcea28490531fe9.png"></p>
+<p>&emsp;&emsp;函数pam_acct_mgmt用于确定用户是否有效,恶意程序为了能够使用任意用户名通过PAM服务验证，修改该函数的验证逻辑。当使用该函数来验证密码为suporte42caixa32的用户时总是返回验证成功。<br><img src="9c0caec3/9e6a74712e2ec0177dcea28490531fe9.png"></p>
 <h2 id="3-7-DNS后门"><a href="#3-7-DNS后门" class="headerlink" title="3.7 DNS后门"></a>3.7 DNS后门</h2><h3 id="1-泄露信息"><a href="#1-泄露信息" class="headerlink" title="1. 泄露信息"></a>1. 泄露信息</h3><p>&emsp;&emsp;恶意程序在执行PAM后门和keylogger功能时利用DNS地址A记录来泄露收集到的信息到C&amp;C服务器而不必担心防火墙和流量规则。恶意程序调用函数uname获取操作系统相关信息,然后通过一系列运算得到hash值作为DNS地址A记录的一部分来标识受害者机器。</p>
 <p><img src="9c0caec3/53bf94be52ef8490e808f15e8727ccdd.png"></p>
 <p>&emsp;&emsp;恶意程序使用密钥suporte42caixa32对要泄露的数据使用RC4算法加密,由于DNS域A记录有着长度限制，只能在域名中携带少量数据。</p>
