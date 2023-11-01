@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://shxi.cc/post/931c000e.html</loc>
+    
+    <lastmod>2023-11-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://shxi.cc/post/b3bbba67.html</loc>
+    
+    <lastmod>2023-11-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://shxi.cc/post/e42690c0.html</loc>
+    
+    <lastmod>2023-11-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://shxi.cc/post/e6b73205.html</loc>
     
     <lastmod>2023-10-18</lastmod>
@@ -39,15 +66,6 @@
   
   <url>
     <loc>http://shxi.cc/post/ccd8a0ac.html</loc>
-    
-    <lastmod>2023-10-17</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://shxi.cc/post/e42690c0.html</loc>
     
     <lastmod>2023-10-17</lastmod>
     
@@ -102,15 +120,6 @@
   
   <url>
     <loc>http://shxi.cc/post/603ce62c.html</loc>
-    
-    <lastmod>2023-10-17</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://shxi.cc/post/b3bbba67.html</loc>
     
     <lastmod>2023-10-17</lastmod>
     
@@ -342,6 +351,20 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>http://shxi.cc/tags/Donot/</loc>
+    <lastmod>2023-11-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://shxi.cc/tags/BPFDoor/</loc>
+    <lastmod>2023-11-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
   
   <url>
@@ -353,6 +376,13 @@
   
   <url>
     <loc>http://shxi.cc/categories/%E9%80%86%E5%90%91/</loc>
+    <lastmod>2023-11-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://shxi.cc/categories/APT/</loc>
     <lastmod>2023-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

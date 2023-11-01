@@ -55,9 +55,9 @@
 <meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image071.png">
 <meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image073.png">
 <meta property="article:published_time" content="2022-08-26T03:15:11.000Z">
-<meta property="article:modified_time" content="2023-10-17T07:37:05.274Z">
+<meta property="article:modified_time" content="2023-11-01T06:46:29.292Z">
 <meta property="article:author" content="KenYang">
-<meta property="article:tag" content="逆向 恶意程序 病毒">
+<meta property="article:tag" content="Donot">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://shxi.cc/post/e42690c0/clip_image001.png">
   
@@ -509,7 +509,7 @@ var _hmt = _hmt || [];
 <span id="more"></span>
 
 <h1 id="4-详细分析"><a href="#4-详细分析" class="headerlink" title="4. 详细分析"></a>4. 详细分析</h1><h2 id="1-s003-doc分析"><a href="#1-s003-doc分析" class="headerlink" title="1. s003.doc分析"></a>1. s003.doc分析</h2><p>&emsp;&emsp;该样本使用远程RTF模板注入，在RTF的template数据中插入要加载的模板文件,模板文件地址为:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://necromencertwo.buzz/bfrp31KqURS2yZTE/0BmHwYTEgupY2Qfb.php</span><br></pre></td></tr></table></figure>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//</span>necromencertwo.buzz<span class="regexp">/bfrp31KqURS2yZTE/</span><span class="number">0</span>BmHwYTEgupY2Qfb.php</span><br></pre></td></tr></table></figure>
 
 <p>&emsp;&emsp;如下图所示:<br><img src="e42690c0/clip_image003.png"></p>
 <p>&emsp;&emsp;托管模板文件的服务器会判断是否由office文档发送请求，如果不是则返回诱饵文档，否则返回携带恶意宏代码的文档。<br>&emsp;&emsp;模板文件的元数据如下, 元数据中与个人有关的元数据已经被清除, 使分析人员不能通过元数据获取到有用的信息。<br><img src="e42690c0/clip_image005.png"></p>
@@ -549,7 +549,7 @@ var _hmt = _hmt || [];
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">format</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> kernel32_VirtualAlloc;</span><br><span class="line">…<span class="comment">//省略部分字段均为API的函数地址</span></span><br><span class="line"><span class="type">int</span> urlmon_URLDownloadToFileA;</span><br><span class="line">  <span class="type">char</span> unkonw_data[<span class="number">296</span>];</span><br><span class="line">  <span class="type">char</span> syswow64_path[<span class="number">256</span>]; <span class="comment">//字符串%tmp%\syswow64.dll</span></span><br><span class="line">  <span class="type">char</span> doc_path[<span class="number">256</span>];<span class="comment">//文档路径 &#x27;%tmp%\document.doc</span></span><br><span class="line">  <span class="type">char</span> cmd1[<span class="number">256</span>];</span><br><span class="line">  <span class="type">int</span> klif_exits;<span class="comment">//klif.sys是否存在</span></span><br><span class="line">  <span class="type">char</span> klif_flag;<span class="comment">// klif.sys文件的过期标志</span></span><br><span class="line">  <span class="type">int</span> aswsp_exits;<span class="comment">// aswsp.sys是否存在</span></span><br><span class="line">  <span class="type">char</span> aswsp_flag;<span class="comment">// aswsp.sys文件的过期标志</span></span><br><span class="line">  <span class="type">int</span> bsfs_exits;<span class="comment">// bsfs.sys是否存在</span></span><br><span class="line">  <span class="type">char</span> bsfs_flag;<span class="comment">//bsfs.sys的过期标志</span></span><br><span class="line">  <span class="type">int</span> gzflt_exits;<span class="comment">// gzflt.sys是否存在</span></span><br><span class="line">  <span class="type">char</span> gzflt_flag;<span class="comment">//gzflt.sys的过期标志</span></span><br><span class="line">  <span class="type">int</span> ehdrv_exits;<span class="comment">// ehdrv.sys是否存在</span></span><br><span class="line">  <span class="type">char</span> ehdrv_flag;<span class="comment">//ehdrv.sys的过期标志</span></span><br><span class="line">  <span class="type">int</span> _360AvFlt_exits;<span class="comment">// 360AvFlt.sys是否存在</span></span><br><span class="line">  <span class="type">char</span> _360AvFlt_flag;<span class="comment">// 360AvFlt.sys的过期标志</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>&emsp;&emsp;Shellcode会检测以下文件是否存在, 并使用结构体的两个字段来分别表示文件是否存在或者是否已经过期。比如用字段bsfs_exits来标志basfs.sys是否存在,bsfs_flag来判断是否过期。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">klif.sys aswsp.sys bsfs.sys gzflt.sys ehdrv.sys 360AvFlt.sys</span><br></pre></td></tr></table></figure>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">klif<span class="selector-class">.sys</span> aswsp<span class="selector-class">.sys</span> bsfs<span class="selector-class">.sys</span> gzflt<span class="selector-class">.sys</span> ehdrv<span class="selector-class">.sys</span> <span class="number">360</span>AvFlt.sys</span><br></pre></td></tr></table></figure>
 
 <p>&emsp;&emsp;以aswsp.sys为例, 该文件不存在时字段bsfs_exits值设为0, 将本地时间与预设的过期时间相比较，小于等于过期时间时字段aswsp_flag设置为1,否则为2。</p>
 <p><img src="e42690c0/clip_image039.png"></p>
@@ -632,18 +632,18 @@ var _hmt = _hmt || [];
 <h3 id="3-收集信息"><a href="#3-收集信息" class="headerlink" title="3.     收集信息"></a>3.     收集信息</h3><p>&emsp;&emsp;收集受害者用户名、机器名和处理器ID信息。<br><img src="e42690c0/clip_image057.png"></p>
 <p>&emsp;&emsp;收集目录” C:\Program Files”和” C:\Program Files(x86)”下所有的文件夹,并用字符”?”来分隔。<br><img src="e42690c0/clip_image059.png"></p>
 <p>&emsp;&emsp;最终将所有收集到的数据拼接在一起并加密上传到C&amp;C服务器，使用的加密方法为AES256+Base64，通过post方法将加密后的值作为字段batac的值发送到C&amp;C服务器</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rus.feedpolicy.xyz/Nb438e8pcbar5ky245ntr4um/tk5hyeq9pgdt</span><br></pre></td></tr></table></figure>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rus.feedpolicy.xyz/<span class="symbol">Nb438</span>e<span class="number">8</span>pcbar<span class="number">5</span>ky<span class="number">245</span><span class="symbol">ntr4</span>um/tk<span class="number">5</span>hyeq<span class="number">9</span>pgdt</span><br></pre></td></tr></table></figure>
 
 <p><img src="e42690c0/clip_image061.png"></p>
 <h3 id="3-检测网络是否有效"><a href="#3-检测网络是否有效" class="headerlink" title="3. 检测网络是否有效"></a>3. 检测网络是否有效</h3><p>&emsp;&emsp;恶意程序往地址en.wikipedia.org/wiki/Encyclopedia发送数据包来检测受害者机器的网络是否有效。<br><img src="e42690c0/clip_image063.png"></p>
 <p>&emsp;&emsp;网络有效则在目录”c:\ProgramData”下创建文件”yjzsghu.txt”并写入数据” BQO89GHY7ki”来标识网络处于连通状态。<br><img src="e42690c0/clip_image065.png"></p>
 <h3 id="4-创建计划任务"><a href="#4-创建计划任务" class="headerlink" title="4.     创建计划任务"></a>4.     创建计划任务</h3><p>&emsp;&emsp;创建定时的计划任务，每隔3分钟执行一次程序，执行的程序和命令行如下:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rundll32.exe %Temp%\pgixedfxglmjirdc.dll,Yolueorgw</span><br></pre></td></tr></table></figure>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ru<span class="symbol">ndll32</span>.exe <span class="meta">%</span>Temp<span class="meta">%</span>\pgixedfxglmjirdc.dll,Yolueorgw</span><br></pre></td></tr></table></figure>
 
 <p><img src="e42690c0/clip_image067.png"></p>
 <h3 id="4-删除计划任务"><a href="#4-删除计划任务" class="headerlink" title="4. 删除计划任务"></a>4. 删除计划任务</h3><p>&emsp;&emsp;调用程序schtasks来删除名为Jiscor的计划任务。<br><img src="e42690c0/clip_image069.png"></p>
 <h3 id="5-C-amp-C指令"><a href="#5-C-amp-C指令" class="headerlink" title="5. C&amp;C指令"></a>5. C&amp;C指令</h3><p>&emsp;&emsp;如果由C&amp;C服务器返回的指令中包含”Lok”时恶意程序发送数据到C&amp;C服务器请求下载文件, 发送的格式如下, 与上传泄露信息时使用相同的加密方法。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户名-机器名-处理器ID|||dll名</span><br></pre></td></tr></table></figure>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户名-机器名-处理器ID<span class="string">|||dll名</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="e42690c0/clip_image071.png"></p>
 <p>&emsp;&emsp;下载的模块保存于目录%pragramData%/DeviceStage下。<br><img src="e42690c0/clip_image073.png"></p>
@@ -713,7 +713,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2023年10月17日 15:37:05
+	2023年11月01日 14:46:29
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
@@ -742,6 +742,17 @@ var _hmt = _hmt || [];
 	  
 	  <!-- 分类页 -->
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Donot</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
 	  
@@ -946,10 +957,10 @@ var _hmt = _hmt || [];
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 15 篇</span>
+		<span> 16 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">33.7k</span></span>
+		<span> <span class="post-count">35k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
@@ -1167,6 +1178,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">APT41</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Donot</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">BPFDoor</a>
               </li>
             
             <div class="clearfix"></div>
