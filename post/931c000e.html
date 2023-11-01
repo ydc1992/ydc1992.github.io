@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://shxi.cc/post/931c000e/dcb40b122b0b8c619adbd79947dc8fff.png">
 <meta property="og:image" content="http://shxi.cc/post/931c000e/062f702f708566e1ad68839aafab1a92.png">
 <meta property="article:published_time" content="2022-12-23T06:47:51.000Z">
-<meta property="article:modified_time" content="2023-11-01T06:58:06.985Z">
+<meta property="article:modified_time" content="2023-11-01T07:59:11.774Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="Lazarus">
 <meta name="twitter:card" content="summary">
@@ -423,7 +423,10 @@ var _hmt = _hmt || [];
 		  <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>&emsp;&emsp;Lazarus团伙是一个长期活跃的APT组织，武器库十分强大，拥有对多平台进行攻击的能力，近年来，该团伙多次被安全厂商披露，但从未停止进攻的脚本，反而越发活跃，攻击目标也越发广泛。</p>
 <p>&emsp;&emsp;最近有关安全研究人员观测到Lazarus使用AppleJeus变种和使用加密货币为主题的网站针对加密货币的用户，并发现在此次攻击活动中发现Lazarus在以往活动中不曾使用的新TTPs。</p>
 <h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2. 详细分析"></a>2. 详细分析</h1><h2 id="1-仿冒网站"><a href="#1-仿冒网站" class="headerlink" title="1.仿冒网站"></a>1.仿冒网站</h2><p>&emsp;&emsp;在2022年6月至今,Lazarus创建了一个与数字货币交易的网站bloxholder.com，通过进一步的对其分析发现该网站为合法网站hassonline.com克隆而来。</p>
-<p>&emsp;&emsp;从下图可以看出两者之间的细小区别,Lazarus将原网站中与HaasOnline相关的文字引用都被替换成BloxHolder，图上半部分为合法网站，下半部分为克隆网站。<br><img src="931c000e/52893a41c7a49a4619b022e10f6bc56d.png"></p>
+<p>&emsp;&emsp;从下图可以看出两者之间的细小区别,Lazarus将原网站中与HaasOnline相关的文字引用都被替换成BloxHolder，图上半部分为合法网站，下半部分为克隆网站。</p>
+<img src="/post/931c000e/52893a41c7a49a4619b022e10f6bc56d.png" class="" title="example">
+<span id="more"></span>
+
 <p>&emsp;&emsp;在被克隆的网站BloxHolder还提供了伪装成加密货币应用的AppleJeus恶意程序。</p>
 <h2 id="2-Bloxholder-msi"><a href="#2-Bloxholder-msi" class="headerlink" title="2.Bloxholder.msi"></a>2.Bloxholder.msi</h2><p>&emsp;&emsp;该文件为克隆网站上提供的有关加密货币应用的安装程序BloxHolder,实际上该文件为开源的<em>QTBitcoinTrader程序，</em>Lazarus通过将恶意程序与合法程序打包程序msi安装程序,并通过MSI安装脚本创建计划的方式间接启动恶意程序。</p>
 <p>&emsp;&emsp;从MSI安装脚本中可以看到安装文件创建的计划任务相关信息。<br><img src="931c000e/f812071944a66f38ec63ee50974c2c9c.png"></p>
@@ -511,7 +514,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2023年11月01日 14:58:06
+	2023年11月01日 15:59:11
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
