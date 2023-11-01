@@ -34,7 +34,7 @@
 <meta property="og:image" content="http://shxi.cc/post/9c0caec3/02da26743df73d6cede3bf853b1a869e.png">
 <meta property="og:image" content="http://shxi.cc/post/9c0caec3/d7c16040c53c2a2c40e8ff22a65cdac0.png">
 <meta property="article:published_time" content="2023-11-01T07:10:44.000Z">
-<meta property="article:modified_time" content="2023-11-01T07:54:53.617Z">
+<meta property="article:modified_time" content="2023-11-01T07:55:47.925Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="Symbiote">
 <meta name="twitter:card" content="summary">
@@ -507,8 +507,7 @@ var _hmt = _hmt || [];
 <p><img src="9c0caec3/00db18922f046413d38c069f985e80ac.png"></p>
 <p>&emsp;&emsp;函数pam_authenticate为PAM身份验证函数，恶意程序将受害者使用的认证与硬编码的密码suporte42caixa32进行比较，如果匹配成功则返回身份验证成功的返回值，即对于任何使用PAM作为身份验证的程序或者服务，攻击者只需要指定验证密码为suporte42caixa32和使用任意用户名就能够绕过验证而成功登录。</p>
 <p><img src="9c0caec3/74a80d270e020e601849c75f045fcc33.png" alt=" "></p>
-<p>&emsp;&emsp;如果与硬编码的密码匹配失败但是成功通过PAM身份验证，则获取受害者机器服务名、主机名、用户名和通过PAM身份验证的密码。</p>
-<p>恶意程序使用RC4算法加密收集到的信息并保存到文件”/usr/include/java.h”。加密信息使用的RC4加密密钥通过使用硬编码的密钥对”suporte42caixa32”加密后得出。</p>
+<p>&emsp;&emsp;如果与硬编码的密码匹配失败但是成功通过PAM身份验证，则获取受害者机器服务名、主机名、用户名和通过PAM身份验证的密码。<br>&emsp;&emsp;恶意程序使用RC4算法加密收集到的信息并保存到文件”/usr/include/java.h”。加密信息使用的RC4加密密钥通过使用硬编码的密钥对”suporte42caixa32”加密后得出。</p>
 <p>收集到的信息未加密前保存格式如下:</p>
 <figure class="highlight dust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml">pam |</span><span class="template-variable">&#123;服务名&#125;</span><span class="language-xml">|</span><span class="template-variable">&#123;主机名&#125;</span><span class="language-xml">|</span><span class="template-variable">&#123;用户名&#125;</span><span class="language-xml">|</span><span class="template-variable">&#123;pam身份验证密码&#125;</span></span><br></pre></td></tr></table></figure>
 
@@ -601,7 +600,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2023年11月01日 15:54:53
+	2023年11月01日 15:55:47
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
