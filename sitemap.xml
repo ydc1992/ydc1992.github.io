@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://shxi.cc/post/9c0caec3.html</loc>
+    
+    <lastmod>2023-11-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://shxi.cc/post/931c000e.html</loc>
     
     <lastmod>2023-11-01</lastmod>
@@ -360,6 +369,13 @@
   
   <url>
     <loc>http://shxi.cc/tags/BPFDoor/</loc>
+    <lastmod>2023-11-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://shxi.cc/tags/Symbiote/</loc>
     <lastmod>2023-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
