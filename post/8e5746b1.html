@@ -51,8 +51,8 @@
 <meta property="og:image" content="http://shxi.cc/post/8e5746b1/78d570b01a236a400f74404304813ddc.png">
 <meta property="og:image" content="http://shxi.cc/post/8e5746b1/a8f1c7f234a4685b9e33f860ceae7043.png">
 <meta property="og:image" content="http://shxi.cc/post/8e5746b1/9e52b18728e2e404cafb292410718ab6.png">
-<meta property="article:published_time" content="2024-01-07T08:12:37.000Z">
-<meta property="article:modified_time" content="2024-01-07T08:23:53.330Z">
+<meta property="article:published_time" content="2022-03-28T08:12:37.000Z">
+<meta property="article:modified_time" content="2024-01-07T08:30:47.256Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
@@ -363,12 +363,12 @@ var _hmt = _hmt || [];
         
 		
 		  <a href="/post/8e5746b1.html" class="archive-article-date">
-  	<time datetime="2024-01-07T08:12:37.000Z" itemprop="datePublished">
+  	<time datetime="2022-03-28T08:12:37.000Z" itemprop="datePublished">
 	<!-- <i class="icon-calendar icon"></i> -->
 
 	<i class="fa fa-calendar-check-o" aria-hidden="true"></i>
 	&nbsp;
-	2024-01-07</time>
+	2022-03-28</time>
 	
 	<!-- busuanzi阅读量统计
 	
@@ -491,7 +491,7 @@ var _hmt = _hmt || [];
 <p>判断收到的数据包是否是LOOKUP_BACK类型,如果是则调用原函数,不进行任何拦截操作；否则拦截和修改数据包。</p>
 <p><img src="8e5746b1/0e4eff3ac8bc71a27cbe68322979bee7.png"></p>
 <p>&emsp;&emsp;在函数hook_SendCompleteNdisPacket中,将由恶意驱动发送的数据包从链表中移除从而隐藏其通信数据,使Wireshark、Tcpdump等抓包工具不能捕捉到其通信流量。</p>
-<p>&emsp;&emsp;数据包nbl的flags被设置成0x99100000,查找官方文档该值为无效值,应该是用来识别是否是由恶意驱动修改过的数据包,由于数据包被拦截不会到达系统的Windows<br>TCP/IP堆栈,因此设置成任意值都不会对网络通信造成影响。</p>
+<p>&emsp;&emsp;数据包nbl的flags被设置成0x99100000,查找官方文档该值为无效值,应该是用来识别是否是由恶意驱动修改过的数据包,由于数据包被拦截不会到达系统的Windows TCP/IP堆栈,因此设置成任意值都不会对网络通信造成影响。</p>
 <p><img src="8e5746b1/2eaa93107c7cdbfddfd73e056685394a.png"></p>
 <p>&emsp;&emsp;在hook_NextSendBufferListsHandler函数中,比较数据包的NdisPoolHandle是否是ndis_hook_pool。ndis_hook_pool由恶意驱动创建的用于存放数据包的buffer,如果两者相等则调用员函数，如果不相等则需要拦截或修改数据包。</p>
 <p><img src="8e5746b1/d669fd4ce10a73ad9655926a4bf6e725.png"></p>
@@ -638,11 +638,11 @@ var _hmt = _hmt || [];
 	
 	<!-- <br>
 	<strong class="create-time">发布时间：</strong>
-	2024-01-07 -->
+	2022-03-28 -->
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2024年01月07日 16:23:53
+	2024年01月07日 16:30:47
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
@@ -741,9 +741,18 @@ var _hmt = _hmt || [];
   
 <nav id="article-nav">
   
+    <a href="/post/c44584e3.html" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Lazarus利用 Log4Shell 漏洞投递恶意程序NukeSped
+        
+      </div>
+    </a>
   
-    <a href="/post/9c0caec3.html" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Symbiote：几乎不可能被检测到的Linux rootkit</div>
+  
+    <a href="/post/e6b73205.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">APT41将恶意程序Moonbounce写入UEFI固件</div>
       <i class="icon-circle-right"></i>
     </a>
   
