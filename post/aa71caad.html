@@ -45,7 +45,7 @@
 <meta property="og:image" content="http://shxi.cc/post/aa71caad/d7891e59d7f005297a06a6e283ed10d7.png">
 <meta property="og:image" content="http://shxi.cc/post/aa71caad/e8e8c1dc7134bc7342867d7f05d1f220.png">
 <meta property="article:published_time" content="2024-01-10T12:47:07.000Z">
-<meta property="article:modified_time" content="2024-01-10T12:54:26.547Z">
+<meta property="article:modified_time" content="2024-01-10T12:56:18.994Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
@@ -436,7 +436,9 @@ var _hmt = _hmt || [];
 		  
 		  <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>&emsp;&emsp;DeathStalker是一个独特的威胁组织, 专门针对金融机构和律师事务所进行攻击。该组织不受经济利益的驱动，他们不会部署勒索软件，不会窃取付款信息以转售它，或从事通常与网络犯罪黑社会相关的任何类型的活动，他们只对收集敏感的业务信息感兴趣。</p>
 <p>&emsp;&emsp;从该组织以往的攻击行为来看DeathStalker是一群雇佣据,他们提供黑客服务或者在金融界充当某种信息经纪人的角色。他们通常通过包含恶意LNK文件的附件的钓鱼邮件来进行传播，并控制受害者的设备一切去敏感的商业信息，主要使用恶意程序Janicab对目标进行攻击,</p>
-<h1 id="2-攻击链"><a href="#2-攻击链" class="headerlink" title="2.攻击链"></a>2.攻击链</h1><p><img src="aa71caad/92d2d419189d5968014db7b0845f7b37.png"></p>
+<h1 id="2-攻击链"><a href="#2-攻击链" class="headerlink" title="2.攻击链"></a>2.攻击链</h1><img src="/post/aa71caad/92d2d419189d5968014db7b0845f7b37.png" class="" title="example">
+<span id="more"></span>
+
 <h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2. 详细分析"></a>2. 详细分析</h1><h2 id="1-SMPT-error-txt-lnk分析"><a href="#1-SMPT-error-txt-lnk分析" class="headerlink" title="1.SMPT-error.txt.lnk分析"></a>1.SMPT-error.txt.lnk分析</h2><p>&emsp;&emsp;该文件为Janicab变种，该lnk元数据与以前被发现的旧版本Janicab类似，即SID、字体、屏幕缓冲区大小、窗口大小和MAC地址是相似的。MAC地址都为VMWare虚拟机内的地址。在LNK文件中嵌入了多个文件, 这些文件在LNK文件中的位置如下图:</p>
 <p><img src="aa71caad/9b447f5649375ab3dfc952c27dfcacc6.png"></p>
 <p>&emsp;&emsp;当受害者点击快捷方式时，lnk会将自身拷贝到临时目录,然后通过find找到字符串”#@~^”并将从该字符串到文件末尾的数据保存为文件”.vbe”,该字符串为被加密的vbs脚本的标志。然后使用cscript.exe执行该vbe脚本,并设置第一个参数为该快捷方式文件名，该参数主要用于vbe脚本从lnk文件中解析其他的嵌入文件。</p>
@@ -630,7 +632,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2024年01月10日 20:54:26
+	2024年01月10日 20:56:18
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
