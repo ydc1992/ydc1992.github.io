@@ -34,7 +34,7 @@
 <meta property="og:image" content="http://shxi.cc/post/445e503c/9f3398541330d76a5da31c6fab89e849.png">
 <meta property="og:image" content="http://shxi.cc/post/445e503c/1557b278fd2e61ca4a0ddd66c9d4ca21.png">
 <meta property="article:published_time" content="2024-03-21T01:56:49.000Z">
-<meta property="article:modified_time" content="2024-03-21T02:01:13.256Z">
+<meta property="article:modified_time" content="2024-03-21T02:34:10.028Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
@@ -437,8 +437,7 @@ var _hmt = _hmt || [];
 <p><img src="445e503c/3ca99eb085181d835b5a72bacdc16eca.png"></p>
 <p>&emsp;&emsp;然后将前面拼接的字符串附加到C&amp;C服务器地址后面然后函数URLDownloadToFileW间接实现HTTPGET请求。</p>
 <p><img src="445e503c/3672a2d3be78ff55ad66db5660af4c87.png"></p>
-<h3 id="3-检测执行环境是否能够联网"><a href="#3-检测执行环境是否能够联网" class="headerlink" title="3.检测执行环境是否能够联网"></a>3.检测执行环境是否能够联网</h3><p>&emsp;&emsp;恶意程序首先判断文件ImageEditor.exe是否存在, 如果不存在则退出程序。</p>
-<p>&emsp;&emsp;如果存在则访问网站”hxxp://<a target="_blank" rel="noopener" href="http://www.baidu.com”判断网络是否能够联通,如果不能连通则从受害者某个目录拷贝”.pdf”、”.pptx”等后缀的文档到移动设备上/">www.baidu.com”判断网络是否能够联通,如果不能连通则从受害者某个目录拷贝”.pdf”、”.pptx”等后缀的文档到移动设备上</a>,<br>当该移动设备在能够联网的电脑上连接时将收集到的数据上传，否则执行payload下载功能。<br><img src="445e503c/9137a3bd43014041ade5b84a4b8e0888.png"></p>
+<h3 id="3-检测执行环境是否能够联网"><a href="#3-检测执行环境是否能够联网" class="headerlink" title="3.检测执行环境是否能够联网"></a>3.检测执行环境是否能够联网</h3><p>&emsp;&emsp;恶意程序首先判断文件ImageEditor.exe是否存在, 如果不存在则退出程序。<br>&emsp;&emsp;如果存在则访问网站<strong>hxxp://<a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a></strong>判断网络是否能够联通,如果不能连通则从受害者某个目录拷贝”.pdf”、”.pptx”等后缀的文档到移动设备上,<br>当该移动设备在能够联网的电脑上连接时将收集到的数据上传，否则执行payload下载功能。<br><img src="445e503c/9137a3bd43014041ade5b84a4b8e0888.png"></p>
 <h3 id="4-窃取文档数据"><a href="#4-窃取文档数据" class="headerlink" title="4.窃取文档数据"></a>4.窃取文档数据</h3><p>&emsp;&emsp;受害者机器不能联网时实现文档窃取功能，恶意程序首先在受害者机器的Recent目录下以用户名为名在恶意程序所在的目录下创建一个隐藏目录。<br><img src="445e503c/0e543b04e8dd9558d3e022fd00c1a5ec.png"></p>
 <p>&emsp;&emsp;恶意程序使用函数FindFirstFileW和FindNextFileW来收集指定目录下所有后缀名为”.docx”和”.pptx”的文档数据的快捷方式，该路径名为</p>
 <figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:<span class="symbol">\\</span>Users<span class="symbol">\\</span>AppData<span class="symbol">\\</span>Roaming<span class="symbol">\\</span>Microsoft<span class="symbol">\\</span>Windows<span class="symbol">\\</span>Recent</span><br></pre></td></tr></table></figure>
@@ -559,7 +558,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2024年03月21日 10:01:13
+	2024年03月21日 10:34:10
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
