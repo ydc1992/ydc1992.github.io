@@ -314,6 +314,204 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-APT41将恶意程序Moonbounce写入UEFI固件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title_code_ant" href="/post/e6b73205.html">APT41将恶意程序Moonbounce写入UEFI固件</a>
+    </h2>
+  
+
+        
+		
+		  <a href="/post/e6b73205.html" class="archive-article-date">
+  	<time datetime="2022-02-17T07:59:59.000Z" itemprop="datePublished">
+	<!-- <i class="icon-calendar icon"></i> -->
+
+	<i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+	&nbsp;
+	2022-02-17</time>
+	
+	<!-- busuanzi阅读量统计
+	
+	-->
+	
+    <!-- waline阅读量统计 -->
+	
+
+</a>
+
+
+        
+		
+		
+		  <!-- 添加标题栏文字统计效果 -->
+<div class="word-count">
+	
+      
+        <span class="article-type" style="
+          color: white;
+          font-size: 14px;
+          background: #0088CC;
+          padding: 0 5px 1px 5px;
+          margin-right: 5px;
+          border-radius: 2px;">原创</span>
+		  &nbsp; 
+      
+    
+	
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
+        <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
+        <span class="post-meta-item-text">字数统计: </span>
+        <span class="post-count">1.9k字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+	    <i class="fa fa-pagelines" aria-hidden="true"></i>
+        <span class="post-meta-item-text">阅读时长: </span>
+        <span class="post-count">7min</span>
+      </span>
+    </span>
+	
+
+</div>
+<!-- 添加标题栏文字统计效果结束 -->
+		
+      </header>
+    
+	
+    <div class="article-entry" itemprop="articleBody">
+	  <!-- 添加分类与标签 -->
+	  
+		  
+			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h1><p>&emsp;&emsp;APT41早在2012年就开始活跃。据观察，该小组针对14个国家/地区的医疗保健，电信，技术和视频游戏行业,也进行一些经济私利驱动的入侵，尤其针对视频游戏产业，包括偷窃源代码和数字证书，虚拟货币操纵和尝试部署勒索软件。</p>
+<p>&emsp;&emsp;卡巴斯基2022年曝光了恶意程序Moonbounce,并将其归因于APT41。恶意程序修改了UEFI固件中的dxe驱动文件。因为它不是存储在硬盘中,因此在格式化硬盘或者更换硬盘时不会清除恶意程序。</p>
+<p>&emsp;&emsp;修改后的dxe驱动文件能够拦截和引导UEFI启动的流程,引入一个复杂的感染链,并且只在内存中运行,硬盘上没有留下攻击痕迹。这样的bootkit不仅更隐蔽而且更难以缓解。</p>
+<h1 id="2-样本信息"><a href="#2-样本信息" class="headerlink" title="2. 样本信息"></a>2. 样本信息</h1><p>&emsp;&emsp;UEFI固件中被修改的dxe驱动详细文件信息如下:</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>Core_dxe</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Md5</td>
+<td>2d4991c3b6da35745e0d4f76dffbca56</td>
+</tr>
+<tr>
+<td>文件类型</td>
+<td>EFI_BOOT_SERVICE_DRIVER</td>
+</tr>
+</tbody></table>
+<p>映射到内存的驱动</p>
+<table>
+<thead>
+<tr>
+<th>MD5</th>
+<th>2ce20fbf09f74a819486a7815ae8e47d</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文件类型</td>
+<td>Kernel driver</td>
+</tr>
+</tbody></table>
+<p>驱动APC注入到svchost的dll文件</p>
+<table>
+<thead>
+<tr>
+<th>MD5</th>
+<th>bcf786ac5cfe3b6e9ceacc6733827355</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文件类型</td>
+<td>Dll</td>
+</tr>
+</tbody></table>
+<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3. 流程图"></a>3. 流程图</h1> <img src="/post/e6b73205/62ec9d3ff2fe0b0fc45b97f6cd4c4f41.png" class="" title="example">
+		  
+				  
+	  
+      
+	  <!-- 添加打赏 -->
+	  
+	
+	  <!-- 添加版权声明 -->
+      
+	  
+	</div>
+	
+	<!-- 添加置顶 -->
+    <div class="article-info article-info-index">
+      
+	  
+	  <!-- 分类页 -->
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">APT41</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+	  
+	  <!-- 添加展开全文 -->
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/post/e6b73205.html">展开全文 >></a>
+        </p>
+      
+	  
+	  <!-- 添加分享 -->
+      
+	  
+      <div class="clearfix"></div>
+	  
+    </div>
+  </div>
+</article>
+
+
+
+<!-- 添加回到顶部和文章目录 -->
+<aside class="wrap-side-operation">
+  <div class="mod-side-operation">
+    
+      <div class="jump-container" id="js-jump-container" style="display:none;">
+        <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+          <i class="icon-font icon-back"></i>
+        </a>
+      </div>
+    
+    
+  </div>
+</aside>
+
+<!-- 添加评论 -->
+
+
+<!-- 文章页添加mathjax公式 -->
+
+  
+
+<!-- 文章页添加mathjax公式 -->
+  
     <article id="post-盲眼鹰针对厄瓜尔多的近期活动分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1251,10 +1449,10 @@ window.MathJax = {
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 26 篇</span>
+		<span> 27 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">61.9k</span></span>
+		<span> <span class="post-count">63.4k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->

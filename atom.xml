@@ -6,7 +6,7 @@
   <link href="http://shxi.cc/atom.xml" rel="self"/>
   
   <link href="http://shxi.cc/"/>
-  <updated>2024-03-21T02:34:10.028Z</updated>
+  <updated>2024-03-22T02:03:27.387Z</updated>
   <id>http://shxi.cc/</id>
   
   <author>
@@ -15,6 +15,24 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Lazarus组织以日本瑞穗銀行等招聘信息为诱饵的攻击活动分析</title>
+    <link href="http://shxi.cc/post/53de2fc6.html"/>
+    <id>http://shxi.cc/post/53de2fc6.html</id>
+    <published>2024-03-22T01:59:01.000Z</published>
+    <updated>2024-03-22T02:03:27.387Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.概述"></a>1.概述</h1><p>&emsp;&emsp;Lazarus是朝鲜国家资助的APT组织，该组织自成立以来一直活跃至今，因2014年11月针对索尼影视娱乐公司的攻击活动Operation Blockbuster而出名。<br>&emsp;&emsp;该组织早期主要针对政府机关，以窃取情报为主，但自2014年后，该组织开始针对全球金融机构、虚拟货币交易等位目标，并开始发动攻击以获取经济利益。近日在威胁狩猎中发现Lazarus以日本瑞穗银行（Mizuho Bank）的招聘信息为诱饵进行攻击的攻击活动，</p><h1 id="2-攻击链"><a href="#2-攻击链" class="headerlink" title="2.攻击链"></a>2.攻击链</h1> <img src="/post/53de2fc6/76334015ff4f1c0ee62489c2b2422b5c.png" class="" title="example"><span id="more"></span><h1 id="3-攻击活动分析"><a href="#3-攻击活动分析" class="headerlink" title="3. 攻击活动分析"></a>3. 攻击活动分析</h1><h2 id="1-Job-Description-vhd分析"><a href="#1-Job-Description-vhd分析" class="headerlink" title="1. Job_Description.vhd分析"></a>1. Job_Description.vhd分析</h2><p>&emsp;&emsp;vhd为虚拟磁盘格式, 在较高版本的操作系统中能够直接打开，在较低版本的系统中不能直接打开，比如win7操作系统，因此该样本主要针对使用高版本系统的用户。<br>&emsp;&emsp;Vhd文件打开后如下图，其中文件Dump.bin和Job_Description.pdf为隐藏状态，因此从受害者的角度来看文件打开后只显示Job_Description.exe文件。</p><p><img src="53de2fc6/0a88d1b4d749286469d2fd3caa57fc56.png"></p><p>为了降低受害者的警惕性，图标伪装成PDF文件,在文件名和后缀名之间使用了大量的空格，在资源管理器中不能直接看到后缀而是被用”…”代替。</p><p><img src="53de2fc6/66f0ffb6b786fa9218e981935643f447.png"></p><p>如果受害者点击执行了文件Job_Description.exe,该恶意程序会打开PDF诱饵文件展示在前台。PDF诱饵文件的主题为日本瑞穗银行（Mizuho Bank）的招聘信息。</p><p><img src="53de2fc6/90d731ff3184953279eb4cc2a912a579.png"></p><h2 id="2-Job-Descrition-exe分析"><a href="#2-Job-Descrition-exe分析" class="headerlink" title="2.Job_Descrition.exe分析"></a>2.Job_Descrition.exe分析</h2><p>恶意程序执行后,首先将文件dump.bin拷贝到目录%Templates%，并重命名为”war{当前时间戳}{随机数}”，随机数为使用当前时间戳作为随机数种子生成。</p><p><img src="53de2fc6/f64bb17d0686a90822841bc55240fc20.png"></p><p>目录%templates%主要存放word生成的本地模板,命名一般为”war{xxx}.bin”，在将dump.bin拷贝到该目录重命名后取消其隐藏属性，因为在该目录下使用该文件名很正常。</p><p><img src="53de2fc6/fc5fb3eb41878416122ff686f653e307.png"></p><p>&emsp;&emsp;读取拷贝后的dump.bin, 判断文件头是否是MZ，如果是表示该文件已经解密，直接返回;否则使用文件中第一个字节作为异或密钥，解密前1000字节数据，如果文件大小小于1000，则解密整个文件。</p><p>&emsp;&emsp;解密完成后，将解密后的首字节改成’M’来修复PE头，最后将解密的数据写入原文件起始位置。</p><p><img src="53de2fc6/2d4ab8ab0c3e3ef493c184adfea9dddc.png"></p><p>&emsp;&emsp;最后通过函数LoadLibraryW将文件加载到内存中，获取导出序号为1的导出函数并执行。</p><p><img src="53de2fc6/89862418a9522b4d6e854093ee17ef56.png"></p><h2 id="3-dump-bin分析"><a href="#3-dump-bin分析" class="headerlink" title="3.dump.bin分析"></a>3.dump.bin分析</h2><p>&emsp;&emsp;文件dump.bin为加密数据,解密后为dll文件。由文件Job_Descrition.exe解密并执行该dll导出序号为1的导出函数。Dll文件执行后首先读取自身文件尾部的4字节数据作为加密配置信息在文件中的偏移值，然后使用标准的RC4解密算法解密出配置数据。</p><p><img src="53de2fc6/78d3b3c8106772c10905108643aec3df.png"></p><p>解密后的值为:</p><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hxxps:<span class="regexp">//</span>azure.protection-</span><br><span class="line">service.cloud<span class="regexp">/GJ4EDAp_dNg/</span>lIHlIP4QM7<span class="regexp">/GQKGPNuo4R/</span>c5njZjK9Tq<span class="regexp">/J7rC%2BBrm/</span></span><br><span class="line">ZoQVg%<span class="number">3</span>D%<span class="number">3</span>D</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;解密完配置信息后,遍历当前运行的进程快照，检测系统中是否包含安全产商安全软件相关的进行。若存在则设置对应的全局变量值为1。</p><p><img src="53de2fc6/4ffaad2157400f3660c3120e0a966aae.png"></p><p>检测的进程名如下:</p><table><thead><tr><th>进程名</th><th>所属软件</th></tr></thead><tbody><tr><td>SavService.exe</td><td>Sophos Anti-Virus Software</td></tr><tr><td>avp.exe</td><td>卡巴斯基杀毒软件</td></tr><tr><td>klnagent.exe</td><td>卡巴斯基杀毒软件</td></tr><tr><td>AvastSvc.exe</td><td>Avast杀毒软件</td></tr><tr><td>AvastUI.exe</td><td>Avast杀毒软件</td></tr><tr><td>avguard.exe</td><td>杀毒软件小红伞(Avira)</td></tr><tr><td>SentryEye.exe</td><td>Avira Product Family</td></tr><tr><td>bdagent.exe</td><td>BitDefender Professional</td></tr><tr><td>vsserv.exe</td><td>Bull Guard网络安全套装</td></tr><tr><td>coreServiceShell.exe</td><td>趋势杀毒软件</td></tr><tr><td>uiSeAgnt.exe</td><td>趋势科技Worry-Free Business Security</td></tr><tr><td>MsMpEng.exe</td><td>Windows Defender</td></tr></tbody></table><p>&emsp;&emsp;当系统中存在趋势科技、BitDefender、WindowsDefender其中之一的进程时，则重载ntdll.dll，以取消杀软对ntdll.dll的hook，从而绕过杀软监测。<br>当进程中存在与 趋势科技、BitDefender、WindowsDefender相关的进程时,重载加载的ntdll模块，用于绕过这些进程对ntdll的监控。<br><img src="53de2fc6/bdbaf27190b3005f8ad913fd29b8aeac.png"></p><p>重载代码如下:<br><img src="53de2fc6/80be64511a991416173b39e93e4529d9.png"></p><p>检测互斥量是否已经被创建用于避免恶意程序被重复执行。<br><img src="53de2fc6/3beaddbda3e4aea94ea360a62243173e.png"></p><p>&emsp;&emsp;恶意程序在运行中会根据受害者计算机中安装的安全软件进程使用不同的策略来绕过检测。当解密的配置数据不是以”http”开头的url地址或者恶意程序已经在执行的情况下只执行打开诱饵文档的操作。<br><img src="53de2fc6/ec0d8271cff1bd7bb4a0d9e202d6e04a.png"></p><p>&emsp;&emsp;若存在BitDefender、WindowsDefender相关进程时通过timeout延迟10秒执行，然后使用rundll32.dll调用自身模块序号为1的导出函数。<br><img src="53de2fc6/a05b604082c0e5a72488c70507f02368.png"></p><p>恶意程序通过使用curl来从解密后的链接中下载后续的payload，如果目标系统中使用了代码，则curl使用参数”-x”来添加对应的代理。<br><img src="53de2fc6/21c6f7d259ff405cc828c04f7720f87e.png"></p><p>创建匿名管道从进程curl的执行结果中读取数据。<br><img src="53de2fc6/fe7b8c7bcf4eeb49d5f143d42baf43ef.png"></p><p>从远程服务器下载的payload被伪装成html网页，因此在下载完成后需要验证数据头部是否为”&lt;html&gt;”来确定下载的数据是否有效。<br><img src="53de2fc6/8a549fa35eef5bb92ac54340fec1198d.png"></p><p>在伪装的html数据中偏移0x40开始处才是真正的payload数据。该数据使用RC4加密算法加密。<br><img src="53de2fc6/75ea1f69ce1339fd0a477dd31c365834.png"></p><p>若存在Avria或Avast时，将解密后的数据写入文件marcoor.dll，并用rundll32.dll调用其导出函数；否则创建远程线程将数据解密后的文件注入到进程explorer中。<br><img src="53de2fc6/857851d51dcf203cbab3c5ac898a80ac.png"></p><p>恶意程序使用的远程线程代码注入如下:<br><img src="53de2fc6/40edcac130e1b97601b701c86e7c5b7f.png"></p><p>&emsp;&emsp;遗憾的是在分析过程中，始终无法获取到后续payload。</p><h1 id="3-IOC"><a href="#3-IOC" class="headerlink" title="3. IOC"></a>3. IOC</h1><p>hxxps://azure.protection-<br>service.cloud/GJ4EDAp_dNg/lIHlIP4QM7/GQKGPNuo4R/c5njZjK9Tq/J7rC%2BBrm/<br>ZoQVg%3D%3D<br>3CE53609211CAE4C925B9FEE88C7380E<br>931D0969654AF3F77FC1DAB9E2BD66B1<br>31E154E560DFF21F07F8AFF37BE6DE9B<br>A17E9FC78706431FFC8B3085380FE29F<br>2A7745C1B6FBC60C88487908A1D39EBB</p><h1 id="4-ATT-amp-CK矩阵"><a href="#4-ATT-amp-CK矩阵" class="headerlink" title="4. ATT&amp;CK矩阵"></a>4. ATT&amp;CK矩阵</h1><table><thead><tr><th>Tactic</th><th>ID</th><th>Name</th><th>Description</th></tr></thead><tbody><tr><td>Initial Access</td><td>T1566</td><td>Phishing</td><td>鱼叉式钓鱼</td></tr><tr><td>Execution</td><td>T1204</td><td>User Execution</td><td>通过诱饵文档诱导执行</td></tr><tr><td></td><td>T1059</td><td>Command and Scripting Interpreter</td><td>执行cmd命令</td></tr><tr><td>Command and Control</td><td>T1105</td><td>Ingress Tool Transfer</td><td>下载恶意程序</td></tr><tr><td></td><td>T1071</td><td>Application Layer Protocol</td><td>使用http协议通信</td></tr></tbody></table>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;1-概述&quot;&gt;&lt;a href=&quot;#1-概述&quot; class=&quot;headerlink&quot; title=&quot;1.概述&quot;&gt;&lt;/a&gt;1.概述&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;Lazarus是朝鲜国家资助的APT组织，该组织自成立以来一直活跃至今，因2014年11月针对索尼影视娱乐公司的攻击活动Operation Blockbuster而出名。&lt;br&gt;&amp;emsp;&amp;emsp;该组织早期主要针对政府机关，以窃取情报为主，但自2014年后，该组织开始针对全球金融机构、虚拟货币交易等位目标，并开始发动攻击以获取经济利益。近日在威胁狩猎中发现Lazarus以日本瑞穗银行（Mizuho Bank）的招聘信息为诱饵进行攻击的攻击活动，&lt;/p&gt;
+&lt;h1 id=&quot;2-攻击链&quot;&gt;&lt;a href=&quot;#2-攻击链&quot; class=&quot;headerlink&quot; title=&quot;2.攻击链&quot;&gt;&lt;/a&gt;2.攻击链&lt;/h1&gt; &lt;img src=&quot;/post/53de2fc6/76334015ff4f1c0ee62489c2b2422b5c.png&quot; class=&quot;&quot; title=&quot;example&quot;&gt;</summary>
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>APT-C-48(CNC)组织针利用摆渡攻击对军工和教育行业进行攻击</title>
@@ -583,73 +601,6 @@
     
     
     
-    
-  </entry>
-  
-  <entry>
-    <title>APT41将恶意程序Moonbounce写入UEFI固件</title>
-    <link href="http://shxi.cc/post/e6b73205.html"/>
-    <id>http://shxi.cc/post/e6b73205.html</id>
-    <published>2022-02-17T07:59:59.000Z</published>
-    <updated>2023-10-18T08:12:42.131Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h1><p>&emsp;&emsp;APT41早在2012年就开始活跃。据观察，该小组针对14个国家/地区的医疗保健，电信，技术和视频游戏行业,也进行一些经济私利驱动的入侵，尤其针对视频游戏产业，包括偷窃源代码和数字证书，虚拟货币操纵和尝试部署勒索软件。</p><p>&emsp;&emsp;卡巴斯基2022年曝光了恶意程序Moonbounce,并将其归因于APT41。恶意程序修改了UEFI固件中的dxe驱动文件。因为它不是存储在硬盘中,因此在格式化硬盘或者更换硬盘时不会清除恶意程序。</p><p>&emsp;&emsp;修改后的dxe驱动文件能够拦截和引导UEFI启动的流程,引入一个复杂的感染链,并且只在内存中运行,硬盘上没有留下攻击痕迹。这样的bootkit不仅更隐蔽而且更难以缓解。</p><h1 id="2-样本信息"><a href="#2-样本信息" class="headerlink" title="2. 样本信息"></a>2. 样本信息</h1><p>&emsp;&emsp;UEFI固件中被修改的dxe驱动详细文件信息如下:</p><table><thead><tr><th>文件名</th><th>Core_dxe</th></tr></thead><tbody><tr><td>Md5</td><td>2d4991c3b6da35745e0d4f76dffbca56</td></tr><tr><td>文件类型</td><td>EFI_BOOT_SERVICE_DRIVER</td></tr></tbody></table><p>映射到内存的驱动</p><table><thead><tr><th>MD5</th><th>2ce20fbf09f74a819486a7815ae8e47d</th></tr></thead><tbody><tr><td>文件类型</td><td>Kernel driver</td></tr></tbody></table><p>驱动APC注入到svchost的dll文件</p><table><thead><tr><th>MD5</th><th>bcf786ac5cfe3b6e9ceacc6733827355</th></tr></thead><tbody><tr><td>文件类型</td><td>Dll</td></tr></tbody></table><h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3. 流程图"></a>3. 流程图</h1> <img src="/post/e6b73205/62ec9d3ff2fe0b0fc45b97f6cd4c4f41.png" class="" title="example"><span id="more"></span><h1 id="3-详细分析"><a href="#3-详细分析" class="headerlink" title="3. 详细分析"></a>3. 详细分析</h1><h2 id="3-1-UEFI启动过程"><a href="#3-1-UEFI启动过程" class="headerlink" title="3.1 UEFI启动过程"></a>3.1 UEFI启动过程</h2><p>UEFI启动操作系统的过程如下：</p><ul><li> 完成UEFI平台初始化,完成CPU和芯片初始化。加载UEFI平台模块。</li><li> UEFI boot manager枚举外部设备,加载UEFI设备驱动,加载boot应用。</li><li> Windows boot manager(bootmgfw.efi)加载winows boot loader。</li><li> Windows boot loader加载windows操作系统。</li></ul><p><img src="e6b73205/7a52977d982d0ac8c08e73a71508f15e.png"></p><p>图1-来源:书籍 <strong>Rootkits and Bootkits</strong></p><p>图1中标箭头的地方是bootkit攻击UEFI固件常用的攻击点,主要有以下几点:</p><ul><li>  修改未签名UEFI Option ROM里UEFI DXE驱动,使恶意代码能够在dxe stage执行。</li><li>  修改UEFI固件中已经存在或者添加新的UEFI dxe驱动,使恶意代码能够在dxe stage执行。</li><li>  替换windows boot manager,在UEFI固件将控制权交给系统bootloader时恶意代码得到执行。</li><li>  添加新的bootloader</li></ul><h2 id="3-2-CORE-DXE"><a href="#3-2-CORE-DXE" class="headerlink" title="3.2 CORE_DXE"></a>3.2 CORE_DXE</h2><p>&emsp;&emsp;查看PE结构得知,subsystem为”EFI_driver_boot_service”,即64位的UEFI dxe驱动。<br><img src="e6b73205/b59ff739e1583c0fe2bb35113da9c065.png"></p><p>&emsp;&emsp;该dxe驱动编译时间为2014年,直到2022年1月份才被卡巴斯基曝光,由此可说明其隐蔽性。<br><img src="e6b73205/dae967d3abbc34d5fb57bd73a48d4a44.png"></p><p>&emsp;&emsp;从core_dxe发现一个字符串常量”E7846IMS.M30”,它就是core_dxe对应的UEFI固件名,由台湾微星公司硬件平台发布的固件更新。原core_dex文件与被修改的文件非常相似,除了三个被hook的函数。<br><img src="e6b73205/b64b59f04c4d4c26272b54f8bb61f018.png"></p><h3 id="1-EFI-BOOT-SERVICE-hook"><a href="#1-EFI-BOOT-SERVICE-hook" class="headerlink" title="1. EFI_BOOT_SERVICE hook"></a>1. EFI_BOOT_SERVICE hook</h3><p>&emsp;&emsp;通过对efi_boot_service结构体中的三个函数进行hook,以下被hook的代码先恢复prologue,然后实现hook代码,然后返回原代码执行原流程。以下位各个被hook函数实现的hook代码。</p><p><strong>coreAllocatePool</strong>用于分配存放驱动映射的shellcode的内存。<br><strong>coreCreateEventEx</strong>用于创建传统启动方式的事件,将驱动映射的shellcode设为其回调函数。<br><strong>ExitBootService</strong> 对函数OslArchTransferToKernel进行hook。</p><p><img src="e6b73205/3210bb0fa9752aa1d11af558798ad5a5.png"></p><p>&emsp;&emsp;Hook后的代码如下,采用inline hook的方式将函数头部改为跳转到hook_dxe_code,三个函数都是跳转到同一个函数。</p><p><img src="e6b73205/0102d122a72816e2d65470079bd95ca7.png"></p><h3 id="2-CoreAllocatePool函数分析"><a href="#2-CoreAllocatePool函数分析" class="headerlink" title="2. CoreAllocatePool函数分析"></a>2. CoreAllocatePool函数分析</h3><p>dxe驱动入口点函数为ModuleEntryPoint,创建全局结构体gDxeCoreST和gDxeCoreRT并为其分配内存时调用AllocateRuntimeCopyPool函数分配。</p><p><img src="e6b73205/0917c0835eb75a6533ceee0d18d6f65c.png"></p><p>&emsp;&emsp;AllocateRuntimeCopyPool内部调用coreAllocatePool函数分配内存。</p><p><img src="e6b73205/550d55fe78cddbd5e90918e2fbe82446.png"></p><p>&emsp;&emsp;CoreAllocatePool为被hook的函数,因此进入hook_dxe_code函数。首先恢复prologue,现在rax指向的函数CoreAllocatePool没有被hook,使用”call eax”调用原函数分配内存存放用来映射windows 内核驱动的shellcode。</p><p>&emsp;&emsp;由于地址”rbx+0xB3”为函数CoreAllocatePool的第三个参数,分配内存成功时将该地址被覆盖成内存地址。</p><p><img src="e6b73205/5919f5956641bdfc2d1dcd2f6a1cc55c.png"></p><p>&emsp;&emsp;rbx+0xB3所在地址0x1801577EB的magic数字0x1122334455667788刚好被覆盖成刚分配的内存地址。</p><p><img src="e6b73205/c2503cd1df20cb8837acb0003b074db8.png"></p><p>&emsp;&emsp;地址0x180157996(shellcode_1)处的shellcode第一条指令也有magic数字0x1122334455667788用刚分配的内存地址覆盖。</p><p><img src="e6b73205/2676c2fcce3b89e09a7b709b10e8152d.png"></p><h3 id="3-CoreCreateEventEx分析"><a href="#3-CoreCreateEventEx分析" class="headerlink" title="3. CoreCreateEventEx分析"></a>3. CoreCreateEventEx分析</h3><p>&emsp;&emsp;首先恢复函数prologue,调用原函数创建针对EFI_EVENT_Legacy_BOOT的事件,回调函数被设置成地址0x1801577E7处的shellcode。当启动方式为传统启动方式时,以回调函数的形式执行0x1801577E7的shellcode,</p><p><img src="e6b73205/f02407ede9ec6faff192c1755ec11e22.png"></p><p>&emsp;&emsp;传统启动方式启动时,直接执行驱动映射的shellcode将驱动映射并执行,如果是UEFI启动方式还需要做一些额外的工作。</p><p><img src="e6b73205/dda1acb8b08613405db59d54c3125c65.png"></p><h3 id="4-CoreExitBootServices分析"><a href="#4-CoreExitBootServices分析" class="headerlink" title="4. CoreExitBootServices分析"></a>4. CoreExitBootServices分析</h3><p>&emsp;&emsp;首先恢复函数prologue。</p><p><img src="e6b73205/2032afdabc3feff2cf934e380098d293.png"></p><p>&emsp;&emsp;查找函数OslArchTransferToKernel尾部指令,0xCB485541对应的指令为“push r13” 和”retfq”,将”retfq”指令修改成跳转指令”jmp 0x98000”。</p><p><img src="e6b73205/8a0b002f627c8d8899e13bb534d216a8.png"></p><h3 id="5-OslArchTransgerToKernel分析"><a href="#5-OslArchTransgerToKernel分析" class="headerlink" title="5. OslArchTransgerToKernel分析"></a>5. OslArchTransgerToKernel分析</h3><p>&emsp;&emsp;该函数的主要功能是将控制权从winload.exe或者winload.efi交接给内核入口点KiSystemStartup,在这里进行内核初始化。由于返回指令被修改,当初始化完准备返回时跳转到地址0x98000执行代码。Shellcode主要功能是找到ntoskrnl.exe的模块基址,保存到全局变量g_ntoskrnl_exe_image_base。<br>&emsp;&emsp;将地址0x18015791C处的shellcode拷贝到ntoskrnl的重定位表处,Inline hook函数ExAllocatePool跳转到shellcode2_hook。</p><p><img src="e6b73205/0bb08d911636c492a9594221b672a67b.png"></p><p>&emsp;&emsp;在x64_Serach_Ntoskrnl_Export函数中通过hash来找到ntoskrnl.exe导出的三个API。<br><img src="e6b73205/d6c82e956fa4a23ff3422039d268ead0.png"></p><p>&emsp;&emsp;由于需要往ntoskrnl.exe写入shellcode或者修改代码,因此需要将区段属性改为可写。<br><img src="e6b73205/22138b6d50d634a72f53f70b09a6b975.png"></p><p>&emsp;&emsp;Macgic数字在运行被动态修改为第一阶段使用coreAllocatePool分配的内存地址。使用x64_MmMapIoSpace将该shellcode映射到windows内核内存并执行。<br><img src="e6b73205/56066a19b3ad857319f43e01b4294e86.png"></p><p>&emsp;&emsp;恢复ExAllocatePool函数prologue, 加载恶意驱动并执行驱动入口点。<br><img src="e6b73205/cc4c6f0524567b8ec25aaa4f2308b97d.png"></p><h2 id="3-3驱动加载"><a href="#3-3驱动加载" class="headerlink" title="3.3驱动加载"></a>3.3驱动加载</h2><p>&emsp;&emsp;使用函数load_driver将驱动malious_driver加载到内存。</p><h3 id="1-分配内存"><a href="#1-分配内存" class="headerlink" title="1. 分配内存"></a>1. 分配内存</h3><p>&emsp;&emsp;调用ExAllocate分配足够大小的内存地址,驱动将被映射到这段内存。</p><p><img src="e6b73205/18fa8a8c93cdfa7b8e57500ebc68fab2.png"></p><h3 id="2-拷贝头部数据"><a href="#2-拷贝头部数据" class="headerlink" title="2. 拷贝头部数据"></a>2. 拷贝头部数据</h3><p><img src="e6b73205/7cb483ea28ac2fe0b7345b9c840ae6dc.png"></p><h3 id="3-拷贝区段数据"><a href="#3-拷贝区段数据" class="headerlink" title="3. 拷贝区段数据"></a>3. 拷贝区段数据</h3><p><img src="e6b73205/48fb6310fb68beb54e16563502fc94a1.png"></p><h3 id="4-修复重定位"><a href="#4-修复重定位" class="headerlink" title="4. 修复重定位"></a>4. 修复重定位</h3><p><img src="e6b73205/8b4d07bf6d2a115a2a7be9c25258c794.png"></p><h3 id="5-解析导入表函数地址"><a href="#5-解析导入表函数地址" class="headerlink" title="5. 解析导入表函数地址"></a>5. 解析导入表函数地址</h3><p>&emsp;&emsp;使用RtInitAnsiString和RtlAnsiStringToUnicodeString将函数名初始化并作为MmGetSystemRoutineAddress的参数来获取对应函数名的函数地址然后写入到导入函数地址表中。<br><img src="e6b73205/db1843dcab729c122ce957ce50a15cef.png"></p><h3 id="6-调用驱动入口点"><a href="#6-调用驱动入口点" class="headerlink" title="6. 调用驱动入口点"></a>6. 调用驱动入口点</h3><p>&emsp;&emsp;获取驱动入口点并调用。<br><img src="e6b73205/f72d43429dd899dede208bfdb63efde0.png"></p><h2 id="3-4-驱动分析"><a href="#3-4-驱动分析" class="headerlink" title="3.4 驱动分析"></a>3.4 驱动分析</h2><p>&emsp;&emsp;驱动入口点DriverEntry使用PsSetLoadImageNotifyRoutine实现对模块加载的监控,即每当有新的模块被加载时,都会执行回调函数NotifyRoutine。<br><img src="e6b73205/2f783ba8705b682e5d5735706e3b98ce.png"></p><p>&emsp;&emsp;判断加载的是否是kernel32.dll并且所属进程的命令行是”svchost.exe -k”等,因为需要kernel32导出的api函数来映射pe文件到内存,所以需要等待kernel32.dll加载成功。创建结构体作为内核APC回调函数<br>kernelRoutine的参数。<br><img src="e6b73205/863ac698dd8924627875d30f26e89b3e.png"></p><p>&emsp;&emsp;在内核APC回调函数kernelRoutine中初始化需要传给回调函数的参数并将workItem插入Work队列中等待被执行。<br><img src="e6b73205/64e7a11a7284f289b3738d308ed5d76a.png"></p><p>&emsp;&emsp;在workItem的回调函数中,创建用户APC用于向svchost注入shellcode,KeInitializeApc的第6个参数为要注入的shellcode,也就是加载恶意dll的代码,最后一个参数为保存着加载dll时需要用到的数据,比如api地址、恶意文件等等。<br><img src="e6b73205/4a3c6b30843cf362832742aa0bba6c0d.png"></p><h2 id="3-5-恶意dll分析"><a href="#3-5-恶意dll分析" class="headerlink" title="3.5 恶意dll分析"></a>3.5 恶意dll分析</h2><p>&emsp;&emsp;查壳后得知被加了MPRESS壳,脱壳后查看代码得知主要功能就是下载文件。<br><img src="e6b73205/31a4a5d2a53742a8e3dbad652f5acf64.png"></p><p>&emsp;&emsp;文件下载部分代码如下,链接由dll入口点DllEntryPoint的第三个参数提供。这里给的下载链接是”hxxp://mb.glbaitech.com/mboard.dll”,可能是年代已久,现在已经失效了。<br><img src="e6b73205/5126dc0e8ee05cea96726229b2bea7f1.png"></p><h1 id="4-IOC"><a href="#4-IOC" class="headerlink" title="4. IOC"></a>4. IOC</h1><p>hxxp://mb.glbaitech.com/mboard.dll<br>2d4991c3b6da35745e0d4f76dffbca56<br>2ce20fbf09f74a819486a7815ae8e47d<br>bcf786ac5cfe3b6e9ceacc6733827355</p><h1 id="5-参考"><a href="#5-参考" class="headerlink" title="5. 参考"></a>5. 参考</h1><p><a href="https://www.binarly.io/posts/A_deeper_UEFI_dive_into_MoonBounce/index.html">Https://www.binarly.io/posts/A_deeper_UEFI_dive_into_MoonBounce/index.html</a><br><a href="https://securelist.com/moonbounce-the-dark-side-of-uefi-firemware/105468">Https://securelist.com/moonbounce-the-dark-side-of-uefi-firemware/105468</a><br>ebook: <strong>rootkit and bootkit</strong></p>]]></content>
-    
-    
-    <summary type="html">&lt;h1 id=&quot;1-概述&quot;&gt;&lt;a href=&quot;#1-概述&quot; class=&quot;headerlink&quot; title=&quot;1. 概述&quot;&gt;&lt;/a&gt;1. 概述&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;APT41早在2012年就开始活跃。据观察，该小组针对14个国家/地区的医疗保健，电信，技术和视频游戏行业,也进行一些经济私利驱动的入侵，尤其针对视频游戏产业，包括偷窃源代码和数字证书，虚拟货币操纵和尝试部署勒索软件。&lt;/p&gt;
-&lt;p&gt;&amp;emsp;&amp;emsp;卡巴斯基2022年曝光了恶意程序Moonbounce,并将其归因于APT41。恶意程序修改了UEFI固件中的dxe驱动文件。因为它不是存储在硬盘中,因此在格式化硬盘或者更换硬盘时不会清除恶意程序。&lt;/p&gt;
-&lt;p&gt;&amp;emsp;&amp;emsp;修改后的dxe驱动文件能够拦截和引导UEFI启动的流程,引入一个复杂的感染链,并且只在内存中运行,硬盘上没有留下攻击痕迹。这样的bootkit不仅更隐蔽而且更难以缓解。&lt;/p&gt;
-&lt;h1 id=&quot;2-样本信息&quot;&gt;&lt;a href=&quot;#2-样本信息&quot; class=&quot;headerlink&quot; title=&quot;2. 样本信息&quot;&gt;&lt;/a&gt;2. 样本信息&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;UEFI固件中被修改的dxe驱动详细文件信息如下:&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;文件名&lt;/th&gt;
-&lt;th&gt;Core_dxe&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;&lt;tr&gt;
-&lt;td&gt;Md5&lt;/td&gt;
-&lt;td&gt;2d4991c3b6da35745e0d4f76dffbca56&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;文件类型&lt;/td&gt;
-&lt;td&gt;EFI_BOOT_SERVICE_DRIVER&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;&lt;/table&gt;
-&lt;p&gt;映射到内存的驱动&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;MD5&lt;/th&gt;
-&lt;th&gt;2ce20fbf09f74a819486a7815ae8e47d&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;&lt;tr&gt;
-&lt;td&gt;文件类型&lt;/td&gt;
-&lt;td&gt;Kernel driver&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;&lt;/table&gt;
-&lt;p&gt;驱动APC注入到svchost的dll文件&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;MD5&lt;/th&gt;
-&lt;th&gt;bcf786ac5cfe3b6e9ceacc6733827355&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;&lt;tr&gt;
-&lt;td&gt;文件类型&lt;/td&gt;
-&lt;td&gt;Dll&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;&lt;/table&gt;
-&lt;h1 id=&quot;3-流程图&quot;&gt;&lt;a href=&quot;#3-流程图&quot; class=&quot;headerlink&quot; title=&quot;3. 流程图&quot;&gt;&lt;/a&gt;3. 流程图&lt;/h1&gt; &lt;img src=&quot;/post/e6b73205/62ec9d3ff2fe0b0fc45b97f6cd4c4f41.png&quot; class=&quot;&quot; title=&quot;example&quot;&gt;</summary>
-    
-    
-    
-    <category term="APT分析报告" scheme="http://shxi.cc/categories/APT%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/"/>
-    
-    
-    <category term="APT41" scheme="http://shxi.cc/tags/APT41/"/>
     
   </entry>
   
