@@ -44,7 +44,7 @@
 <meta property="og:image" content="http://shxi.cc/post/310d33d6/d51a5bd5c01dbef028d82b98c157d528.png">
 <meta property="og:image" content="http://shxi.cc/post/310d33d6/65e066b58393312da8e48bcae374112e.png">
 <meta property="article:published_time" content="2022-02-10T13:05:10.000Z">
-<meta property="article:modified_time" content="2024-03-27T02:53:47.586Z">
+<meta property="article:modified_time" content="2024-03-31T05:21:22.397Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="盲眼鹰">
 <meta name="twitter:card" content="summary">
@@ -443,7 +443,7 @@ var _hmt = _hmt || [];
 <p><img src="310d33d6/91a8fa49771f8af6054559538a562bb7.png"></p>
 <h2 id="2-pRay-exe"><a href="#2-pRay-exe" class="headerlink" title="2.pRay.exe"></a>2.pRay.exe</h2><p>恶意程序使用C#的WPF框架编写而成,有受害者点击PDF文件的下载链接下载而来。攻击者在恶意程序中插入了大量正常的代码用于诱导分析人员误认为该文件为正常文件。</p>
 <p><img src="310d33d6/4873512be7f682b3b20b767d2d6588a4.png"></p>
-<p>&emsp;&emsp;恶意代码在WPF窗口入口处函数MainWindow中,从资源Pittsburgh.Frequency.si中读取加密的数据并解密, 解密的文件为C# dll文件。<br>&emsp;&emsp;恶意程序通过Load来发射加载dll,并从硬编码的Rule.Bookmarks中解析两个参数。使用函数GetExportedTypes反射获取dll程序导出的第二个类型,即”CargoWise.Whise”类,<br>CreateInstance调用该类并传入函数参数。<br><img src="310d33d6/07803b571e1ddd9458206718397eb591.png"></p>
+<p>&emsp;&emsp;恶意代码在WPF窗口入口处函数MainWindow中,从资源Pittsburgh.Frequency.si中读取加密的数据并解密, 解密的文件为C# dll文件。恶意程序通过Load来发射加载dll,并从硬编码的Rule.Bookmarks中解析两个参数。<br>&emsp;&emsp;使用函数GetExportedTypes反射获取dll程序导出的第二个类型,即”CargoWise.Whise”类,CreateInstance调用该类并传入函数参数。<br><img src="310d33d6/07803b571e1ddd9458206718397eb591.png"></p>
 <p>加密数据解密方法如下图。<br><img src="310d33d6/c661e10c6a91f0e11149922d11d69e0f.png"></p>
 <h2 id="3-stage1-wise-dll"><a href="#3-stage1-wise-dll" class="headerlink" title="3.stage1 wise.dll"></a>3.stage1 wise.dll</h2><p>该阶段的恶意程序为混淆的C# dll程序, 主要功能为解密下一阶段的dll文件。恶意程序开发者将类名或函数名用特殊符号命名或者使用与其实际功能不相关的名字。<br><img src="310d33d6/937ab4af138afc45907f442788648a96.png"></p>
 <p>函数代码则使用不透明谓词的混淆方式混淆代码,干扰分析人员分析恶意代码，同时也能够绕过一些安全防护软件的检测。<br><img src="310d33d6/0f5e16db30d1a73e15d2df88feedde91.png"></p>
@@ -626,7 +626,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2024年03月27日 10:53:47
+	2024年03月31日 13:21:22
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
