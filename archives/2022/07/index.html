@@ -7,59 +7,19 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <meta http-equiv="Content-Language" content="zh-cn">
   <link rel="dns-prefetch" href="http://shxi.cc">
-  <title>DoNot组织在其框架中引入浏览器窃取模块 | ydc&#39;s Blog</title>
+  <title>归档: 2022/7 | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="1.   概述&amp;emsp;&amp;emsp;Donot“肚脑虫”（APT-Q-38）是疑似具有南亚背景的APT组织，其主要以周边国家的政府机构 为目标进行网络攻击活动，通常以窃取敏感信息为目的。该组织具备针对Windows与Android双平台的攻击能力。&amp;emsp;&amp;emsp;在对该组织追踪朔源的过程中，发现Donot使用了一系列新型的后门框架，该框架名为Jaca，根据组件的功能分别分为下载执行组件、">
-<meta property="og:type" content="article">
-<meta property="og:title" content="DoNot组织在其框架中引入浏览器窃取模块">
-<meta property="og:url" content="http://shxi.cc/post/e42690c0.html">
+  <meta name="description" content="分享一些恶意样本分析和分析报告">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ydc&#39;s Blog">
+<meta property="og:url" content="http://shxi.cc/archives/2022/07/index.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="1.   概述&amp;emsp;&amp;emsp;Donot“肚脑虫”（APT-Q-38）是疑似具有南亚背景的APT组织，其主要以周边国家的政府机构 为目标进行网络攻击活动，通常以窃取敏感信息为目的。该组织具备针对Windows与Android双平台的攻击能力。&amp;emsp;&amp;emsp;在对该组织追踪朔源的过程中，发现Donot使用了一系列新型的后门框架，该框架名为Jaca，根据组件的功能分别分为下载执行组件、">
+<meta property="og:description" content="分享一些恶意样本分析和分析报告">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image001.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image003.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image005.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image007.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image009.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image011.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image013.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image015.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image017.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image019.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image021.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image023.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image025.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image027.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image029.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image031.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image033.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image035.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image037.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image039.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image039.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image043.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image045.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image047.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image049.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image051.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image053.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image055.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image057.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image059.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image061.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image063.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image065.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image067.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image069.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image071.png">
-<meta property="og:image" content="http://shxi.cc/post/e42690c0/clip_image073.png">
-<meta property="article:published_time" content="2022-08-26T03:15:11.000Z">
-<meta property="article:modified_time" content="2023-11-01T06:46:29.292Z">
 <meta property="article:author" content="KenYang">
-<meta property="article:tag" content="Donot">
+<meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://shxi.cc/post/e42690c0/clip_image001.png">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -352,599 +312,101 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-DoNot组织在其框架中引入浏览器窃取模块" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
+            
+  
+  
     
-      <header class="article-header">
-        
-  
-    <h1 class="article-title_code_ant" itemprop="name">
-	  <a href="/post/e42690c0.html">DoNot组织在其框架中引入浏览器窃取模块</a>
-	</h1>
-  
-
-        
-		
-		  <a href="/post/e42690c0.html" class="archive-article-date">
-  	<time datetime="2022-08-26T03:15:11.000Z" itemprop="datePublished">
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2022" class="archive-year">2022</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/post/e22d03da.html" class="archive-article-date">
+  	<time datetime="2022-07-15T04:40:12.000Z" itemprop="datePublished">
 	<!-- <i class="icon-calendar icon"></i> -->
 
 	<i class="fa fa-calendar-check-o" aria-hidden="true"></i>
 	&nbsp;
-	2022-08-26</time>
+	2022-07-15</time>
 	
 	<!-- busuanzi阅读量统计
-	
-	<span>
-		&nbsp; &nbsp; &nbsp;
-		<span class="post-meta-item-text">阅读量:</span>
-		<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
-		<span class="post-meta-item-text">次</span>
-	</span>
 	
 	-->
 	
     <!-- waline阅读量统计 -->
 	
-	<span>
-		&nbsp; &nbsp; &nbsp;
-		<i class="fa fa-eye" aria-hidden="true"></i>
-		&nbsp;
-		<span class="waline-pageview-count" data-path="/post/e42690c0.html"><i class="fa fa-spinner fa-spin"></i></span>
-	</span>
-	
 
 </a>
 
 
-        
-		
-		
-		  <!-- 添加标题栏文字统计效果 -->
-<div class="word-count">
-	
-      
-        <span class="article-type" style="
-          color: white;
-          font-size: 14px;
-          background: #0088CC;
-          padding: 0 5px 1px 5px;
-          margin-right: 5px;
-          border-radius: 2px;">原创</span>
-		  &nbsp; 
-      
-    
-	
-    <span class="post-time">
-      <span class="post-meta-item-icon">
-	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
-        <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
-        <span class="post-meta-item-text">字数统计: </span>
-        <span class="post-count">2.9k字</span>
-      </span>
-    </span>
-
-    <span class="post-time">
-      &nbsp; | &nbsp;
-      <span class="post-meta-item-icon">
-	    <i class="fa fa-pagelines" aria-hidden="true"></i>
-        <span class="post-meta-item-text">阅读时长: </span>
-        <span class="post-count">11min</span>
-      </span>
-    </span>
-	
-
-</div>
-<!-- 添加标题栏文字统计效果结束 -->
-		
-      </header>
-    
-	
-    <div class="article-entry" itemprop="articleBody">
-	  <!-- 添加分类与标签 -->
-	  
-		  
-		  <h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>&emsp;&emsp;Donot“肚脑虫”（APT-Q-38）是疑似具有南亚背景的APT组织，其主要以周边国家的政府机构 为目标进行网络攻击活动，通常以窃取敏感信息为目的。该组织具备针对Windows与Android双平台的攻击能力。<br>&emsp;&emsp;在对该组织追踪朔源的过程中，发现Donot使用了一系列新型的后门框架，该框架名为Jaca，根据组件的功能分别分为下载执行组件、文件上传组件、截图组件、文件收集组件、键盘鼠标消息记录组件、浏览器敏感信息窃取组件、移动磁盘文件收集组件等等。</p>
-<h1 id="2-样本详情"><a href="#2-样本详情" class="headerlink" title="2. 样本详情"></a>2. 样本详情</h1><table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>文件名</td>
-<td>S03.doc</td>
-</tr>
-<tr>
-<td>MD5</td>
-<td>3fabf3b97362af460abe98855c7caef8</td>
-</tr>
-<tr>
-<td>文件类型</td>
-<td>Office word文档</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>文件名</td>
-<td>HG5HlDPqsnr3HBwO.php</td>
-</tr>
-<tr>
-<td>Md5</td>
-<td>21b82530fa520eecd5aa677fa7ec0879</td>
-</tr>
-<tr>
-<td>文件类型</td>
-<td>Office word模板</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>文件名</td>
-<td>pgixedfxglmjirdc.dll</td>
-</tr>
-<tr>
-<td>Md5</td>
-<td>b38586849d45649db67189c1e7c0397e</td>
-</tr>
-<tr>
-<td>文件类型</td>
-<td>dll</td>
-</tr>
-</tbody></table>
-<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.   流程图"></a>3.   流程图</h1> <img src="/post/e42690c0/clip_image001.png" class="" title="example">
-<span id="more"></span>
-
-<h1 id="4-详细分析"><a href="#4-详细分析" class="headerlink" title="4. 详细分析"></a>4. 详细分析</h1><h2 id="1-s003-doc分析"><a href="#1-s003-doc分析" class="headerlink" title="1. s003.doc分析"></a>1. s003.doc分析</h2><p>&emsp;&emsp;该样本使用远程RTF模板注入，在RTF的template数据中插入要加载的模板文件,模板文件地址为:</p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//</span>necromencertwo.buzz<span class="regexp">/bfrp31KqURS2yZTE/</span><span class="number">0</span>BmHwYTEgupY2Qfb.php</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;如下图所示:<br><img src="e42690c0/clip_image003.png"></p>
-<p>&emsp;&emsp;托管模板文件的服务器会判断是否由office文档发送请求，如果不是则返回诱饵文档，否则返回携带恶意宏代码的文档。<br>&emsp;&emsp;模板文件的元数据如下, 元数据中与个人有关的元数据已经被清除, 使分析人员不能通过元数据获取到有用的信息。<br><img src="e42690c0/clip_image005.png"></p>
-<p>&emsp;&emsp;从元数据中的数据可以推测出如下几点:</p>
-<ol>
-<li><p>   模板文件创建时间为2021年3月30日,最近的修改时间为2022年6月6号，可以得知至少在2021年3月份Donot组织就开始在使用远程RTF模板注入，并且是用工具对同一个文件来生成的包含不同恶意宏代码的文件。</p>
-</li>
-<li><p>   Donot生成模板文件时使用的操作系统为win10-x64,使用的office word的版本为15.000。  </p>
-</li>
-</ol>
-<h3 id="1-1-宏代码"><a href="#1-1-宏代码" class="headerlink" title="1.1  宏代码"></a>1.1  宏代码</h3><p>&emsp;&emsp;当模板注入成功时，它会诱使受害者开启宏功能以使恶意宏代码能够执行。宏被启用后调用dOCument_OpEN方法，dOCument_OpEN主要功能是拼接shellcode，调用ZwAllocateVirtualMemory在当前进程(word.exe)的内存空间分配内存存放shellcode并设置可执行属性；调用MultiByteToWideChar将shellcode从字节转换成utf-16;将转换后的shellcode作为回调参数传入函数EnumUILanguagesA中。<br><img src="e42690c0/clip_image007.png"></p>
-<p>&emsp;&emsp;打开带有恶意宏代码的word程序有x86和x64版本两个版本,在宏代码中利用宏定义Win64来识别并在EnumUILanguagesA中使用不同版本的shellcode。<br><img src="e42690c0/clip_image009.png"></p>
-<h3 id="1-2-Stage1-x64-shellcode"><a href="#1-2-Stage1-x64-shellcode" class="headerlink" title="1.2 Stage1 x64 shellcode"></a>1.2 Stage1 x64 shellcode</h3><p>&emsp;&emsp;X86和x64版本的shellcode大致一样, 不同的是获取PEB结构地址的方法和 在获取已加载的模块时使用的结构体偏移不一致。<br><img src="e42690c0/clip_image011.png"></p>
-<p>&emsp;&emsp;通过PEB来查找kernel32.dll的加载地址<br><img src="e42690c0/clip_image013.png"></p>
-<p>&emsp;&emsp;获取Dll函数加载地址和函数地址时并不使用明文来获取，而是在恶意程序内部硬编码了几个函数名对应的哈希值。寄存器 rsi为要查找的API地址所在的dll的加载基址,通过加载地址解析模块的导出表并计算哈希值，要查找的API都是以硬编码哈希的形式存放在程序内，该哈希值先异或0xBAADC0D3再与计算出的哈希值进行比较，如果相等则返回对应API的函数地址,否则继续比较直到找到为止。</p>
-<p><img src="e42690c0/clip_image015.png"></p>
-<p>&emsp;&emsp;解析以下函数地址用于保存下载的文件和分配内存<br><img src="e42690c0/clip_image017.png"></p>
-<p>&emsp;&emsp;从服务器下载加密的shellcode并保存到临时文件，由于服务器已经无法连接，不能继续分析下一阶段的shellcode。<br><img src="e42690c0/clip_image019.png"></p>
-<p>&emsp;&emsp;解密加密的shellcode并跳转到shellcode执行代码。<br><img src="e42690c0/clip_image021.png"></p>
-<p>&emsp;&emsp;在shellcode中发现一些有趣的字符串，这些信息是用于第二阶段的shellcode用于解密的xor密钥和一些安全产品到期时间等等。</p>
-<p><img src="e42690c0/clip_image023.png"></p>
-<h3 id="a-Stage1-x86-shellcode"><a href="#a-Stage1-x86-shellcode" class="headerlink" title="a) Stage1 x86 shellcode"></a>a) Stage1 x86 shellcode</h3><p>&emsp;&emsp;这一阶段的shellcode与x64版本的shellcode一样,开头代码为解密后续的加密数据,解密算法为对加密数据的每一个字节先取反然后异或0x2B,大小为0x29A。</p>
-<p><img src="e42690c0/clip_image025.png"></p>
-<p>&emsp;&emsp;与x64版本的shellcode一样, 通过是遍历peb的链表InLoadOrderModuleList指向的模块相关的数据结构来获取kernel32.dll的加载地址。</p>
-<p><img src="e42690c0/clip_image027.png"></p>
-<p>&emsp;&emsp;通过比较函数哈希来获取函数地址的方法与x64版本一样。</p>
-<p><img src="e42690c0/clip_image029.png"></p>
-<p>&emsp;&emsp;解密该阶段和下阶段shellcode要使用的API函数地址。</p>
-<p><img src="e42690c0/clip_image031.png"></p>
-<p>&emsp;&emsp;从服务器上下载加密的shellcode,  x64 shellcode下载是png后缀的文件,x86下载的是ico后缀文件。</p>
-<p><img src="e42690c0/clip_image033.png"></p>
-<p>&emsp;&emsp;异或解密后服务器上下载的shellcode, 然后判断解密的shellcode的入口点是否为0x89、0x90、0xcc, 如果是则表示已经解密成功，跳转到shellcode入口点执行代码，如果不是则从shellcode返回到进程word而不执行任何恶意代码。</p>
-<p><img src="e42690c0/clip_image035.png">        </p>
-<h3 id="1-4-Stage2-x86-shellcode"><a href="#1-4-Stage2-x86-shellcode" class="headerlink" title="1.4 Stage2 x86 shellcode"></a>1.4 Stage2 x86 shellcode</h3><p>&emsp;&emsp;该阶段的shellcode入口代码和前面的shellcode一样，先解密加密数据然后跳转到解密后的代码执行。<br><img src="e42690c0/clip_image037.png"></p>
-<p>&emsp;&emsp;解析shellcode用到的API地址, 解析方法与前面shellcode与前面的shellcode使用的方法一样。<br><img src="e42690c0/clip_image039.png"></p>
-<p>&emsp;&emsp;在这一阶段shellcode中,寄存器EDI指向的内存使用的结构体如下:</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">format</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> kernel32_VirtualAlloc;</span><br><span class="line">…<span class="comment">//省略部分字段均为API的函数地址</span></span><br><span class="line"><span class="type">int</span> urlmon_URLDownloadToFileA;</span><br><span class="line">  <span class="type">char</span> unkonw_data[<span class="number">296</span>];</span><br><span class="line">  <span class="type">char</span> syswow64_path[<span class="number">256</span>]; <span class="comment">//字符串%tmp%\syswow64.dll</span></span><br><span class="line">  <span class="type">char</span> doc_path[<span class="number">256</span>];<span class="comment">//文档路径 &#x27;%tmp%\document.doc</span></span><br><span class="line">  <span class="type">char</span> cmd1[<span class="number">256</span>];</span><br><span class="line">  <span class="type">int</span> klif_exits;<span class="comment">//klif.sys是否存在</span></span><br><span class="line">  <span class="type">char</span> klif_flag;<span class="comment">// klif.sys文件的过期标志</span></span><br><span class="line">  <span class="type">int</span> aswsp_exits;<span class="comment">// aswsp.sys是否存在</span></span><br><span class="line">  <span class="type">char</span> aswsp_flag;<span class="comment">// aswsp.sys文件的过期标志</span></span><br><span class="line">  <span class="type">int</span> bsfs_exits;<span class="comment">// bsfs.sys是否存在</span></span><br><span class="line">  <span class="type">char</span> bsfs_flag;<span class="comment">//bsfs.sys的过期标志</span></span><br><span class="line">  <span class="type">int</span> gzflt_exits;<span class="comment">// gzflt.sys是否存在</span></span><br><span class="line">  <span class="type">char</span> gzflt_flag;<span class="comment">//gzflt.sys的过期标志</span></span><br><span class="line">  <span class="type">int</span> ehdrv_exits;<span class="comment">// ehdrv.sys是否存在</span></span><br><span class="line">  <span class="type">char</span> ehdrv_flag;<span class="comment">//ehdrv.sys的过期标志</span></span><br><span class="line">  <span class="type">int</span> _360AvFlt_exits;<span class="comment">// 360AvFlt.sys是否存在</span></span><br><span class="line">  <span class="type">char</span> _360AvFlt_flag;<span class="comment">// 360AvFlt.sys的过期标志</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;Shellcode会检测以下文件是否存在, 并使用结构体的两个字段来分别表示文件是否存在或者是否已经过期。比如用字段bsfs_exits来标志basfs.sys是否存在,bsfs_flag来判断是否过期。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">klif<span class="selector-class">.sys</span> aswsp<span class="selector-class">.sys</span> bsfs<span class="selector-class">.sys</span> gzflt<span class="selector-class">.sys</span> ehdrv<span class="selector-class">.sys</span> <span class="number">360</span>AvFlt.sys</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;以aswsp.sys为例, 该文件不存在时字段bsfs_exits值设为0, 将本地时间与预设的过期时间相比较，小于等于过期时间时字段aswsp_flag设置为1,否则为2。</p>
-<p><img src="e42690c0/clip_image039.png"></p>
-<p>&emsp;&emsp;如果文件存在, 则根据flag的值来执行不同的行为, 在这个行为中使用以下这些值, 分别用[1]-[7]来表示。</p>
-<p>[1] hxxp://mak.logupdates.xyz/DWqYVVzQLc0xrqvt/HG5HlDPqsnr3HBwOKY0vKGRBE7V0sDPdZb09n7xhp0klyT5X.mp3<br>[2] hxxp://mak.logupdates.xyz/DWqYVVzQLc0xrqvt/HG5HlDPqsnr3HBwOKY0vKGRBE7V0sDPdZb09n7xhp0klyT5X.doc<br>[3] %tmp%\syswow64.dll<br>[4] %tmp%\document.doc<br>[5] Qoltyfotskelo<br>[6] schtasks.exe /create /tn wakeup /tr &quot;rundll32 %tmp%\syswow64.dll, HPMG&quot; /f /sc DAILY /st 11:00 /ri 10 /du 24:00、<br>[7] cmd.exe %tmp%\syswow64.dll</p>
-<p>&emsp;&emsp;下表为如果驱动文件存在时shellcode要执行的动作:</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>驱动名</td>
-<td>所属安全软件</td>
-<td>到期时间</td>
-<td>Flag为1(未过期)</td>
-<td>Flag为2(已过期)</td>
-</tr>
-<tr>
-<td>gzflt.sys</td>
-<td>BitDefender</td>
-<td>2022.07.15</td>
-<td>参考1.5</td>
-<td>参考1.6</td>
-</tr>
-<tr>
-<td>klif.sys</td>
-<td>卡巴斯基</td>
-<td>2022.07.11</td>
-<td>参考1.7</td>
-<td>解密shellcode,后面与节1.6一样</td>
-</tr>
-<tr>
-<td>aswsp.sys</td>
-<td>Avast</td>
-<td>2022.07.15</td>
-<td>参考1.5</td>
-<td>参考1.6</td>
-</tr>
-<tr>
-<td>ehdrv.sys</td>
-<td>ESET NOD32</td>
-<td>2022.07.23</td>
-<td>参考1.5</td>
-<td>参考1.6</td>
-</tr>
-<tr>
-<td>bsfs.sys</td>
-<td>QuickHeal</td>
-<td>2022.07.17</td>
-<td>参考1.5</td>
-<td>返回到进程word</td>
-</tr>
-<tr>
-<td>360AvFlt.sys</td>
-<td>奇虎360</td>
-<td>2022.07.19</td>
-<td>参考1.5</td>
-<td>参考1.6</td>
-</tr>
-</tbody></table>
-<h3 id="1-5-下载文件并调用导出函数"><a href="#1-5-下载文件并调用导出函数" class="headerlink" title="1.5 下载文件并调用导出函数"></a>1.5 下载文件并调用导出函数</h3><p>&emsp;&emsp;从连接[1]下载文件并保存到[3]，下载的文件头部的PE结构magic值被抹除，这是为了绕过反病毒软件的检测。恢复文件头部然后加载文件并调用其导出函数[5]</p>
-<p><img src="e42690c0/clip_image043.png"></p>
-<h3 id="1-6-通过WinExcute执行程序"><a href="#1-6-通过WinExcute执行程序" class="headerlink" title="1.6 通过WinExcute执行程序"></a>1.6 通过WinExcute执行程序</h3><p>&emsp;&emsp;从连接[1]下载文件并保存到路径[3],从连接[2]下载诱饵文档保存到路径[5],然后拼接创建计划任务时需要的命令行[6]，使用函数WinExec来执行命令。</p>
-<p><img src="e42690c0/clip_image045.png"></p>
-<h3 id="1-7-注入shellcode到bcrypt-dll并执行"><a href="#1-7-注入shellcode到bcrypt-dll并执行" class="headerlink" title="1.7 注入shellcode到bcrypt.dll并执行"></a>1.7 注入shellcode到bcrypt.dll并执行</h3><p>&emsp;&emsp;将另一段shellcode注入到模块bcrypt.dll的内存空间内, 修改内存属性为可执行然后执行注入的shellcode。<br><img src="e42690c0/clip_image047.png"></p>
-<p>&emsp;&emsp;注入的代码如下, 也是从连接[1]下载文件保存到[3],然后执行dll的导出函数。<br><img src="e42690c0/clip_image049.png"></p>
-<h2 id="2-syswow64-dll分析"><a href="#2-syswow64-dll分析" class="headerlink" title="2. syswow64.dll分析"></a>2. syswow64.dll分析</h2><p>&emsp;&emsp;该文件包含两个导出函数Yolueorgw和Qoltyfotskelo。第一个导出函数主要是检测防病毒软件和检测是否在虚拟机内执行。第二个导出函数为设置计划任务。</p>
-<h3 id="1-检测互斥量和虚拟机环境"><a href="#1-检测互斥量和虚拟机环境" class="headerlink" title="1.     检测互斥量和虚拟机环境"></a>1.     检测互斥量和虚拟机环境</h3><p>&emsp;&emsp;创建名为”KRDNVCEAMGT@LJHNKED”的互斥量, 如果恶意程序已经在运行中则退出程序。通过WMI来查询产品名来判断是否处于虚拟机环境中，如果处于虚拟机环境中则退出程序。</p>
-<p><img src="e42690c0/clip_image051.png"></p>
-<h3 id="2-检测是否安装安全软件"><a href="#2-检测是否安装安全软件" class="headerlink" title="2.     检测是否安装安全软件"></a>2.     检测是否安装安全软件</h3><p>&emsp;&emsp;恶意程序检测目标机器上是否由安装360TotalSecurity，如果有则将自删除代码写入脚本并执行。</p>
-<p><img src="e42690c0/clip_image053.png"></p>
-<p>&emsp;&emsp;自删除代码如下,bat使用了5个参数, 通过taskkill结束自身进程,调用del删除自身文件，调用schtasks来删除名为DrivealoneUpdates的计划任务。</p>
-<p><img src="e42690c0/clip_image055.png"></p>
-<h3 id="3-收集信息"><a href="#3-收集信息" class="headerlink" title="3.     收集信息"></a>3.     收集信息</h3><p>&emsp;&emsp;收集受害者用户名、机器名和处理器ID信息。<br><img src="e42690c0/clip_image057.png"></p>
-<p>&emsp;&emsp;收集目录” C:\Program Files”和” C:\Program Files(x86)”下所有的文件夹,并用字符”?”来分隔。<br><img src="e42690c0/clip_image059.png"></p>
-<p>&emsp;&emsp;最终将所有收集到的数据拼接在一起并加密上传到C&amp;C服务器，使用的加密方法为AES256+Base64，通过post方法将加密后的值作为字段batac的值发送到C&amp;C服务器</p>
-<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rus.feedpolicy.xyz/<span class="symbol">Nb438</span>e<span class="number">8</span>pcbar<span class="number">5</span>ky<span class="number">245</span><span class="symbol">ntr4</span>um/tk<span class="number">5</span>hyeq<span class="number">9</span>pgdt</span><br></pre></td></tr></table></figure>
-
-<p><img src="e42690c0/clip_image061.png"></p>
-<h3 id="3-检测网络是否有效"><a href="#3-检测网络是否有效" class="headerlink" title="3. 检测网络是否有效"></a>3. 检测网络是否有效</h3><p>&emsp;&emsp;恶意程序往地址en.wikipedia.org/wiki/Encyclopedia发送数据包来检测受害者机器的网络是否有效。<br><img src="e42690c0/clip_image063.png"></p>
-<p>&emsp;&emsp;网络有效则在目录”c:\ProgramData”下创建文件”yjzsghu.txt”并写入数据” BQO89GHY7ki”来标识网络处于连通状态。<br><img src="e42690c0/clip_image065.png"></p>
-<h3 id="4-创建计划任务"><a href="#4-创建计划任务" class="headerlink" title="4.     创建计划任务"></a>4.     创建计划任务</h3><p>&emsp;&emsp;创建定时的计划任务，每隔3分钟执行一次程序，执行的程序和命令行如下:</p>
-<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ru<span class="symbol">ndll32</span>.exe <span class="meta">%</span>Temp<span class="meta">%</span>\pgixedfxglmjirdc.dll,Yolueorgw</span><br></pre></td></tr></table></figure>
-
-<p><img src="e42690c0/clip_image067.png"></p>
-<h3 id="4-删除计划任务"><a href="#4-删除计划任务" class="headerlink" title="4. 删除计划任务"></a>4. 删除计划任务</h3><p>&emsp;&emsp;调用程序schtasks来删除名为Jiscor的计划任务。<br><img src="e42690c0/clip_image069.png"></p>
-<h3 id="5-C-amp-C指令"><a href="#5-C-amp-C指令" class="headerlink" title="5. C&amp;C指令"></a>5. C&amp;C指令</h3><p>&emsp;&emsp;如果由C&amp;C服务器返回的指令中包含”Lok”时恶意程序发送数据到C&amp;C服务器请求下载文件, 发送的格式如下, 与上传泄露信息时使用相同的加密方法。</p>
-<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户名-机器名-处理器ID<span class="string">|||dll名</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="e42690c0/clip_image071.png"></p>
-<p>&emsp;&emsp;下载的模块保存于目录%pragramData%/DeviceStage下。<br><img src="e42690c0/clip_image073.png"></p>
-<p>&emsp;&emsp;由于C&amp;C服务器已经关闭,无法接收到后续的指令，因此无法继续分析下去。</p>
-<h1 id="5-IOC"><a href="#5-IOC" class="headerlink" title="5.   IOC"></a>5.   IOC</h1><p>3fabf3b97362af460abe98855c7caef8<br>21b82530fa520eecd5aa677fa7ec0879<br>b38586849d45649db67189c1e7c0397e<br>yjzsghu.txt<br>hxxp://necromencertwo.buzz/bfrp31KqURS2yZTE/0BmHwYTEgupY2Qfb.php</p>
-<h1 id="6-ATT-amp-CK矩阵"><a href="#6-ATT-amp-CK矩阵" class="headerlink" title="6. ATT&amp;CK矩阵"></a>6. ATT&amp;CK矩阵</h1><table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Tactic</td>
-<td>ID</td>
-<td>Name</td>
-<td>Description</td>
-</tr>
-<tr>
-<td>initial-access</td>
-<td>Phishing</td>
-<td>T1566</td>
-<td>通过网络钓鱼投递</td>
-</tr>
-<tr>
-<td>execution</td>
-<td>Command and Scripting Interpreter</td>
-<td>T1059</td>
-<td>使用bat脚本自删除</td>
-</tr>
-<tr>
-<td></td>
-<td>Scheduled Task/Job</td>
-<td>T1053</td>
-<td>设置计划任务来定时执行程序</td>
-</tr>
-<tr>
-<td>defense-evasion</td>
-<td>Template Injection</td>
-<td>T1221</td>
-<td>Office文档使用模板注入</td>
-</tr>
-</tbody></table>
-
-				  
-	  
-      
-	  <!-- 添加打赏 -->
-	  
-	
-	  <!-- 添加版权声明 -->
-      
-        <!-- 添加版权声明 -->
-<!--https://blog.csdn.net/weixin_41287260/article/details/103050336-->
-
-<div class="declare">
-	<strong class="author">本文作者：</strong>
-	
-	  KenYang
-	
-	
-	<!-- <br>
-	<strong class="create-time">发布时间：</strong>
-	2022-08-26 -->
-	
-	<br>
-	<strong class="update-time">最后更新：</strong>
-	2023年11月01日 14:46:29
-	
-	<!-- <br>
-	<strong class="article-titles">本文标题：</strong>
-	<a href="http://shxi.cc/post/e42690c0.html" title="DoNot组织在其框架中引入浏览器窃取模块" target="_blank">DoNot组织在其框架中引入浏览器窃取模块</a> -->
-	
-	<br>
-	<strong class="article-url">本文链接：</strong>
-	<a href="http://shxi.cc/post/e42690c0.html" title="DoNot组织在其框架中引入浏览器窃取模块" target="_blank">http://shxi.cc/post/e42690c0.html</a>
-	
-	<br>
-	<strong class="copyright">版权声明：</strong>
-	本作品采用
-	<a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" title="知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议">CC BY-NC-SA 4.0</a>
-	许可协议进行许可，转载请注明出处！
-	
-	
-</div>
-<!-- 添加版权声明 -->
-      
-	  
-	</div>
-	
-	<!-- 添加置顶 -->
-    <div class="article-info article-info-index">
-      
-	  
-	  <!-- 分类页 -->
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Donot</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-	  
-	  <!-- 添加展开全文 -->
-      
-	  
-	  <!-- 添加分享 -->
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
+    	 
+  
+    <h2 itemprop="name">
+      <a class="archive-article-title" href="/post/e22d03da.html">Kimsuky APT继续使用AppleSeed后门攻击韩国政府</a>
+    </h2>
+  
 
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-	  <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://shxi.cc/post/e42690c0.html" alt="微信分享二维码">
-    </div>
-</div>
+        <div class="article-info info-on-right">
+          
+          
 
-<div class="mask js-mask"></div>
-      
-	  
-      <div class="clearfix"></div>
-	  
-    </div>
+        </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-
-  
-<nav id="article-nav">
-  
-    <a href="/post/1364ae67.html" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Fin7通过XLL扩展投递恶意程序JSSLoader
-        
-      </div>
-    </a>
   
   
-    <a href="/post/e22d03da.html" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Kimsuky APT继续使用AppleSeed后门攻击韩国政府</div>
-      <i class="icon-circle-right"></i>
-    </a>
+    </div></section>
   
-</nav>
 
-
-
-<!-- 添加回到顶部和文章目录 -->
-<aside class="wrap-side-operation">
-  <div class="mod-side-operation">
     
-      <div class="jump-container" id="js-jump-container" style="display:none;">
-        <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-          <i class="icon-font icon-back"></i>
-        </a>
-      </div>
-    
-    
-      <div class="toc-container tooltip-left">
-        <i class="icon-font icon-category"></i>
-        <div class="tooltip tooltip-east">
-          <span class="tooltip-item"></span>
-          <span class="tooltip-content">
-			<span style="font-size: 20px;font-weight: bold;">目录</span>
-            <div class="toc-article">
-              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">1.   概述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E6%A0%B7%E6%9C%AC%E8%AF%A6%E6%83%85"><span class="toc-number">2.</span> <span class="toc-text">2. 样本详情</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">3.</span> <span class="toc-text">3.   流程图</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">4. 详细分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-s003-doc%E5%88%86%E6%9E%90"><span class="toc-number">4.1.</span> <span class="toc-text">1. s003.doc分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%AE%8F%E4%BB%A3%E7%A0%81"><span class="toc-number">4.1.1.</span> <span class="toc-text">1.1  宏代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-Stage1-x64-shellcode"><span class="toc-number">4.1.2.</span> <span class="toc-text">1.2 Stage1 x64 shellcode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#a-Stage1-x86-shellcode"><span class="toc-number">4.1.3.</span> <span class="toc-text">a) Stage1 x86 shellcode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-Stage2-x86-shellcode"><span class="toc-number">4.1.4.</span> <span class="toc-text">1.4 Stage2 x86 shellcode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6%E5%B9%B6%E8%B0%83%E7%94%A8%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0"><span class="toc-number">4.1.5.</span> <span class="toc-text">1.5 下载文件并调用导出函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-%E9%80%9A%E8%BF%87WinExcute%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="toc-number">4.1.6.</span> <span class="toc-text">1.6 通过WinExcute执行程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-%E6%B3%A8%E5%85%A5shellcode%E5%88%B0bcrypt-dll%E5%B9%B6%E6%89%A7%E8%A1%8C"><span class="toc-number">4.1.7.</span> <span class="toc-text">1.7 注入shellcode到bcrypt.dll并执行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-syswow64-dll%E5%88%86%E6%9E%90"><span class="toc-number">4.2.</span> <span class="toc-text">2. syswow64.dll分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A3%80%E6%B5%8B%E4%BA%92%E6%96%A5%E9%87%8F%E5%92%8C%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%8E%AF%E5%A2%83"><span class="toc-number">4.2.1.</span> <span class="toc-text">1.     检测互斥量和虚拟机环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A3%80%E6%B5%8B%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85%E5%AE%89%E5%85%A8%E8%BD%AF%E4%BB%B6"><span class="toc-number">4.2.2.</span> <span class="toc-text">2.     检测是否安装安全软件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%94%B6%E9%9B%86%E4%BF%A1%E6%81%AF"><span class="toc-number">4.2.3.</span> <span class="toc-text">3.     收集信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%A3%80%E6%B5%8B%E7%BD%91%E7%BB%9C%E6%98%AF%E5%90%A6%E6%9C%89%E6%95%88"><span class="toc-number">4.2.4.</span> <span class="toc-text">3. 检测网络是否有效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%88%9B%E5%BB%BA%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1"><span class="toc-number">4.2.5.</span> <span class="toc-text">4.     创建计划任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%88%A0%E9%99%A4%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1"><span class="toc-number">4.2.6.</span> <span class="toc-text">4. 删除计划任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-C-amp-C%E6%8C%87%E4%BB%A4"><span class="toc-number">4.2.7.</span> <span class="toc-text">5. C&amp;C指令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-IOC"><span class="toc-number">5.</span> <span class="toc-text">5.   IOC</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-ATT-amp-CK%E7%9F%A9%E9%98%B5"><span class="toc-number">6.</span> <span class="toc-text">6. ATT&amp;CK矩阵</span></a></li></ol>
-            </div>
-          </span>
-        </div>
-      </div>
-	
-  </div>
-</aside>
-
-<!-- 添加评论 -->
 
 
-  
-  <script src='//unpkg.com/@waline/client@v2/dist/waline.js'></script>
-<link href='//unpkg.com/@waline/client@v2/dist/waline.css' rel='stylesheet' />
 
-<div id="waline"></div>
+<!-- 主页添加mathjax公式 -->
+
+  <!-- mathjax http://docs.mathjax.org/en/latest/web/start.html -->
 <script>
-	// 中文默认
-	const locale = {
-	  nick: ' 昵称: ',
-	  nickError: '昵称不能少于3个字符',
-	  mail: '邮箱: ',
-	  mailError: '请填写正确的邮件地址',
-	  link: '网址: ',
-	  placeholder: ' 客官留个言吧(◕ˇ∀ˇ◕)',
-	  sofa: '评论区空空荡荡，客官快来评论吧~',
-	  submit: '提交',
-	  reply: '回复',
-	  cancelReply: '取消回复',
-	  comment: '评论',
-	  more: '加载更多...',
-	  preview: '预览',
-	  emoji: '表情',
-	  uploadImage: '上传图片',
-	  seconds: '秒前',
-	  minutes: '分钟前',
-	  hours: '小时前',
-	  days: '天前',
-	  now: '刚刚',
-	  uploading: '正在上传',
-	  login: '登录',
-	  logout: '退出',
-	  admin: '博主',
-	  word: '字',
-	  wordHint: '评论字数应在 $0 到 $1 字之间！\n当前字数：$2',
-	};
-
-	Waline.init({
-	  el: '#waline',
-	  serverURL: 'your_waline_comments_url',
-	  locale,
-	  login: 'enable',
-	  lang: 'zh-CN ',
-	  dark: '',
-	  // 设置 emoji 为微博与哔哩哔哩
-	  emoji: [
-		'https://unpkg.com/@waline/emojis@1.1.0/weibo',
-		'https://unpkg.com/@waline/emojis@1.1.0/bilibili',
-	  ],
-	  wordLimit: 0,
-	  pageSize: 10,
-	  imageUploader: false,
-	  pageview: true,
-	  meta: ['nick', 'mail', 'link'],  //评论者相关属性，默认['nick', 'mail', 'link'],
-	  requiredMeta: ['nick'], //设置评论者属性必填项，默认[]（即匿名）
-	});
+window.MathJax = {
+  tex: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true
+  },
+  chtml: {
+    scale: 1,                      // global scaling factor for all expressions
+    minScale: .5,                  // smallest scaling factor to use
+    mtextInheritFont: false,       // true to make mtext elements use surrounding font
+    merrorInheritFont: false,      // true to make merror text use surrounding font
+    mtextFont: '',                 // font to use for mtext, if not inheriting (empty means use MathJax fonts)
+    merrorFont: 'serif',           // font to use for merror, if not inheriting (empty means use MathJax fonts)
+    unknownFamily: 'serif',        // font to use for character that aren't in MathJax's fonts
+    mathmlSpacing: false,          // true for MathML spacing rules, false for TeX rules
+    skipAttributes: {},            // RFDa and other attributes NOT to copy to the output
+    exFactor: .5,                  // default size of ex in em units
+    displayAlign: 'center',        // default for indentalign when set to 'auto'
+    displayIndent: '0'             // default for indentshift when set to 'auto'
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
 </script>
-  
-  
-  
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 
-  
-
-  
-
-  
-
-
-<!-- 文章页添加mathjax公式 -->
-
-  
-
-<!-- 文章页添加mathjax公式 -->
+<!-- 主页添加mathjax公式 -->
           </div>
         </div>
       </div>
@@ -1031,8 +493,8 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
