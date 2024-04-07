@@ -314,6 +314,148 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-debug-IDApython-script" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title_code_ant" href="/post/1736976b.html">debug IDApython script</a>
+    </h2>
+  
+
+        
+		
+		  <a href="/post/1736976b.html" class="archive-article-date">
+  	<time datetime="2018-09-16T02:37:53.000Z" itemprop="datePublished">
+	<!-- <i class="icon-calendar icon"></i> -->
+
+	<i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+	&nbsp;
+	2018-09-16</time>
+	
+	<!-- busuanzi阅读量统计
+	
+	-->
+	
+    <!-- waline阅读量统计 -->
+	
+
+</a>
+
+
+        
+		
+		
+		  <!-- 添加标题栏文字统计效果 -->
+<div class="word-count">
+	
+      
+        <span class="article-type" style="
+          color: white;
+          font-size: 14px;
+          background: #0088CC;
+          padding: 0 5px 1px 5px;
+          margin-right: 5px;
+          border-radius: 2px;">原创</span>
+		  &nbsp; 
+      
+    
+	
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
+        <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
+        <span class="post-meta-item-text">字数统计: </span>
+        <span class="post-count">591字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+	    <i class="fa fa-pagelines" aria-hidden="true"></i>
+        <span class="post-meta-item-text">阅读时长: </span>
+        <span class="post-count">2min</span>
+      </span>
+    </span>
+	
+
+</div>
+<!-- 添加标题栏文字统计效果结束 -->
+		
+      </header>
+    
+	
+    <div class="article-entry" itemprop="articleBody">
+	  <!-- 添加分类与标签 -->
+	  
+		  
+			<h2 id="使用pycharm调试"><a href="#使用pycharm调试" class="headerlink" title="使用pycharm调试"></a>使用pycharm调试</h2><p>在网上搜索调试的方法也很久了，也没有找到方法。无意中在<strong>auto_re</strong>插件中发现如下这段代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">RDEBUG = <span class="literal">False</span></span><br><span class="line"><span class="comment"># adjust this value to be a full path to a debug egg</span></span><br><span class="line">RDEBUG_EGG = <span class="string">r&#x27;c:\Program Files\JetBrains\PyCharm 2017.1.4\debug-eggs\pycharm-debug.egg&#x27;</span></span><br><span class="line">RDEBUG_HOST = <span class="string">&#x27;localhost&#x27;</span></span><br><span class="line">RDEBUG_PORT = <span class="number">12321</span></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>():</span><br><span class="line">    .....</span><br><span class="line">    <span class="keyword">if</span> RDEBUG <span class="keyword">and</span> RDEBUG_EGG:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> os.path.isfile(RDEBUG_EGG):</span><br><span class="line">            idaapi.msg(<span class="string">&#x27;AutoRE: Remote debug is enabled, but I cannot find the debug egg: %s&#x27;</span> % RDEBUG_EGG)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> RDEBUG_EGG <span class="keyword">not</span> <span class="keyword">in</span> sys.path:</span><br><span class="line">                sys.path.append(RDEBUG_EGG)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">import</span> pydevd</span><br><span class="line">            pydevd.settrace(RDEBUG_HOST, port=RDEBUG_PORT, stdoutToServer=<span class="literal">True</span>, stderrToServer=<span class="literal">True</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+		  
+				  
+	  
+      
+	  <!-- 添加打赏 -->
+	  
+	
+	  <!-- 添加版权声明 -->
+      
+	  
+	</div>
+	
+	<!-- 添加置顶 -->
+    <div class="article-info article-info-index">
+      
+	  
+	  <!-- 分类页 -->
+      
+      
+
+	  
+	  <!-- 添加展开全文 -->
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/post/1736976b.html">展开全文 >></a>
+        </p>
+      
+	  
+	  <!-- 添加分享 -->
+      
+	  
+      <div class="clearfix"></div>
+	  
+    </div>
+  </div>
+</article>
+
+
+
+<!-- 添加回到顶部和文章目录 -->
+<aside class="wrap-side-operation">
+  <div class="mod-side-operation">
+    
+      <div class="jump-container" id="js-jump-container" style="display:none;">
+        <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+          <i class="icon-font icon-back"></i>
+        </a>
+      </div>
+    
+    
+  </div>
+</aside>
+
+<!-- 添加评论 -->
+
+
+<!-- 文章页添加mathjax公式 -->
+
+  
+
+<!-- 文章页添加mathjax公式 -->
+  
     <article id="post-病毒样本快到碗里来，一个样本下载爬虫的实现" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -659,10 +801,10 @@ window.MathJax = {
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 32 篇</span>
+		<span> 33 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">72.4k</span></span>
+		<span> <span class="post-count">74.2k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->

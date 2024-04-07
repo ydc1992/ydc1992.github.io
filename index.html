@@ -314,6 +314,247 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Lazarus组织使用工作机会诱饵展开攻击" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title_code_ant" href="/post/7c2abb96.html">Lazarus组织使用工作机会诱饵展开攻击</a>
+    </h2>
+  
+
+        
+		
+		  <a href="/post/7c2abb96.html" class="archive-article-date">
+  	<time datetime="2024-04-07T03:38:22.000Z" itemprop="datePublished">
+	<!-- <i class="icon-calendar icon"></i> -->
+
+	<i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+	&nbsp;
+	2024-04-07</time>
+	
+	<!-- busuanzi阅读量统计
+	
+	-->
+	
+    <!-- waline阅读量统计 -->
+	
+
+</a>
+
+
+        
+		
+		
+		  <!-- 添加标题栏文字统计效果 -->
+<div class="word-count">
+	
+      
+        <span class="article-type" style="
+          color: white;
+          font-size: 14px;
+          background: #0088CC;
+          padding: 0 5px 1px 5px;
+          margin-right: 5px;
+          border-radius: 2px;">原创</span>
+		  &nbsp; 
+      
+    
+	
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
+        <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
+        <span class="post-meta-item-text">字数统计: </span>
+        <span class="post-count">1.8k字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+	    <i class="fa fa-pagelines" aria-hidden="true"></i>
+        <span class="post-meta-item-text">阅读时长: </span>
+        <span class="post-count">7min</span>
+      </span>
+    </span>
+	
+
+</div>
+<!-- 添加标题栏文字统计效果结束 -->
+		
+      </header>
+    
+	
+    <div class="article-entry" itemprop="articleBody">
+	  <!-- 添加分类与标签 -->
+	  
+		  
+			<h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h1><p>&emsp;&emsp;Lazarus（T-APT-15）组织是来自朝鲜的APT组织，该组织长期对韩国、美国进行渗透攻击，此外还对全球的金融机构进行攻击，堪称全球金融机构的最大威胁。<br>&emsp;&emsp;在这次活动中,Lazarus进行了鱼叉式网络钓鱼攻击,这次攻击将诱饵文件伪装成航天航空巨头洛克希德马丁公司的招聘工作主题文档，巧妙的使用Windows更新程序来执行恶意程序和将github作为C&amp;C服务器。</p>
+<h1 id="2-样本信息"><a href="#2-样本信息" class="headerlink" title="2. 样本信息"></a>2. 样本信息</h1><p>招聘工作主题诱饵文档</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>Md5</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Lockheed_Martin_JobOpportunities.doc</td>
+<td>3f326da2affb0f7f2a4c5c95ffc660cc</td>
+</tr>
+</tbody></table>
+<p>shellcode解密的PE文件</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>Md5</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>stage1_winword.dll</td>
+<td>e48f4983962d4ca5974ec04be38eecd1</td>
+</tr>
+</tbody></table>
+<p>stage1_winword.dll注入到进程explorer.exe的dll文件</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>Md5</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Stage2_explorer.dll</td>
+<td>0e12a4f94326fcfc866b991f6a03452c</td>
+</tr>
+</tbody></table>
+<p>嵌入在stage2_explorer.dll的两个文件。</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>Md5</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>drop_link.dll</td>
+<td>4e72dccee9f33f41a29485442ea57fd7</td>
+</tr>
+<tr>
+<td>文件名</td>
+<td>Md5</td>
+</tr>
+<tr>
+<td>Stage3_runtimeBroker.dll</td>
+<td>e997f9210791529fbc86db6c26d29fd1</td>
+</tr>
+</tbody></table>
+<p>由stage3_runtimeBroker.dll释放的文件</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>Md5</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Wuaueng.dll</td>
+<td>f2e548ad8f31a8bc656c1ec4c49d5928</td>
+</tr>
+</tbody></table>
+<p>由wuaueng.dll注入到进程explorer.exe的dll文件。</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>Md5</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>core_module.dll</td>
+<td>ea5012291b7f0d62be0552eacbd4792d</td>
+</tr>
+</tbody></table>
+<p>Core_module.dll从github获取的恶意模块</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>Md5</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Get_basic_info.dll</td>
+<td>e2a17841099800fb734c44ea4be47ebb</td>
+</tr>
+</tbody></table>
+<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3. 流程图"></a>3. 流程图</h1><img src="/post/7c2abb96/4e8fbc3647a2d63d164ccae3d1facaba.png" class="" title="example">
+		  
+				  
+	  
+      
+	  <!-- 添加打赏 -->
+	  
+	
+	  <!-- 添加版权声明 -->
+      
+	  
+	</div>
+	
+	<!-- 添加置顶 -->
+    <div class="article-info article-info-index">
+      
+	  
+	  <!-- 分类页 -->
+      
+      
+
+	  
+	  <!-- 添加展开全文 -->
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/post/7c2abb96.html">展开全文 >></a>
+        </p>
+      
+	  
+	  <!-- 添加分享 -->
+      
+	  
+      <div class="clearfix"></div>
+	  
+    </div>
+  </div>
+</article>
+
+
+
+<!-- 添加回到顶部和文章目录 -->
+<aside class="wrap-side-operation">
+  <div class="mod-side-operation">
+    
+      <div class="jump-container" id="js-jump-container" style="display:none;">
+        <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+          <i class="icon-font icon-back"></i>
+        </a>
+      </div>
+    
+    
+  </div>
+</aside>
+
+<!-- 添加评论 -->
+
+
+<!-- 文章页添加mathjax公式 -->
+
+  
+
+<!-- 文章页添加mathjax公式 -->
+  
     <article id="post-Lazarus组织以虚假工作机会为诱饵攻击金融科技行业员工" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -392,107 +633,9 @@ var _hmt = _hmt || [];
 	  <!-- 添加分类与标签 -->
 	  
 		  
-		  <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>&emsp;&emsp;Lazarus组织是来自朝鲜的APT组织，该组织长期针对韩国、美国进行渗透攻击，Lazarus经常使用社会工程学攻击来接近目标,并以提供工作机会为由进一步将诱饵文件发送给目标。<br>&emsp;&emsp;最近发现,Lazarus假装来自Coinbase,想要找到适合”产品安全工程经理”的候选人。Coinbase是世界上最大的加密货币交易平台之一，这使 Lazarus能够为一家享有盛誉的组织提供丰厚且诱人的工作机会奠定基础。<br>&emsp;&emsp;诱饵文件将图标替换成PDF图标,并告知受害者该文件是关于工作职位的PDF文件。当受害者执行文件时,该文件会从网络上下载诱饵PDF或DOC文件，同时还会加载恶意DLL。</p>
-<h1 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h1><p><img src="becb71b0/0cec99330885454e954f045ecdf90a94.png"></p>
-<h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2. 详细分析"></a>2. 详细分析</h1><h2 id="1-Coinbase-online-careers-2022-07-exe"><a href="#1-Coinbase-online-careers-2022-07-exe" class="headerlink" title="1. Coinbase_online_careers_2022_07.exe"></a>1. Coinbase_online_careers_2022_07.exe</h2><h3 id="检测自身模块路径和文件名"><a href="#检测自身模块路径和文件名" class="headerlink" title="检测自身模块路径和文件名"></a>检测自身模块路径和文件名</h3><p>&emsp;&emsp;恶意程序伪装成使用PDF图标的可执行文件, 并将文件名改成与Coinbase相关的命名。通过社会工程学、钓鱼等方式将恶意程序发送给受害者。<br>&emsp;&emsp;恶意程序第一次被执行时会判断恶意程序的当前工作目录与文件名是否是”%Music%\Microsoft Edge.exe”，如果不是则需要先创建快捷方式和将文件拷贝到指定目录。</p>
-<p><img src="becb71b0/f65870ca33275d9abbcdcb539a56d15a.png"></p>
-<h3 id="创建快捷方式"><a href="#创建快捷方式" class="headerlink" title="创建快捷方式"></a>创建快捷方式</h3><p>&emsp;&emsp;拷贝自身到%Music%目录，并将文件名设置为”Microsoft Edge.exe”,以调用com接口的方式在%Music%目录创建快捷方式。创建进程名为”esentutl”的进程将快捷方式从目录%Music%移动到%Startup%来达到持久化的目的。<br><img src="becb71b0/417457c4e153efb22f2d2597c7db498b.png"></p>
-<p>&emsp;&emsp;恶意程序使用com接口CLSID_Shortcut创建快捷方式，设置运行快捷方式时启动的程序为”explorer”，这样可以让快捷方式的图标显示为程序explorer的图标。设置exeplorer的命令行为恶意程序的路径，这样执行快捷方式时最终会启动恶意程序。<br><img src="becb71b0/fda85e650f898ceea2400f1b17e5f60a.png"></p>
-<h3 id="打开PDF诱饵文件"><a href="#打开PDF诱饵文件" class="headerlink" title="打开PDF诱饵文件"></a>打开PDF诱饵文件</h3><p>如果恶意程序是在受害者机器上第一次执行,调用浏览器打开为受害者精心准备的PDF诱饵文件。<br><img src="becb71b0/fb744a4a00354f85ecdb73cbe236690d.png"></p>
-<p>PDF诱饵文档如下, 内容如下:<br><img src="becb71b0/5aca450d865e16d3870e32926b363260.png"></p>
-<h3 id="下载payload"><a href="#下载payload" class="headerlink" title="下载payload"></a>下载payload</h3><p>&emsp;&emsp;恶意程序从链接” hxxps://docs.mktrending.com/marrketend.png”下载payload,payload伪装为图片，下一阶段恶意程序位于图片数据偏移0x1A610处。<br>&emsp;&emsp;如果没有下载成功,则等待900秒后再次下载payload,当下载失败的次数达到3451次时退出程序。</p>
-<p><img src="becb71b0/c9aa34a71e765ccbf3264cbe2ea58259.png"></p>
-<p>恶意程序将下载payload的请求伪装成访问图片数据的请求，请求头中的cookie字段被当作机器标识符用于识别受害者。</p>
-<p><img src="becb71b0/43588caa8675a5a5ffd295c2fe026580.png"></p>
-<p>&emsp;&emsp;cookie键长度为5~10,值为随机的字母,对应的键值使用AES256+base64加密，未加密前的格式为”{键}&gt;{用户名}”,在C&amp;C服务器中,可以通过解密cookie字段来获取受害者的用户名。<br>&emsp;&emsp;恶意程序使用字符串”d$f92&amp;^$#FESAfaSDage#FDa”的sha256值作为AES加密的密钥，加密算法如下图:</p>
-<p><img src="becb71b0/11d7faef554516cca147024b1d577dca.png"></p>
-<p>&emsp;&emsp;恶意程序下载payload时使用固定的请求头,其中cookie用于机器标识符,接收的类型设置为img, 当使用网络抓包工具抓包时会将该流量识别为图片数据。读取到图片数据后从偏移0x1A610读取PE数据。</p>
-<p><img src="becb71b0/0fc8e92ee729eeb8015996059858918a.png"></p>
-<h2 id="AdobeNotification-exe"><a href="#AdobeNotification-exe" class="headerlink" title="AdobeNotification.exe"></a>AdobeNotification.exe</h2><p>&emsp;&emsp;样本与前一个样本实现的功能类似,不同的是该样本使用ollvm混淆技术,干扰分析人员分析，所有字符串都是加密状态, 安全软件检测该软件比较困难。</p>
-<h3 id="1-ollvm混淆"><a href="#1-ollvm混淆" class="headerlink" title="1.ollvm混淆"></a>1.ollvm混淆</h3><p>以函数sub_7ff6e32BC20为例,混淆情况下代码如下:</p>
-<p><img src="becb71b0/7d0edad92c96aaf8ccd11334cb442a9b.png"></p>
-<p>去混淆后代码如下图。</p>
-<p><img src="becb71b0/4c09eeb101ba1814d5ae78d699319c49.png" alt="文本 描述已自动生成"></p>
-<h3 id="2-注册窗口回调"><a href="#2-注册窗口回调" class="headerlink" title="2.注册窗口回调"></a>2.注册窗口回调</h3><p>&emsp;&emsp;与Lazarus以前的某个样本相似,从资源中读取要使用的窗口名和窗口类名,然后注册窗口回调。该样本由于使用ollvm混淆时破坏了资源数据,因此用LoadStringW获取的字符串为空。</p>
-<p><img src="becb71b0/dd9f9939b9750100169af09d53fcb06e.png"></p>
-<p>&emsp;&emsp;创建窗口和窗口回调函数代码如下,由于窗口名和类名为空,因此创建窗口肯定会失败,下图中的窗口回调函数不会被创建，而该样本也利用这一点在窗口创建失败时执行下载器功能。<img src="becb71b0/d91c171ce65207058e2076404eb98257.png"></p>
-<h3 id="3-字符串解密"><a href="#3-字符串解密" class="headerlink" title="3.字符串解密"></a>3.字符串解密</h3><p>&emsp;&emsp;恶意程序对字符串加密使用了两种方法:由ollvm提供的加密方法和恶意程序开发者自己实现的加密方法。由ollvm提供的字符串加密的解密方法在程序执行winMain函数之前开始解密，大量使用SIMD指令来对加密字符进行操作,每次解密0x10字节大小的字符串。</p>
-<p><img src="becb71b0/c53f0dd507fa44d441e7c85efd57dd79.png"></p>
-<p>另一种解密方法用来解密dll字符串。</p>
-<p><img src="becb71b0/32754cc33614a7c90d2ac760adce4203.png"></p>
-<h3 id="4-API地址解析"><a href="#4-API地址解析" class="headerlink" title="4. API地址解析"></a>4. API地址解析</h3><p>与大部分恶意程序解析API地址使用的技术一样,使用指令” mov r8,gs:60h”获取PEB地址,然后从peb中的字段ldr获取链表”InLoadOrderModuleList”,该链表指向的结构为”LDR_DATA_TABLE_ENTRY_x64”,为加载的dll的详细信息。恶意程序通过遍历该链表并遍历dll文件的导出表,然后计算导出函数的哈希值并比较,如果匹配成功则返回对应的函数地址。</p>
-<p><img src="becb71b0/d2b8e3f3a04876d5e3c68e4c5bfc729b.png"></p>
-<h3 id="5-与C-amp-C通信"><a href="#5-与C-amp-C通信" class="headerlink" title="5.与C&amp;C通信"></a>5.与C&amp;C通信</h3><p>恶意程序与C&amp;C服务端进行通信时使用固定的请求头，将Accept伪装成图片流量绕过防火墙对流量的检测。</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Proxy</span>-Connection: keep-alive</span><br><span class="line"><span class="attribute">Cache</span>-Control: max-age=<span class="number">0</span></span><br><span class="line"><span class="attribute">Upgrade</span>-Insecure-Requests: <span class="number">1</span></span><br><span class="line"><span class="attribute">Accept</span>:text/html,application/xhtml+xml,application/xml;q=<span class="number">0</span>.<span class="number">9</span>,image/webp,image/apng,*/*;q=<span class="number">0</span>.<span class="number">8</span></span><br><span class="line"><span class="attribute">Accept</span>-Encoding: gzip, deflate</span><br><span class="line"><span class="attribute">Accept</span>-Language: en-US;q=<span class="number">0</span>.<span class="number">8</span>,en;q=<span class="number">0</span>.<span class="number">7</span></span><br></pre></td></tr></table></figure>
-
-<p>恶意程序使用cookies作为机器标识符来识别受害者，其中键值为长度为3~9的随机字母，生成方法如下:</p>
-<p><img src="becb71b0/cd4fc08494c4f4dc08eacdb810ea6c6c.png"></p>
-<p>&emsp;&emsp;将生成的随机数与受害者机器的用户名拼接成字符串”{随机数}&gt;{用户名}”，然后将其加密。加密方法如下:</p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">计算字符串d<span class="variable">$f92</span>&amp;^<span class="variable">$#FESAfaSDage</span><span class="comment">#Fda的sha256值</span></span><br><span class="line">将<span class="number">1</span>中sha256值作为AES加密的密钥</span><br><span class="line">对数据进行AES加密</span><br></pre></td></tr></table></figure>
-
-<p>代码如下；<br><img src="becb71b0/90db9f862fd2fba9eeb6b145ec6cbd7e.png"></p>
-<p>Cookies中的键名同样使用随机数,与键值的生成方式一样。</p>
-<p><img src="becb71b0/f3d9a4d7ded8b8ebdc054dd2e1a4deca.png"></p>
-<h3 id="下载诱饵文件和shellcode"><a href="#下载诱饵文件和shellcode" class="headerlink" title="下载诱饵文件和shellcode"></a>下载诱饵文件和shellcode</h3><p>&emsp;&emsp;恶意程序从链接”hxxps://yourblogcenter.com/logo.jpg”下载加密的shellcode文件,从链接”<br>hxxps://allinfostudio.com/manual.pdf”下载诱饵文档。当诱饵文档下载完成后调用函数WinExec打开文档。下载的文件”logo.jpg”为伪装成图片的shellcode。</p>
-<p>Shellcode使用AES来加密,使用的密钥为”93/G&amp;h:=Qi9@+)rT660I60-Dx4gEd{=a”，解密后在内存中执行恶意文件。<br><img src="becb71b0/4ab675f5ab7eb68b2fd58b9359564b69.png"></p>
-<h3 id="6-提升权限"><a href="#6-提升权限" class="headerlink" title="6. 提升权限"></a>6. 提升权限</h3><p>将权限字符串”SeDebugPrivilege”转换成luid格式。<br><img src="becb71b0/5ee761c3eae81e8782aab52498887e34.png"></p>
-<p>调用函数LookupPrivilegeValueW和AdjustTokenPrivileges提升权限。<br><img src="becb71b0/bb1a71e2df83c7bd24f2c23966e42faf.png"></p>
-<h3 id="7-在内存中执行文件"><a href="#7-在内存中执行文件" class="headerlink" title="7. 在内存中执行文件"></a>7. 在内存中执行文件</h3><p>&emsp;&emsp;恶意程序不使用加载dll或者创建进程的方式来执行文件，而是通过手动将文件映射到内存的方式来执行文件。这样做可以绕过安全软件对dll文件和exe文件操作的相关API的hook。在执行前判断解密后的文件架构是否是x86，如果不是则设置错误码为0x57(文件未找到)，否则就将文件映射到内存。<br><img src="becb71b0/bfd5b334e31b7f8f04970e2bc670a1d8.png"></p>
-<p>分配足够大小的内存存放映射后的文件。<br><img src="becb71b0/b4f0c93da8cace6ff27b75f9d0f0a3ea.png"></p>
-<p>内存分配成功后, 从解密后的文件中读取PE文件的DOS头部和NT头部并拷贝到内存中。<br><img src="becb71b0/882b47064dbebc1ab94da88b00ede4e5.png"></p>
-<p>当分配的地址与PE文件内定义的地址不一样时还需要进行重定位。<br><img src="becb71b0/c147d74f6ec7fab1eccfe4228f88cc00.png"></p>
-<p>如果存在导入表则调用LoadLibraryA来加载导入表中使用的dll。<br><img src="becb71b0/086b99fbe106132bc5f867a248268b54.png"></p>
-<p>将所有区段映射到内存中，并修改对应区段的内存属性,比如代码段修改成只读可执行数据，数据段修改成读写属性等等。<br><img src="becb71b0/08be2e56b71f20d250caea2c57dee844.png"></p>
-<p>将解密后的文件映射到内存完成后,开始执行程序入口点代码。<br><img src="becb71b0/0fd2a8a7b72a29f0d711a1bcfaf5dde1.png"></p>
-<p>由于对应的链接已经下线,只能够分析到如何将文件映射到内存部分，不能对其进行进一步的分析。</p>
-<h1 id="4-IOC"><a href="#4-IOC" class="headerlink" title="4. IOC"></a>4. IOC</h1><p>0dab8ad32f7ed4703b9217837c91cca7<br>770d0b25057f5afd3611324d4fda1bcd<br>hxxps://yourblogcenter.com/logo.jpg<br>hxxps://docs.mktrending.com/marrketend.png<br>d$f92&amp;^$#FESAfaSDage#FDa(第一个样本使用的密钥)<br>d$f92&amp;^$#FESAfaSDage#Fda(第二个样本使用的密钥)<br>93/G&amp;h:=Qi9@+)rT660I60-Dx4gEd{=a(第二个样本解密文件使用的密钥)<br>hxxps://allinfostudio.com/manual.pdf</p>
-<h1 id="5-ATT-amp-CK矩阵"><a href="#5-ATT-amp-CK矩阵" class="headerlink" title="5. ATT&amp;CK矩阵"></a>5. ATT&amp;CK矩阵</h1><table>
-<thead>
-<tr>
-<th>Tactic</th>
-<th>ID</th>
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Command and Control</td>
-<td>T1105</td>
-<td>Ingress Tool Transfer</td>
-<td>下载恶意程序</td>
-</tr>
-<tr>
-<td></td>
-<td>T1001</td>
-<td>Encrypted Channel</td>
-<td>传输加密后的数据</td>
-</tr>
-<tr>
-<td></td>
-<td>T1071</td>
-<td>Application Layer Protocol</td>
-<td>使用http协议进行通信</td>
-</tr>
-<tr>
-<td>Persistence</td>
-<td>T1547.001</td>
-<td>Registry Run Keys / Startup Folder</td>
-<td>使用注册表启动项</td>
-</tr>
-<tr>
-<td>Execution</td>
-<td>T1204</td>
-<td>User Execution</td>
-<td>恶意程序需要受害者手动执行</td>
-</tr>
-<tr>
-<td>Initial Access</td>
-<td>T1566</td>
-<td>Phishing</td>
-<td>使用鱼叉式网络钓鱼</td>
-</tr>
-</tbody></table>
-
+			<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>&emsp;&emsp;Lazarus组织是来自朝鲜的APT组织，该组织长期针对韩国、美国进行渗透攻击，Lazarus经常使用社会工程学攻击来接近目标,并以提供工作机会为由进一步将诱饵文件发送给目标。<br>&emsp;&emsp;最近发现,Lazarus假装来自Coinbase,想要找到适合”产品安全工程经理”的候选人。Coinbase是世界上最大的加密货币交易平台之一，这使 Lazarus能够为一家享有盛誉的组织提供丰厚且诱人的工作机会奠定基础。<br>&emsp;&emsp;诱饵文件将图标替换成PDF图标,并告知受害者该文件是关于工作职位的PDF文件。当受害者执行文件时,该文件会从网络上下载诱饵PDF或DOC文件，同时还会加载恶意DLL。</p>
+<h1 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h1><img src="/post/becb71b0/0cec99330885454e954f045ecdf90a94.png" class="" title="example">
+		  
 				  
 	  
       
@@ -1808,159 +1951,6 @@ var _hmt = _hmt || [];
 
 <!-- 文章页添加mathjax公式 -->
   
-    <article id="post-BlackLotus-首个绕过安全启动的UEFI-bootkit-下" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title_code_ant" href="/post/603ce62c.html">BlackLotus 首个绕过安全启动的UEFI bootkit(下)</a>
-    </h2>
-  
-
-        
-		
-		  <a href="/post/603ce62c.html" class="archive-article-date">
-  	<time datetime="2023-03-17T02:56:09.000Z" itemprop="datePublished">
-	<!-- <i class="icon-calendar icon"></i> -->
-
-	<i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-	&nbsp;
-	2023-03-17</time>
-	
-	<!-- busuanzi阅读量统计
-	
-	-->
-	
-    <!-- waline阅读量统计 -->
-	
-
-</a>
-
-
-        
-		
-		
-		  <!-- 添加标题栏文字统计效果 -->
-<div class="word-count">
-	
-      
-        <span class="article-type" style="
-          color: white;
-          font-size: 14px;
-          background: #0088CC;
-          padding: 0 5px 1px 5px;
-          margin-right: 5px;
-          border-radius: 2px;">原创</span>
-		  &nbsp; 
-      
-    
-	
-    <span class="post-time">
-      <span class="post-meta-item-icon">
-	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
-        <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
-        <span class="post-meta-item-text">字数统计: </span>
-        <span class="post-count">1.8k字</span>
-      </span>
-    </span>
-
-    <span class="post-time">
-      &nbsp; | &nbsp;
-      <span class="post-meta-item-icon">
-	    <i class="fa fa-pagelines" aria-hidden="true"></i>
-        <span class="post-meta-item-text">阅读时长: </span>
-        <span class="post-count">6min</span>
-      </span>
-    </span>
-	
-
-</div>
-<!-- 添加标题栏文字统计效果结束 -->
-		
-      </header>
-    
-	
-    <div class="article-entry" itemprop="articleBody">
-	  <!-- 添加分类与标签 -->
-	  
-		  
-			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>&emsp;&emsp;在上一篇报告中已经详细分析了bootkit的安装过程, 本篇报告主要针对已经部署的bootkit进行进一步的详细分析。</p>
-<h1 id="2-详细分析"><a href="#2-详细分析" class="headerlink" title="2.详细分析"></a>2.详细分析</h1><h2 id="1-bootmgrfw-efi分析"><a href="#1-bootmgrfw-efi分析" class="headerlink" title="1. bootmgrfw.efi分析"></a>1. bootmgrfw.efi分析</h2><p>         BlackLotus使用自签名的恶意EFI应用替换了原文件bootmgrfw.efi,将源文件重命名为winload.efi, 替换后的执行流程如下图:<br> <img src="/post/603ce62c/clip_image001.png" class="" title="example"></p>
-		  
-				  
-	  
-      
-	  <!-- 添加打赏 -->
-	  
-	
-	  <!-- 添加版权声明 -->
-      
-	  
-	</div>
-	
-	<!-- 添加置顶 -->
-    <div class="article-info article-info-index">
-      
-	  
-	  <!-- 分类页 -->
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">BlackLotus</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-	  
-	  <!-- 添加展开全文 -->
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/post/603ce62c.html">展开全文 >></a>
-        </p>
-      
-	  
-	  <!-- 添加分享 -->
-      
-	  
-      <div class="clearfix"></div>
-	  
-    </div>
-  </div>
-</article>
-
-
-
-<!-- 添加回到顶部和文章目录 -->
-<aside class="wrap-side-operation">
-  <div class="mod-side-operation">
-    
-      <div class="jump-container" id="js-jump-container" style="display:none;">
-        <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-          <i class="icon-font icon-back"></i>
-        </a>
-      </div>
-    
-    
-  </div>
-</aside>
-
-<!-- 添加评论 -->
-
-
-<!-- 文章页添加mathjax公式 -->
-
-  
-
-<!-- 文章页添加mathjax公式 -->
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">下一页 &gt;&gt;</a>
@@ -2015,10 +2005,10 @@ window.MathJax = {
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 32 篇</span>
+		<span> 33 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">72.4k</span></span>
+		<span> <span class="post-count">74.2k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
