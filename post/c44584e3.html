@@ -10,12 +10,12 @@
   <title>Lazarus利用 Log4Shell 漏洞投递恶意程序NukeSped | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="1. 概述&amp;emsp;&amp;emsp;2021年12月9日晚,基于Java的日志记录程序Log4j的一个远程执行漏洞(CVE-2021-44228)POC被公开。攻击者使用${}关键标识符触发JNDI注入漏洞,当程序将用户输入的数据进行日志记录时,即可触发此漏洞并成功利用此漏洞在目标服务器上执行任意代码。 &amp;emsp;&amp;emsp;今年4月份,有安全研究人员发现Lazarus利用Log4jShell漏洞">
+  <meta name="description" content="1. 概述&emsp;&emsp;2021年12月9日晚,基于Java的日志记录程序Log4j的一个远程执行漏洞(CVE-2021-44228)POC被公开。攻击者使用${}关键标识符触发JNDI注入漏洞,当程序将用户输入的数据进行日志记录时,即可触发此漏洞并成功利用此漏洞在目标服务器上执行任意代码。 &emsp;&emsp;今年4月份,有安全研究人员发现Lazarus利用Log4jShell漏洞">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Lazarus利用 Log4Shell 漏洞投递恶意程序NukeSped">
 <meta property="og:url" content="http://shxi.cc/post/c44584e3.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="1. 概述&amp;emsp;&amp;emsp;2021年12月9日晚,基于Java的日志记录程序Log4j的一个远程执行漏洞(CVE-2021-44228)POC被公开。攻击者使用${}关键标识符触发JNDI注入漏洞,当程序将用户输入的数据进行日志记录时,即可触发此漏洞并成功利用此漏洞在目标服务器上执行任意代码。 &amp;emsp;&amp;emsp;今年4月份,有安全研究人员发现Lazarus利用Log4jShell漏洞">
+<meta property="og:description" content="1. 概述&emsp;&emsp;2021年12月9日晚,基于Java的日志记录程序Log4j的一个远程执行漏洞(CVE-2021-44228)POC被公开。攻击者使用${}关键标识符触发JNDI注入漏洞,当程序将用户输入的数据进行日志记录时,即可触发此漏洞并成功利用此漏洞在目标服务器上执行任意代码。 &emsp;&emsp;今年4月份,有安全研究人员发现Lazarus利用Log4jShell漏洞">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://shxi.cc/post/c44584e3/8a46542bbcd70903896bca01daa4d0bc.png">
 <meta property="og:image" content="http://shxi.cc/post/c44584e3/443c344df31866e9543ed4e1579f6d84.png">
@@ -112,7 +112,7 @@ var _hmt = _hmt || [];
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.1.1"></head>
 
 <body>
 
@@ -1569,6 +1569,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Lazarus利用</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">APT41</a>
               </li>
              
@@ -1582,6 +1586,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Symbiote</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">逆向引擎</a>
               </li>
              
               <li class="article-tag-list-item">

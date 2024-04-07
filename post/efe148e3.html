@@ -10,12 +10,12 @@
   <title>mbr结构和代码分析 | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下  bootcode代码&amp;emsp;&amp;emsp;以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)，  第一块选区0x000-0x162为MBR的可执行代码第二块选区0x163-0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符第三块选区0x1be-">
+  <meta name="description" content="很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下  bootcode代码&emsp;&emsp;以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)，  第一块选区0x000-0x162为MBR的可执行代码第二块选区0x163-0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符第三块选区0x1be-">
 <meta property="og:type" content="article">
 <meta property="og:title" content="mbr结构和代码分析">
 <meta property="og:url" content="http://shxi.cc/post/efe148e3.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下  bootcode代码&amp;emsp;&amp;emsp;以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)，  第一块选区0x000-0x162为MBR的可执行代码第二块选区0x163-0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符第三块选区0x1be-">
+<meta property="og:description" content="很久以前分析的时候写的,最近开始学习分析bootkit类的病毒,记录下  bootcode代码&emsp;&emsp;以WIN7为例(bootcode代码,win7到win10都一样)，MBR大小为1个扇区，大小为512(0x200)，  第一块选区0x000-0x162为MBR的可执行代码第二块选区0x163-0x1b2为错误信息显示，查找分区表失败时会在系统显示这些字符第三块选区0x1be-">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://shxi.cc/post/efe148e3/clip_image001.png">
 <meta property="og:image" content="http://shxi.cc/post/efe148e3/clip_image002.png">
@@ -85,7 +85,7 @@ var _hmt = _hmt || [];
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.1.1"></head>
 
 <body>
 
@@ -1072,6 +1072,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Lazarus利用</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">APT41</a>
               </li>
              
@@ -1085,6 +1089,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Symbiote</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">逆向引擎</a>
               </li>
              
               <li class="article-tag-list-item">

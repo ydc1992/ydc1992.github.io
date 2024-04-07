@@ -383,6 +383,13 @@
   </url>
   
   <url>
+    <loc>http://shxi.cc/tags/Lazarus%E5%88%A9%E7%94%A8/</loc>
+    <lastmod>2024-04-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://shxi.cc/tags/APT41/</loc>
     <lastmod>2024-04-07</lastmod>
     <changefreq>weekly</changefreq>
@@ -405,6 +412,13 @@
   
   <url>
     <loc>http://shxi.cc/tags/Symbiote/</loc>
+    <lastmod>2024-04-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://shxi.cc/tags/%E9%80%86%E5%90%91%E5%BC%95%E6%93%8E/</loc>
     <lastmod>2024-04-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -456,6 +470,13 @@
   
   <url>
     <loc>http://shxi.cc/categories/%E9%80%86%E5%90%91/</loc>
+    <lastmod>2024-04-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://shxi.cc/categories/APT/</loc>
     <lastmod>2024-04-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
