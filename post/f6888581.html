@@ -10,18 +10,56 @@
   <title>摩诃草组织以巴基斯坦相关政府机构文件为诱饵的攻击活动分析 | ydc&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta name="description" content="分享一些恶意样本分析和分析报告">
+  <meta name="description" content="概述&emsp;&emsp;摩诃草，又名Hangover、Patchwork、白象等，该APT组织被广泛认为来自南亚地区某国，其最早攻击活动可以追溯到2009年11月，从2015年开始变得更加活跃。该组织主要针对Windows系统进行攻击，同时也会针对Android、MacOS系统进行攻击。其攻击活动中使用了大量漏洞，其中至少包括一次 0day 漏洞利用攻击。&emsp;&emsp;摩诃草组织攻击">
 <meta property="og:type" content="article">
 <meta property="og:title" content="摩诃草组织以巴基斯坦相关政府机构文件为诱饵的攻击活动分析">
 <meta property="og:url" content="http://shxi.cc/post/f6888581.html">
 <meta property="og:site_name" content="ydc&#39;s Blog">
-<meta property="og:description" content="分享一些恶意样本分析和分析报告">
+<meta property="og:description" content="概述&emsp;&emsp;摩诃草，又名Hangover、Patchwork、白象等，该APT组织被广泛认为来自南亚地区某国，其最早攻击活动可以追溯到2009年11月，从2015年开始变得更加活跃。该组织主要针对Windows系统进行攻击，同时也会针对Android、MacOS系统进行攻击。其攻击活动中使用了大量漏洞，其中至少包括一次 0day 漏洞利用攻击。&emsp;&emsp;摩诃草组织攻击">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/0f985c101d3027b893b6ce2d62cd2a84.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/e8fb1f1ab921921f7318664ced02cd87.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/9cc1529615d4d5cb002e8e8c31afab30.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/ea8faa620fc531b8cd816100f08a7a8a.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/230746b0fe261623e71c1bc698834783.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/ed921d528aa3ec59ba71ba76f5a644fb.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/fce01d2d641876b48e0de1119ac81c29.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/d1c8f2f8b631c77f32cd8259cb6fe29b.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/8b365572d170d969e65acb1fd2032f0e.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/3f0a324f21c2f61c91b5d105543340c7.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/765a19cda71c0a58f9a2b5aed194527d.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/936a9dd6af83558aa384e857b562c0f1.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/516713ed129c46fcd530ddcf5714cd12.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/4b629a09850760a0af587e1c02087cbc.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/d2b34a8365e1a26496a71909c571676f.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/92228ada2544331ac83aedcfffb676d4.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/9987726547038d4561170819da9a3a31.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/2210c31394a86eb5199a5ac7e6c8a5b2.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/5faa91db7100178e591eb5ee4d73f092.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/1d11009121cc757b63c940c464a490d3.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/a2210c88d1a10accab670d8e8085b37b.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/11c5a02b116513169ebb6e1a320737ef.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/832cacad6ec58e7db1f8601efd1d39ef.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/918004f9dfba24d06106c5e52e52c41e.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/0f3af2e44c0d1feb831fba96730dc9c2.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/ec1394a1052e9714d9d2191cb22910ce.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/d8d070c10c438ee2033c80164822fc81.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/99f9ee0e443ddab2aff27be231c66ba5.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/b22913d7d35a00ddb673a7944af4efb3.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/dd1a80ebf4e526f8e846e5e2ed4b78fb.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/bb7a0ec21a00ae484cdacbfbb5c3f6cb.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/b7d411b77e10ef3dfeabebeff7539a49.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/686e2c733c752db155e6accf625b2e35.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/e7288ddb36c55449a50128e1a530b46c.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/148c0fddea76918aa214a0eb1de7b96a.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/ea74c00790790314864a539a6cb74202.png">
+<meta property="og:image" content="http://shxi.cc/post/f6888581/a1abf87a5a28e8b7e9fe04668d2b774d.png">
 <meta property="article:published_time" content="2024-04-15T11:19:58.000Z">
-<meta property="article:modified_time" content="2024-04-15T11:19:58.842Z">
+<meta property="article:modified_time" content="2024-04-15T11:24:35.415Z">
 <meta property="article:author" content="KenYang">
 <meta property="article:tag" content="逆向 恶意程序 病毒">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://shxi.cc/post/f6888581/0f985c101d3027b893b6ce2d62cd2a84.png">
   
   
     <link rel="alternative" href="/atom.xml" title="ydc&#39;s Blog" type="application/atom+xml">
@@ -382,7 +420,7 @@ var _hmt = _hmt || [];
 	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
         <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
         <span class="post-meta-item-text">字数统计: </span>
-        <span class="post-count">0字</span>
+        <span class="post-count">3.2k字</span>
       </span>
     </span>
 
@@ -391,7 +429,7 @@ var _hmt = _hmt || [];
       <span class="post-meta-item-icon">
 	    <i class="fa fa-pagelines" aria-hidden="true"></i>
         <span class="post-meta-item-text">阅读时长: </span>
-        <span class="post-count">1min</span>
+        <span class="post-count">12min</span>
       </span>
     </span>
 	
@@ -406,7 +444,308 @@ var _hmt = _hmt || [];
 	  <!-- 添加分类与标签 -->
 	  
 		  
-		  
+		  <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>&emsp;&emsp;摩诃草，又名Hangover、Patchwork、白象等，该APT组织被广泛认为来自南亚地区某国，其最早攻击活动可以追溯到2009年11月，从2015年开始变得更加活跃。该组织主要针对Windows系统进行攻击，同时也会针对Android、MacOS系统进行攻击。其攻击活动中使用了大量漏洞，其中至少包括一次 0day 漏洞利用攻击。<br>&emsp;&emsp;摩诃草组织攻击目标所涉及的国家和地区分布非常广泛，除了中国和巴基斯坦等主要目标，还包括以色列、孟加拉国、美国、英国、日本、韩国等国以及中东和东南亚地区。该组织以鱼叉攻击为主，以少量水坑攻击为辅，针对目标国家的政府、军事、电力、工业、外交和经济进行网络间谍活动，窃取敏感信息。</p>
+<h1 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h1> <img src="/post/f6888581/0f985c101d3027b893b6ce2d62cd2a84.png" class="" title="example">
+<span id="more"></span>
+
+
+
+<h1 id="3-详细分析"><a href="#3-详细分析" class="headerlink" title="3. 详细分析"></a>3. 详细分析</h1><h2 id="1-钓鱼文档分析"><a href="#1-钓鱼文档分析" class="headerlink" title="1. 钓鱼文档分析"></a>1. 钓鱼文档分析</h2><p>&emsp;&emsp;钓鱼文档为RTF类型文件,打开如下图，内容为巴基斯坦旁遮普政府劳动和人力资源部相关。该文档包含CVE-2017-11882公式编辑器漏洞，受害者一旦打开文档便会触发漏洞并执行shellcode。在shellcode中释放恶意文件。</p>
+ <img src="/post/f6888581/e8fb1f1ab921921f7318664ced02cd87.png" class="" title="example"> 
+
+<h2 id="2-shellcode分析"><a href="#2-shellcode分析" class="headerlink" title="2.shellcode分析"></a>2.shellcode分析</h2><h3 id="1-硬编码函数地址调用"><a href="#1-硬编码函数地址调用" class="headerlink" title="1.硬编码函数地址调用"></a>1.硬编码函数地址调用</h3><p>&emsp;&emsp;该shellcode与其他恶意程序使用的shellcode不同,它并没有使用从peb结构体获取函数地址的访问,而是从公式编辑器中窃取API函数地址，由于公式编辑器编译时并没有开启ASLR地址随机化，因此与公式编辑器处于同一地址空间的shellcode代码能够直接通过函数地址来调用函数而不会引发各种异常。<br> <img src="/post/f6888581/9cc1529615d4d5cb002e8e8c31afab30.png" class="" title="example"> </p>
+<p>&emsp;&emsp;如果要使用一些在公式编辑器内并没有使用的API函数时，手动通过LoadLibrary和GetProcessAddress来获取对应的函数地址，当然这两个函数使用的是硬编码的函数地址。<br> <img src="/post/f6888581/ea8faa620fc531b8cd816100f08a7a8a.png" class="" title="example"> </p>
+<h3 id="2-获取函数地址"><a href="#2-获取函数地址" class="headerlink" title="2.获取函数地址"></a>2.获取函数地址</h3><p>&emsp;&emsp;Shellcode从公式编辑器中窃取函数LoadLibrary和GetProcessAddress的函数地址来获取shellcode用到的所有函数的地址。<br> <img src="/post/f6888581/230746b0fe261623e71c1bc698834783.png" class="" title="example"> </p>
+<h3 id="3-获取操作系统版本"><a href="#3-获取操作系统版本" class="headerlink" title="3.获取操作系统版本"></a>3.获取操作系统版本</h3><p>&emsp;&emsp;由于windows系统的不同版本的系统目录有些不同，shellcode获取操作系统版本号用于在执行释放的恶意程序时针对不同版本号使用不同的操作。<br> <img src="/post/f6888581/ed921d528aa3ec59ba71ba76f5a644fb.png" class="" title="example"> </p>
+<h3 id="4-检测AVP进程"><a href="#4-检测AVP进程" class="headerlink" title="4.检测AVP进程"></a>4.检测AVP进程</h3><p>&emsp;&emsp;Shellcode通过枚举进程的方式来判断当前所有运行的进程是否包含”avp”和”AvastSvc”，shellcode会根据是否包含这两个进程来确定如何执行释放的恶意程序。<br> <img src="/post/f6888581/fce01d2d641876b48e0de1119ac81c29.png" class="" title="example"> </p>
+<p>&emsp;&emsp;进程检测代码如下图，使用函数CreateToolhelp32Snapshot创建进程快照对象，通过ProcessFirst和ProcessNext来遍历所有的进程并与要查找的进程名进行匹配，如果匹配成功返回1，否则返回0。<br> <img src="/post/f6888581/d1c8f2f8b631c77f32cd8259cb6fe29b.png" class="" title="example"> </p>
+<h3 id="5-创建计划任务"><a href="#5-创建计划任务" class="headerlink" title="5.创建计划任务"></a>5.创建计划任务</h3><p>&emsp;&emsp;如果检测到受害者机器上存在进程”AvastSvc”则创建计划任务。创建计划任务时，恶意程序OneDriver还未被释放，因此延迟1分钟后执行。使用函数ShellExecuteA执行cmd命令创建计划任务。<br> <img src="/post/f6888581/8b365572d170d969e65acb1fd2032f0e.png" class="" title="example"> </p>
+<h3 id="6-释放恶意程序"><a href="#6-释放恶意程序" class="headerlink" title="6.释放恶意程序"></a>6.释放恶意程序</h3><p>&emsp;&emsp;恶意程序Onedriver嵌入在shellcode内，shellcode使用指令pop和指令push组合使用获取函数jmp_return_addr的返回地址即0x12F,减去0xE获取当前函数所在地址0x121。<br> <img src="/post/f6888581/3f0a324f21c2f61c91b5d105543340c7.png" class="" title="example"> </p>
+<p>&emsp;&emsp;恶意程序OneDriver 位于偏移当前函数地址+0xAF2中,从下图中可以看出MZ字符和PE字符被抹去，这样做可以有效防止一些工具直接将文件dump出来。<br> <img src="/post/f6888581/765a19cda71c0a58f9a2b5aed194527d.png" class="" title="example"> </p>
+<p>&emsp;&emsp;获取恶意程序所在位置,然后将头部’MZ’写入。<br> <img src="/post/f6888581/936a9dd6af83558aa384e857b562c0f1.png" class="" title="example"> </p>
+<p>&emsp;&emsp;当操作系统版本号为6时，并不直接通过函数地址来调用函数CreateFile,而是模拟CreateFile的序言，然后跳转到序言后的代码并执行。由于安全软件对一些关键函数的hook一般都是修改函数头部5字节代码,shellcode跳过函数序言可以绕过HOOK。<br> <img src="/post/f6888581/516713ed129c46fcd530ddcf5714cd12.png" class="" title="example"> </p>
+<p>&emsp;&emsp;Shellcode写入恶意程序文件代码如下，文件被写入到%programdata%目录中,文件名为”oneDriver.exe”。<br>IDA反编译后的伪代码第38行由于IDA优化的原因没有反编译成正确的代码。<br> <img src="/post/f6888581/4b629a09850760a0af587e1c02087cbc.png" class="" title="example"> </p>
+<h3 id="7-执行恶意程序"><a href="#7-执行恶意程序" class="headerlink" title="7.执行恶意程序"></a>7.执行恶意程序</h3><p>&emsp;&emsp;如果受害者机器上存在avsvc进程则直接退出程序，等待计划任务触发时执行恶意程序。在其他情况下，shellcode会创建注册表启动项以便在受害者机器开机启动时执行恶意程序。<br> <img src="/post/f6888581/d2b34a8365e1a26496a71909c571676f.png" class="" title="example"> </p>
+<p>&emsp;&emsp;在注册表启动项创建成功后，还会根据是否存在进程”avp”来使用不同的方法来创建进程来绕过安全防护进程的检测。如果不存在进程”avp”,则使用使用CreateProcess来执行释放的恶意文件。<br> <img src="/post/f6888581/92228ada2544331ac83aedcfffb676d4.png" class="" title="example"> </p>
+<p>&emsp;&emsp;如果存在进程”avp”则开启shutdown权限，发送<strong>HARDERROR_MSG</strong>消息使受害者机器触发蓝屏，然后等待受害者系统启动时执行释放的恶意程序。<br> <img src="/post/f6888581/9987726547038d4561170819da9a3a31.png" class="" title="example"> </p>
+<h2 id="3-Bannew木马"><a href="#3-Bannew木马" class="headerlink" title="3.Bannew木马"></a>3.Bannew木马</h2><h3 id="数据加密"><a href="#数据加密" class="headerlink" title="数据加密"></a>数据加密</h3><p>&emsp;&emsp;在以往版本的Banner木马中,与C&amp;C通信时使用的加密算法为AES-CBC-128，这次发现的样本开始使用更为轻量的RC4加密算法来对通信数据进行加密。部分字段在使用RC4加密后还会采用Base64对其进行编码。<br> <img src="/post/f6888581/2210c31394a86eb5199a5ac7e6c8a5b2.png" class="" title="example"> </p>
+<h3 id="泄露数据"><a href="#泄露数据" class="headerlink" title="泄露数据"></a>泄露数据</h3><p>&emsp;&emsp;使用工具nslookup来查询受害者机器的外网IP地址。<br> <img src="/post/f6888581/5faa91db7100178e591eb5ee4d73f092.png" class="" title="example"> </p>
+<p>&emsp;&emsp;使用函数GetUserName获取受害者机器当前用户。<br> <img src="/post/f6888581/1d11009121cc757b63c940c464a490d3.png" class="" title="example"> </p>
+<p>&emsp;&emsp;使用powershell命令获取受害者机器上所有已安装的服务，并将结果保存到文件<strong>RTYgjfdg.sys</strong>中。<br> <img src="/post/f6888581/a2210c88d1a10accab670d8e8085b37b.png" class="" title="example"> </p>
+<p>&emsp;&emsp;通过命令<strong>tasklist</strong>获取操作系统正在运行的所有进程信息，命令执行后输出的数据同样保存到文件<strong>RTYgjfdg.sys</strong>中。<br> <img src="/post/f6888581/11c5a02b116513169ebb6e1a320737ef.png" class="" title="example"> </p>
+<p>&emsp;&emsp;从注册表中获取在受害者机器上所有已安装的软件,同样将结果写入<strong>RTYgjfdg.sys</strong>。<br> <img src="/post/f6888581/832cacad6ec58e7db1f8601efd1d39ef.png" class="" title="example"> </p>
+<h3 id="3-C-C通信"><a href="#3-C-C通信" class="headerlink" title="3.C&amp;C通信"></a>3.C&amp;C通信</h3><p>&emsp;&emsp;恶意程序与C&amp;C服务器通信时使用post请求来发送数据，其中post请求使用的所有参数如表,C&amp;C服务器地址为”dayspringdesk.xyz”, post请求的路径为”wfgkl&#x2F;cvrkaf&#x2F;xkj&#x2F;test.php”。</p>
+<table>
+<thead>
+<tr>
+<th><strong>字段</strong></th>
+<th><strong>描述</strong></th>
+<th><strong>加密算法</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>uuid</td>
+<td>机器序列号</td>
+<td>在发送准备接收指令执行的请求中不加密，其他情况下加密</td>
+</tr>
+<tr>
+<td>fname</td>
+<td>文件名</td>
+<td>RC4+base64</td>
+</tr>
+<tr>
+<td>command</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>fcat</td>
+<td>文件类型 “10”表示文件名为<strong>RTYgjfdg.sys</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>fsize</td>
+<td>文件大小</td>
+<td>将文件大小转成字符串再加密,加密方式为RC4+base64</td>
+</tr>
+<tr>
+<td>Fdata</td>
+<td>文件数据</td>
+<td>Base64</td>
+</tr>
+<tr>
+<td>Isping</td>
+<td></td>
+<td>在发送准备接收指令执行的请求中使用RC4加密，其他情况不加密</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>状态</td>
+<td>无加密</td>
+</tr>
+<tr>
+<td>Found</td>
+<td></td>
+<td>无加密</td>
+</tr>
+<tr>
+<td>flag</td>
+<td>标志</td>
+<td>无加密</td>
+</tr>
+<tr>
+<td>ip</td>
+<td>受害者机器的外网IP</td>
+<td>无加密</td>
+</tr>
+<tr>
+<td>User</td>
+<td>受害者机器用户名</td>
+<td>RC4加密</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="4-发送上线包"><a href="#4-发送上线包" class="headerlink" title="4.发送上线包"></a>4.发送上线包</h3><p>&emsp;&emsp;恶意程序在第一次运行时检测临时目录下的”<strong>THYdbjks</strong>”文件是否存在,如果不存在则收集受害者机器上的系统信息,包括已安装服务、当前运行的进程、所有已安装的软件等等，收集的信息保存在临时目录下的”<strong>RTYgjfdg.sys</strong>”文件。<br> <img src="/post/f6888581/918004f9dfba24d06106c5e52e52c41e.png" class="" title="example"> </p>
+<p>&emsp;&emsp;恶意程序上传文件时采用分段上传，每次最多上传0x400字节大小的文件数据，其中文件大小和文件名加密后分别作为参数传递给post请求的字段fsize和fname。<br> <img src="/post/f6888581/0f3af2e44c0d1feb831fba96730dc9c2.png" class="" title="example"> </p>
+<p>&emsp;&emsp;将文件数据base64编码后作为字段fdata的参数，分段上传时post的字段fdata对应不同段的文件数据，其他字段保持不变，其中fcat的值为”10”，表示该上传的文件主要用于保存从受害者机器上泄露的系统信息。<br> <img src="/post/f6888581/ec1394a1052e9714d9d2191cb22910ce.png" class="" title="example"> </p>
+<p>&emsp;&emsp;文件上传完成后,发送文件上传成功的请求并将文件删除，字段fdata的值为”done”的base64值，字段flag值为done,其他参数保持不变，<br> <img src="/post/f6888581/d8d070c10c438ee2033c80164822fc81.png" class="" title="example"> </p>
+<h3 id="5-键盘记录"><a href="#5-键盘记录" class="headerlink" title="5.键盘记录"></a>5.键盘记录</h3><p>&emsp;&emsp;恶意程序在每一次将上线包发送到C&amp;C服务器后，开始执行C&amp;C指令前创建一个新的线程来实现键盘记录功能，记录的信息保存到临时目录下的文件”atapi.sys”中。<br>&emsp;&emsp;与一般的键盘记录不同，恶意程序采用循环遍历每一种vkey，使用函数<strong>GetAsyncKeyState</strong>来判断vkey是否被按下，当该函数返回值为0x8001时表示vkey对应的按键被按下，接着检测对应的按键是否在需要记录的范围内，比如功能键F1~F12之类的按键就恶意程序就不会记录并写入到文件。<br> <img src="/post/f6888581/99f9ee0e443ddab2aff27be231c66ba5.png" class="" title="example"> </p>
+<p>&emsp;&emsp;恶意程序记录并写入到文件的vkey键值包括0~9的数字、a~z和A~Z的字符，还有shift、caplock和ctlr按键。其中特殊按键使用格式”#{键名}#”的形式写入到文件中。<br> <img src="/post/f6888581/b22913d7d35a00ddb673a7944af4efb3.png" class="" title="example"> </p>
+<p>键盘记录支持的特殊键如下表:</p>
+<table>
+<thead>
+<tr>
+<th>键名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>shift</td>
+<td></td>
+</tr>
+<tr>
+<td>backspack</td>
+<td>后退键</td>
+</tr>
+<tr>
+<td>r_click</td>
+<td>鼠标右击</td>
+</tr>
+<tr>
+<td>caps_lock</td>
+<td>大写键</td>
+</tr>
+<tr>
+<td>Tab</td>
+<td></td>
+</tr>
+<tr>
+<td>up_arrow</td>
+<td>向上的方向键</td>
+</tr>
+<tr>
+<td>down_arrow</td>
+<td>向下的方向键</td>
+</tr>
+<tr>
+<td>left_arrow</td>
+<td>向左的方向键</td>
+</tr>
+<tr>
+<td>Right_arrow</td>
+<td>向右的方向键</td>
+</tr>
+<tr>
+<td>Contrl</td>
+<td></td>
+</tr>
+<tr>
+<td>ALT</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="6-C-C通信"><a href="#6-C-C通信" class="headerlink" title="6.C&amp;C通信"></a>6.C&amp;C通信</h3><p>&emsp;&emsp;恶意程序需要发送指定的post请求来从C&amp;C服务器获取要执行的指令,post请求中包含uuid、user参数，C&amp;C服务器会根据字段来对不同用户名的受害者下发不同的C&amp;C指令数据，下发的数据使用RC4算法加密，加密密钥与恶意程序使用的RC4加密密钥一致，解密后的数据第一个字节表示恶意程序要执行的C&amp;C指令。<br> <img src="/post/f6888581/dd1a80ebf4e526f8e846e5e2ed4b78fb.png" class="" title="example"> </p>
+<p>恶意程序使用的所有C&amp;C指令如下表:</p>
+<table>
+<thead>
+<tr>
+<th>C&amp;C指令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2</td>
+<td>屏幕截图</td>
+</tr>
+<tr>
+<td>3</td>
+<td>退出当前执行的指令，等待C&amp;C服务器下发指令</td>
+</tr>
+<tr>
+<td>1</td>
+<td>收集文件信息</td>
+</tr>
+<tr>
+<td>5</td>
+<td>创建文件</td>
+</tr>
+<tr>
+<td>6</td>
+<td>上传键盘记录文件</td>
+</tr>
+<tr>
+<td>7</td>
+<td>执行远程shell</td>
+</tr>
+</tbody></table>
+<h3 id="7-屏幕截图"><a href="#7-屏幕截图" class="headerlink" title="7.屏幕截图"></a>7.屏幕截图</h3><p>&emsp;&emsp;获取当前屏幕的大小，并计算左上、左下、右上和右下的坐标，在函数Create_SceenSnap对计算出的坐标范围内的屏幕截图。<br> <img src="/post/f6888581/bb7a0ec21a00ae484cdacbfbb5c3f6cb.png" class="" title="example"> </p>
+<p>&emsp;&emsp;创建Bitmap对象,然后调用函数GdipSaveImageToFile将Bitmap对象保存为JPG格式的图片文件，保存的图片文件保存在临时目录下的s.sys文件。<br> <img src="/post/f6888581/b7d411b77e10ef3dfeabebeff7539a49.png" class="" title="example"> </p>
+<p>&emsp;&emsp;创建屏幕截图成功需要将图片文件加密后上传到C&amp;C服务器上，上传屏幕截图图片时与上传键盘记录数据相似,其中字段fname固定为tprk.enc使用RC4加密后的值；同样使用分段上传，每次上传0x5000字节的数据，所有分段上传完成后发送上传成功的post请求。<br> <img src="/post/f6888581/686e2c733c752db155e6accf625b2e35.png" class="" title="example"> </p>
+<h3 id="8-收集文件信息"><a href="#8-收集文件信息" class="headerlink" title="8.收集文件信息"></a>8.收集文件信息</h3><p>&emsp;&emsp;调用FindFIrstFileW和FindNextFileW遍历指定目录下所有的文件,并将其文件名写入临时目录的的文件__TDSYU。与上传屏幕截图发送的post请求类似，分段上传时每段的大小为0x4000字节大小。<br> <img src="/post/f6888581/e7288ddb36c55449a50128e1a530b46c.png" class="" title="example"> </p>
+<h3 id="9-远程shell执行"><a href="#9-远程shell执行" class="headerlink" title="9.远程shell执行"></a>9.远程shell执行</h3><p>&emsp;&emsp;恶意程序要执行的命令shell命令由C&amp;C服务器下发，当执行的命令为cd使用,调用函数SetCurrentDirectoryW将cd命令的参数设置为当前进程的工作目录。<br> <img src="/post/f6888581/148c0fddea76918aa214a0eb1de7b96a.png" class="" title="example"> </p>
+<p>&emsp;&emsp;为其他指令时，调用_popen执行命令。<br> <img src="/post/f6888581/ea74c00790790314864a539a6cb74202.png" class="" title="example"> </p>
+<h3 id="10-下载文件并执行"><a href="#10-下载文件并执行" class="headerlink" title="10.下载文件并执行"></a>10.下载文件并执行</h3><p>&emsp;&emsp;C&amp;C服务器下发文件下载链接，恶意程序下载该文件并保存到临时目录下，保存文件名为”TGJdbkds.exe”,随后调用函数CreateProcessA执行该文件。<br> <img src="/post/f6888581/a1abf87a5a28e8b7e9fe04668d2b774d.png" class="" title="example"> </p>
+<h1 id="5-IOC"><a href="#5-IOC" class="headerlink" title="5. IOC"></a>5. IOC</h1><p>cb50c0650b32911daeb17217ac258afe<br>26991e42f4fa6dfab84cfa886b4d51f0<br>729dd4604fda4b19146d8f33509a43f6</p>
+<h1 id="6-ATT-CK矩阵"><a href="#6-ATT-CK矩阵" class="headerlink" title="6. ATT&amp;CK矩阵"></a>6. ATT&amp;CK矩阵</h1><table>
+<thead>
+<tr>
+<th>Tactic</th>
+<th>ID</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Exfiltration</td>
+<td>T1041</td>
+<td>Exfiltration Over C2 Channel</td>
+<td>通过C&amp;C上传泄露数据</td>
+</tr>
+<tr>
+<td></td>
+<td>T1030</td>
+<td>Data Transfer Size Limits</td>
+<td>使用分块的方式上传数据</td>
+</tr>
+<tr>
+<td>Command and Control</td>
+<td>T1105</td>
+<td>Ingress Tool Transfer</td>
+<td>下载恶意程序</td>
+</tr>
+<tr>
+<td></td>
+<td>T1573</td>
+<td>Encrypted Channel</td>
+<td>使用RC4和base64对流量进行加密</td>
+</tr>
+<tr>
+<td></td>
+<td>T1071</td>
+<td>Application Layer Protocol</td>
+<td>使用http协议进行通信</td>
+</tr>
+<tr>
+<td>Collection</td>
+<td>T1113</td>
+<td>Screen Capture</td>
+<td>屏幕截图</td>
+</tr>
+<tr>
+<td></td>
+<td>T1056</td>
+<td>Input Capture</td>
+<td>键盘记录</td>
+</tr>
+<tr>
+<td>Discovery</td>
+<td>T1033</td>
+<td>System Owner&#x2F;User Discovery</td>
+<td>获取系统用户</td>
+</tr>
+<tr>
+<td></td>
+<td>T1518</td>
+<td>Software Discovery</td>
+<td>获取所有已安装软件</td>
+</tr>
+<tr>
+<td></td>
+<td>T1057</td>
+<td>Process Discovery</td>
+<td>获取进程列表</td>
+</tr>
+<tr>
+<td></td>
+<td>T1007</td>
+<td>System Service Discovery</td>
+<td>获取所有已注册服务</td>
+</tr>
+<tr>
+<td></td>
+<td>T1083</td>
+<td>File and Directory Discovery</td>
+<td>收集文件信息</td>
+</tr>
+<tr>
+<td>Privilege Escalation</td>
+<td>T1053</td>
+<td>Scheduled Task&#x2F;Job</td>
+<td>创建计划任务执行恶意程序</td>
+</tr>
+<tr>
+<td></td>
+<td>T1547</td>
+<td>Boot or Logon Autostart Execution</td>
+<td>创建注册表启动项</td>
+</tr>
+</tbody></table>
+<h1 id="7-参考"><a href="#7-参考" class="headerlink" title="7. 参考"></a>7. 参考</h1><p><a target="_blank" rel="noopener" href="https://ti.qianxin.com/blog/articles/analysis-of-the-attack-activities-of-patchwork-using-the-documents-of-relevant-government-agencies-in-pakistan-as-bait/">https://ti.qianxin.com/blog/articles/analysis-of-the-attack-activities-of-patchwork-using-the-documents-of-relevant-government-agencies-in-pakistan-as-bait/</a></p>
+
 				  
 	  
       
@@ -430,7 +769,7 @@ var _hmt = _hmt || [];
 	
 	<br>
 	<strong class="update-time">最后更新：</strong>
-	2024年04月15日 19:19:58
+	2024年04月15日 19:24:35
 	
 	<!-- <br>
 	<strong class="article-titles">本文标题：</strong>
@@ -557,7 +896,7 @@ var _hmt = _hmt || [];
           <span class="tooltip-content">
 			<span style="font-size: 20px;font-weight: bold;">目录</span>
             <div class="toc-article">
-              哦，目录不存在
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">2.</span> <span class="toc-text">流程图</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">3. 详细分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%92%93%E9%B1%BC%E6%96%87%E6%A1%A3%E5%88%86%E6%9E%90"><span class="toc-number">3.1.</span> <span class="toc-text">1. 钓鱼文档分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-shellcode%E5%88%86%E6%9E%90"><span class="toc-number">3.2.</span> <span class="toc-text">2.shellcode分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%A1%AC%E7%BC%96%E7%A0%81%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80%E8%B0%83%E7%94%A8"><span class="toc-number">3.2.1.</span> <span class="toc-text">1.硬编码函数地址调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%8E%B7%E5%8F%96%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80"><span class="toc-number">3.2.2.</span> <span class="toc-text">2.获取函数地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%8E%B7%E5%8F%96%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%89%88%E6%9C%AC"><span class="toc-number">3.2.3.</span> <span class="toc-text">3.获取操作系统版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%A3%80%E6%B5%8BAVP%E8%BF%9B%E7%A8%8B"><span class="toc-number">3.2.4.</span> <span class="toc-text">4.检测AVP进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%88%9B%E5%BB%BA%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1"><span class="toc-number">3.2.5.</span> <span class="toc-text">5.创建计划任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E9%87%8A%E6%94%BE%E6%81%B6%E6%84%8F%E7%A8%8B%E5%BA%8F"><span class="toc-number">3.2.6.</span> <span class="toc-text">6.释放恶意程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%89%A7%E8%A1%8C%E6%81%B6%E6%84%8F%E7%A8%8B%E5%BA%8F"><span class="toc-number">3.2.7.</span> <span class="toc-text">7.执行恶意程序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Bannew%E6%9C%A8%E9%A9%AC"><span class="toc-number">3.3.</span> <span class="toc-text">3.Bannew木马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86"><span class="toc-number">3.3.1.</span> <span class="toc-text">数据加密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%84%E9%9C%B2%E6%95%B0%E6%8D%AE"><span class="toc-number">3.3.2.</span> <span class="toc-text">泄露数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-C-C%E9%80%9A%E4%BF%A1"><span class="toc-number">3.3.3.</span> <span class="toc-text">3.C&amp;C通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%8F%91%E9%80%81%E4%B8%8A%E7%BA%BF%E5%8C%85"><span class="toc-number">3.3.4.</span> <span class="toc-text">4.发送上线包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E9%94%AE%E7%9B%98%E8%AE%B0%E5%BD%95"><span class="toc-number">3.3.5.</span> <span class="toc-text">5.键盘记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-C-C%E9%80%9A%E4%BF%A1"><span class="toc-number">3.3.6.</span> <span class="toc-text">6.C&amp;C通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE"><span class="toc-number">3.3.7.</span> <span class="toc-text">7.屏幕截图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E6%94%B6%E9%9B%86%E6%96%87%E4%BB%B6%E4%BF%A1%E6%81%AF"><span class="toc-number">3.3.8.</span> <span class="toc-text">8.收集文件信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E8%BF%9C%E7%A8%8Bshell%E6%89%A7%E8%A1%8C"><span class="toc-number">3.3.9.</span> <span class="toc-text">9.远程shell执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6%E5%B9%B6%E6%89%A7%E8%A1%8C"><span class="toc-number">3.3.10.</span> <span class="toc-text">10.下载文件并执行</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-IOC"><span class="toc-number">4.</span> <span class="toc-text">5. IOC</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-ATT-CK%E7%9F%A9%E9%98%B5"><span class="toc-number">5.</span> <span class="toc-text">6. ATT&amp;CK矩阵</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7-%E5%8F%82%E8%80%83"><span class="toc-number">6.</span> <span class="toc-text">7. 参考</span></a></li></ol>
             </div>
           </span>
         </div>
@@ -657,7 +996,7 @@ var _hmt = _hmt || [];
 		<span> 34 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">74.2k</span></span>
+		<span> <span class="post-count">77.4k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
