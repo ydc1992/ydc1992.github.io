@@ -314,6 +314,179 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-BPFdoor：隐形Linux恶意软件绕过防火墙进行远程访问" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title_code_ant" href="/post/b3bbba67.html">BPFdoor：隐形Linux恶意软件绕过防火墙进行远程访问</a>
+    </h2>
+  
+
+        
+		
+		  <a href="/post/b3bbba67.html" class="archive-article-date">
+  	<time datetime="2023-10-14T06:53:57.000Z" itemprop="datePublished">
+	<!-- <i class="icon-calendar icon"></i> -->
+
+	<i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+	&nbsp;
+	2023-10-14</time>
+	
+	<!-- busuanzi阅读量统计
+	
+	-->
+	
+    <!-- waline阅读量统计 -->
+	
+
+</a>
+
+
+        
+		
+		
+		  <!-- 添加标题栏文字统计效果 -->
+<div class="word-count">
+	
+      
+        <span class="article-type" style="
+          color: white;
+          font-size: 14px;
+          background: #0088CC;
+          padding: 0 5px 1px 5px;
+          margin-right: 5px;
+          border-radius: 2px;">原创</span>
+		  &nbsp; 
+      
+    
+	
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
+        <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
+        <span class="post-meta-item-text">字数统计: </span>
+        <span class="post-count">3.3k字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+	    <i class="fa fa-pagelines" aria-hidden="true"></i>
+        <span class="post-meta-item-text">阅读时长: </span>
+        <span class="post-count">12min</span>
+      </span>
+    </span>
+	
+
+</div>
+<!-- 添加标题栏文字统计效果结束 -->
+		
+      </header>
+    
+	
+    <div class="article-entry" itemprop="articleBody">
+	  <!-- 添加分类与标签 -->
+	  
+		  
+			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.    概述"></a>1.    概述</h1><p>&emsp;&emsp;BPFDoor是专门为Linux和Solaris系统设计的后门程序，攻击者可以远程连接到linux shell以获得受害者设备的访问权限，背后所属的APT组织主要针对中东和亚洲的电信提供商以及政府、教育和物流部门的实体。<br>&emsp;&emsp;该后门滥用伯克利数据包过滤器(BPF)来监听网络和过滤网络数据包，这是BPFDoor名字的由来，也是2022年来被发现的第二个基于BPF进行攻击的恶意程序,第一个是由盘古实验室公布的NAS后门bvp47。<br>&emsp;&emsp;PWC研究人员将该恶意程序归因于来自中国的APT组织Red Menshen, 该APT组织为2021年被PWC命名，归因原因是该组织在后利用阶段使用了Gh0st后门变种以及Mimikatz和Metasploit等开源软件、攻击时间与中国地区工作时间吻合等原因。这种归因方式是信誉度比较低的，因为其他国家的APT组织有时也会使用Gh0st后门,比如朝鲜国家支持的APT组织Lazarus。</p>
+<h1 id="2-样本详情"><a href="#2-样本详情" class="headerlink" title="2.    样本详情"></a>2.    样本详情</h1><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文件名</td>
+<td>kdumpflush</td>
+</tr>
+<tr>
+<td>Md5</td>
+<td>156226c90974180cc4b5f9738e80f1f8</td>
+</tr>
+<tr>
+<td>文件类型</td>
+<td>ELF64</td>
+</tr>
+</tbody></table>
+<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.    流程图"></a>3.    流程图</h1><img src="/post/b3bbba67/clip_image001.png" class="" title="example">
+		  
+				  
+	  
+      
+	  <!-- 添加打赏 -->
+	  
+	
+	  <!-- 添加版权声明 -->
+      
+	  
+	</div>
+	
+	<!-- 添加置顶 -->
+    <div class="article-info article-info-index">
+      
+	  
+	  <!-- 分类页 -->
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">BPFDoor</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+	  
+	  <!-- 添加展开全文 -->
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/post/b3bbba67.html">展开全文 >></a>
+        </p>
+      
+	  
+	  <!-- 添加分享 -->
+      
+	  
+      <div class="clearfix"></div>
+	  
+    </div>
+  </div>
+</article>
+
+
+
+<!-- 添加回到顶部和文章目录 -->
+<aside class="wrap-side-operation">
+  <div class="mod-side-operation">
+    
+      <div class="jump-container" id="js-jump-container" style="display:none;">
+        <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+          <i class="icon-font icon-back"></i>
+        </a>
+      </div>
+    
+    
+  </div>
+</aside>
+
+<!-- 添加评论 -->
+
+
+<!-- 文章页添加mathjax公式 -->
+
+  
+
+<!-- 文章页添加mathjax公式 -->
+  
     <article id="post-BlackLotus-首个绕过安全启动的UEFI-bootkit-下" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1706,219 +1879,6 @@ var _hmt = _hmt || [];
 
 <!-- 文章页添加mathjax公式 -->
   
-    <article id="post-DoNot组织在其框架中引入浏览器窃取模块" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title_code_ant" href="/post/e42690c0.html">DoNot组织在其框架中引入浏览器窃取模块</a>
-    </h2>
-  
-
-        
-		
-		  <a href="/post/e42690c0.html" class="archive-article-date">
-  	<time datetime="2022-08-26T03:15:11.000Z" itemprop="datePublished">
-	<!-- <i class="icon-calendar icon"></i> -->
-
-	<i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-	&nbsp;
-	2022-08-26</time>
-	
-	<!-- busuanzi阅读量统计
-	
-	-->
-	
-    <!-- waline阅读量统计 -->
-	
-
-</a>
-
-
-        
-		
-		
-		  <!-- 添加标题栏文字统计效果 -->
-<div class="word-count">
-	
-      
-        <span class="article-type" style="
-          color: white;
-          font-size: 14px;
-          background: #0088CC;
-          padding: 0 5px 1px 5px;
-          margin-right: 5px;
-          border-radius: 2px;">原创</span>
-		  &nbsp; 
-      
-    
-	
-    <span class="post-time">
-      <span class="post-meta-item-icon">
-	    <i class="fa fa-bar-chart" aria-hidden="true"></i>
-        <!-- <i class="fa fa-keyboard-o" aria-hidden="true"></i> -->
-        <span class="post-meta-item-text">字数统计: </span>
-        <span class="post-count">2.9k字</span>
-      </span>
-    </span>
-
-    <span class="post-time">
-      &nbsp; | &nbsp;
-      <span class="post-meta-item-icon">
-	    <i class="fa fa-pagelines" aria-hidden="true"></i>
-        <span class="post-meta-item-text">阅读时长: </span>
-        <span class="post-count">11min</span>
-      </span>
-    </span>
-	
-
-</div>
-<!-- 添加标题栏文字统计效果结束 -->
-		
-      </header>
-    
-	
-    <div class="article-entry" itemprop="articleBody">
-	  <!-- 添加分类与标签 -->
-	  
-		  
-			<h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1.   概述"></a>1.   概述</h1><p>&emsp;&emsp;Donot“肚脑虫”（APT-Q-38）是疑似具有南亚背景的APT组织，其主要以周边国家的政府机构 为目标进行网络攻击活动，通常以窃取敏感信息为目的。该组织具备针对Windows与Android双平台的攻击能力。<br>&emsp;&emsp;在对该组织追踪朔源的过程中，发现Donot使用了一系列新型的后门框架，该框架名为Jaca，根据组件的功能分别分为下载执行组件、文件上传组件、截图组件、文件收集组件、键盘鼠标消息记录组件、浏览器敏感信息窃取组件、移动磁盘文件收集组件等等。</p>
-<h1 id="2-样本详情"><a href="#2-样本详情" class="headerlink" title="2. 样本详情"></a>2. 样本详情</h1><table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>文件名</td>
-<td>S03.doc</td>
-</tr>
-<tr>
-<td>MD5</td>
-<td>3fabf3b97362af460abe98855c7caef8</td>
-</tr>
-<tr>
-<td>文件类型</td>
-<td>Office word文档</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>文件名</td>
-<td>HG5HlDPqsnr3HBwO.php</td>
-</tr>
-<tr>
-<td>Md5</td>
-<td>21b82530fa520eecd5aa677fa7ec0879</td>
-</tr>
-<tr>
-<td>文件类型</td>
-<td>Office word模板</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>文件名</td>
-<td>pgixedfxglmjirdc.dll</td>
-</tr>
-<tr>
-<td>Md5</td>
-<td>b38586849d45649db67189c1e7c0397e</td>
-</tr>
-<tr>
-<td>文件类型</td>
-<td>dll</td>
-</tr>
-</tbody></table>
-<h1 id="3-流程图"><a href="#3-流程图" class="headerlink" title="3.   流程图"></a>3.   流程图</h1> <img src="/post/e42690c0/clip_image001.png" class="" title="example">
-		  
-				  
-	  
-      
-	  <!-- 添加打赏 -->
-	  
-	
-	  <!-- 添加版权声明 -->
-      
-	  
-	</div>
-	
-	<!-- 添加置顶 -->
-    <div class="article-info article-info-index">
-      
-	  
-	  <!-- 分类页 -->
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Donot</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-	  
-	  <!-- 添加展开全文 -->
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/post/e42690c0.html">展开全文 >></a>
-        </p>
-      
-	  
-	  <!-- 添加分享 -->
-      
-	  
-      <div class="clearfix"></div>
-	  
-    </div>
-  </div>
-</article>
-
-
-
-<!-- 添加回到顶部和文章目录 -->
-<aside class="wrap-side-operation">
-  <div class="mod-side-operation">
-    
-      <div class="jump-container" id="js-jump-container" style="display:none;">
-        <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-          <i class="icon-font icon-back"></i>
-        </a>
-      </div>
-    
-    
-  </div>
-</aside>
-
-<!-- 添加评论 -->
-
-
-<!-- 文章页添加mathjax公式 -->
-
-  
-
-<!-- 文章页添加mathjax公式 -->
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&lt;&lt; 上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">下一页 &gt;&gt;</a>
@@ -1973,10 +1933,10 @@ window.MathJax = {
 	  <br>
 	  <div class="footer-center">
 	    <i class="fa fa-file-word-o" aria-hidden="true"></i>
-		<span> 33 篇</span>
+		<span> 34 篇</span>
 		<span class="post-meta-divider">|</span>
 		<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-		<span> <span class="post-count">74.2k</span></span>
+		<span> <span class="post-count">77.4k</span></span>
       </div>
 	  
 	  <!-- 添加不蒜子统计 -->
